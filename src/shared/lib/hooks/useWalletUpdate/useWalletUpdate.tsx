@@ -1,13 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import {  useEffect, useCallback, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getSelectedWallet, walletActions, Wallet } from '@/entities/Wallet';
+import { getSelectedWallet, walletActions } from '@/entities/Wallet';
 import { walletApi } from '@/entities/Wallet/api/walletApi';
-import { ApiResponse } from '@/shared/lib/types/apiResponse';
 
-interface WalletApiError {
-  message: string;
-  status?: number;
-}
 
 export const useWalletUpdater = () => {
   const selectedWallet = useSelector(getSelectedWallet);
@@ -17,7 +12,7 @@ export const useWalletUpdater = () => {
   const isUpdating = useRef(false);
   const delayedUpdateTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  // Очистка таймаута
+  
   const clearDelayedUpdate = useCallback(() => {
     if (delayedUpdateTimeout.current) {
       clearTimeout(delayedUpdateTimeout.current);
@@ -46,16 +41,16 @@ export const useWalletUpdater = () => {
     }
   }, [selectedWallet, getWalletSilent, dispatch]);
 
-  // Обновление с задержкой
+  
   const updateAfterDelay = useCallback((delay: number) => {
-    clearDelayedUpdate(); // Очищаем предыдущий таймаут, если есть
+    clearDelayedUpdate(); 
 
     delayedUpdateTimeout.current = setTimeout(() => {
       updateWalletData();
     }, delay);
   }, [updateWalletData, clearDelayedUpdate]);
 
-  // Очистка при размонтировании
+  
   useEffect(() => {
     return clearDelayedUpdate;
   }, [clearDelayedUpdate]);

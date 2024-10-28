@@ -6,12 +6,15 @@ import { networkSymbol } from '@/shared/consts/networkSymbol';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useWalletUpdater } from '@/shared/lib/hooks/useWalletUpdate/useWalletUpdate';
+import { useToastManager } from '@/shared/lib/hooks/useToastManager/useToastManager';
 
 export const useTransferWindowLogic = () => {
   const { errorToast, successToast } = useToasts();
   const dispatch = useDispatch();
   const selectedToken = useSelector(getSelectedToken);
   const { updateWalletData, updateAfterDelay } = useWalletUpdater();
+  const { showToast } = useToastManager({maxCount: 1});
+
 
   
 
@@ -45,7 +48,7 @@ export const useTransferWindowLogic = () => {
         setBalanceUsd(result.data.price * tokenToTransfer.balance);
       }
     } catch (e) {
-      errorToast('Failed to get token price');
+      showToast(errorToast, 'Failed to get token price');
     } finally {
       setIsLoading(false);
     }

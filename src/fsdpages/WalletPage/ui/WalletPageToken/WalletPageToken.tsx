@@ -1,16 +1,13 @@
-'use client'
-
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { Typography } from '@/shared/ui/Typography/Typography';
 import { getTokenImage } from '../../lib/helpers/getTokenImage';
 import { Flex } from '@/shared/ui/Flex/Flex';
 import { Token, walletActions } from '@/entities/Wallet';
 import Image from 'next/image';
-import { useSwipeable } from 'react-swipeable';
-import Trash from '@/shared/assets/icons/trash.svg'
+import Trash from '@/shared/assets/icons/trash.svg';
 import { globalActions, GlobalWindow } from '@/entities/Global';
 import { useDispatch } from 'react-redux';
-import { TokenDetailsWindow } from './TokenDetailsWindow';
+import { motion, useAnimation } from 'framer-motion';
 
 export interface WalletTokenProps {
   token: Token;
@@ -28,56 +25,50 @@ export const WalletPageToken: React.FC<WalletTokenProps> = React.memo(({
   isEssentialToken = false
 }) => {
   const dispatch = useDispatch();
-  const [isSwiped, setIsSwiped] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  const handleSwipe = useCallback(({ deltaX }: { deltaX: number }) => {
-    if (isEssentialToken || !contentRef.current) return;
-    
-    const maxOffset = 80;
-    const offset = Math.max(0, Math.min(maxOffset, -deltaX));
-    contentRef.current.style.transform = `translateX(${-offset}px)`;
-  }, [isEssentialToken]);
-
-  const { ref: swipeableRef, ...swipeHandlers } = useSwipeable({
-    onSwiping: handleSwipe,
-    onSwipedLeft: () => {
-      if (!isEssentialToken && contentRef.current) {
-        setIsSwiped(true);
-        contentRef.current.style.transform = 'translateX(-80px)';
-      }
-    },
-    onSwipedRight: () => {
-      if (!isEssentialToken && contentRef.current) {
-        setIsSwiped(false);
-        contentRef.current.style.transform = 'translateX(0)';
-      }
-    },
-    trackTouch: true,
-    delta: 10, // Минимальное расстояние для определения свайпа
-    preventScrollOnSwipe: true, // Предотвращает скролл при свайпе
-    touchEventOptions: { passive: false } // Опции для touch-событий
-  });
+  const controls = useAnimation();
+  const [isDragging, setIsDragging] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const handleClick = useCallback(() => {
-    if (!isSwiped) {
+    if (!isDragging) {
       dispatch(walletActions.setSelectedToken(token));
-      setShowDetails(true);
       dispatch(globalActions.addWindow({ window: GlobalWindow.TokenDetails }));
       onTokenClick?.(token);
     }
-  }, [isSwiped, dispatch, onTokenClick, token]);
+  }, [dispatch, onTokenClick, token, isDragging]);
+
+  const handleDelete = useCallback(() => {
+    onDeleteToken?.(token);
+    controls.start({ x: 0 });
+    setIsOpen(false);
+  }, [onDeleteToken, token, controls]);
+
+  const handleDragEnd = useCallback((event: any, info: any) => {
+    const shouldOpen = !isOpen 
+      ? info.offset.x < -40
+      : info.offset.x > -40;
+
+    if (shouldOpen && !isOpen) {
+      controls.start({ x: -80 });
+      setIsOpen(true);
+    } else {
+      controls.start({ x: 0 });
+      setIsOpen(false);
+    }
+    setIsDragging(false);
+  }, [controls, isOpen]);
 
   const priceChangeColor = token.price_change_percentage > 0 ? 'var(--green)' : 'var(--red)';
   const formattedBalance = token.balance !== 0 ? token.balance.toFixed(7) : '0';
 
   return (
     <div style={{ 
-      position: 'relative', 
-      borderRadius: '16px',
+      position: 'relative',
+      width: '100%',
       background: 'var(--primaryBg)',
-      isolation: 'isolate'
+      borderRadius: '16px',
+      overflow: 'hidden',
+      height: '60px'
     }}>
       {!isEssentialToken && (
         <div
@@ -87,21 +78,15 @@ export const WalletPageToken: React.FC<WalletTokenProps> = React.memo(({
             right: 0,
             height: '100%',
             width: '80px',
-            background: 'var(--primaryBg)',
-            borderRadius: '0 16px 16px 0',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            cursor: 'pointer',
-            zIndex: 1
+            background: 'var(--primaryBg)',
+            cursor: 'pointer'
           }}
           onClick={(e) => {
             e.stopPropagation();
-            onDeleteToken?.(token);
-            setIsSwiped(false);
-            if (contentRef.current) {
-              contentRef.current.style.transform = 'translateX(0)';
-            }
+            handleDelete();
           }}
         >
           <Flex align="center" gap={8}>
@@ -111,27 +96,30 @@ export const WalletPageToken: React.FC<WalletTokenProps> = React.memo(({
         </div>
       )}
 
-      <div
-        ref={mergeRefs(contentRef, swipeableRef)}
-        {...(!isEssentialToken ? swipeHandlers : {})}
+      <motion.div
+        animate={controls}
+        drag={!isEssentialToken ? "x" : false}
+        dragConstraints={{ left: -80, right: 0 }}
+        dragElastic={0}
+        onDragStart={() => setIsDragging(true)}
+        onDragEnd={handleDragEnd}
         style={{
-          transform: 'translateX(0)',
-          transition: 'transform 0.3s ease',
-          borderRadius: '16px',
-          position: 'relative',
-          zIndex: 2,
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
           background: 'var(--secondaryBg)',
+          borderRadius: '16px',
+          zIndex: 1,
+          cursor: !isEssentialToken ? 'grab' : 'pointer'
         }}
+        onClick={handleClick}
       >
         <Flex
           width="100%"
+          height="100%"
           align="center"
-          radius="16px"
-          height="60px"
           padding="10px 16px"
           justify="space-between"
-          bg="var(--secondaryBg)"
-          onClick={handleClick}
         >
           <Flex align="center" gap={12}>
             <Image 
@@ -143,7 +131,7 @@ export const WalletPageToken: React.FC<WalletTokenProps> = React.memo(({
             />
             <Flex direction="column" gap={3}>
               <Typography.Text 
-                text={`${token.name} (${token.symbol})`} 
+                text={`${token.symbol}`} 
                 weight={550} 
                 width={isHidePrice ? "250px" : "135px"} 
                 wrap="nowrap" 
@@ -192,21 +180,9 @@ export const WalletPageToken: React.FC<WalletTokenProps> = React.memo(({
             </Flex>
           )}
         </Flex>
-      </div>
-
-      {showDetails && <TokenDetailsWindow />}
+      </motion.div>
     </div>
   );
 });
 
 WalletPageToken.displayName = 'WalletPageToken';
-
-const mergeRefs = (...refs: React.Ref<any>[]) => (node: any) => {
-  refs.forEach((ref) => {
-    if (typeof ref === 'function') {
-      ref(node);
-    } else if (ref != null) {
-      (ref as React.MutableRefObject<any>).current = node;
-    }
-  });
-};

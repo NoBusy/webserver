@@ -27,10 +27,8 @@ export const useSwapWindowLogic = () => {
   const [isTokenInfoLoading, setIsTokenInfoLoading] = useState<boolean>(false);
   const [getHistoricalQuotesRequest] = walletApi.useLazyGetHistoricalQuotesQuery();
   const [historicalData, setHistoricalData] = useState<{ timestamp: string; price: number }[]>([]);
+  const [estimatedFee, setEstimatedFee] = useState({ estimated_fee: 0, estimated_fee_usd: 0 });
 
- //const [estimatedGas, setEstimatedGas] = useState<number | null>(null);
-  
-  //const [estimateGas, { isLoading: isEstimatingGas }] = walletApi.useEstimateGasMutation();
   const [getTokenPriceRequest] = walletApi.useLazyGetTokenPriceQuery();
   const [swapRequest, { isLoading: isSwapLoading }] = walletApi.useSwapMutation();
   const [getTokenExtendedInfoRequest] = walletApi.useLazyGetTokenExtendedInfoQuery();
@@ -38,6 +36,8 @@ export const useSwapWindowLogic = () => {
   const selectedWallet: Wallet | undefined = useSelector(getSelectedWallet);
   const isSwapWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.Swap);
   const isConfirmSwapWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.ConfirmSwap);
+  const isSelectTokenWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.SelectToken);
+
   const [slippage, setSlippage] = useState<number>(2);
 
   const updateSlippage = (newSlippage: number) => {
@@ -53,31 +53,6 @@ export const useSwapWindowLogic = () => {
     selectedWallet?.tokens ? selectedWallet.tokens : [],
     [selectedWallet]
   );
-
-  // const handleEstimateGas = useDebounce(async () => {
-  //   try {
-  //     if (!fromToken || !toToken || !selectedWallet || !fromAmount) return;
-
-  //     const result = await estimateGas({
-  //       wallet_id: selectedWallet.id,
-  //       from_token_id: fromToken.id,
-  //       to_token_id: toToken.id,
-  //       amount: Number(fromAmount),
-  //     }).unwrap();
-
-  //     if (result.ok && result.data !== undefined) {
-  //       setEstimatedGas(result.data);
-  //     }
-  //   } catch (e) {
-  //     errorToast('Failed to estimate gas fee');
-  //   }
-  // }, 350);
-
-  // useEffect(() => {
-  //   if (fromToken && toToken && fromAmount && selectedWallet) {
-  //     handleEstimateGas();
-  //   }
-  // }, [fromToken, toToken, fromAmount, selectedWallet]);
 
   const handleGetHistoricalQuotes = useDebounce(async (token: Token) => {
     try {
@@ -206,7 +181,7 @@ export const useSwapWindowLogic = () => {
         updateAfterDelay(50000);
       }
     } catch (e) {
-      showToast(errorToast, 'Failed to swap tokens');
+      showToast(errorToast, 'Please try again');
     } finally {
       setIsLoading(false)
     }
@@ -236,21 +211,26 @@ export const useSwapWindowLogic = () => {
     }
   };
 
-  const handleOpenConfirmWindow = () => {
+  const handleOpenConfirmWindow = async () => {
+    const fee = await getEstimatedFee();
+    setEstimatedFee(fee);
     dispatch(globalActions.addWindow({ window: GlobalWindow.ConfirmSwap }));
   };
 
   const handleOpenSelectFromTokenModal = () => {
+    dispatch(globalActions.addWindow({ window: GlobalWindow.SelectToken }));
     setCurrentView('selectFromToken');
   };
 
   const handleOpenSelectToTokenModal = () => {
+    dispatch(globalActions.addWindow({ window: GlobalWindow.SelectToken }));
     setCurrentView('selectToToken');
   };
 
   const handleSelectFromToken = (token: Token) => {
     setFromToken(token);
     setCurrentView('swap');
+    dispatch(globalActions.removeWindow(GlobalWindow.SelectToken ));
     if (token.id === toToken?.id) {
       setToToken(undefined);
       setTokenExtendedInfo(null);
@@ -260,6 +240,55 @@ export const useSwapWindowLogic = () => {
     }
   };
 
+  const getEstimatedFee = useCallback(async () => {
+    if (!selectedWallet?.network || !fromToken) {
+      return {
+        estimated_fee: 0,
+        estimated_fee_usd: 0
+      };
+    }
+  
+    const network = selectedWallet.network;
+    let estimatedFee = 0;
+    
+    switch (network) {
+      case Network.ETH:
+        estimatedFee = 0.005;
+        break;
+      case Network.BSC:
+        estimatedFee = 0.003;
+        break;
+      case Network.SOL:
+        estimatedFee = 0.00022; 
+        break;
+      case Network.TON:
+        estimatedFee = 0.18; 
+        break;
+      default:
+        estimatedFee = 0;
+    }
+  
+    // Получаем цену нативного токена
+    const nativeSymbol = network === Network.ETH ? 'ETH' : 
+                        network === Network.BSC ? 'BNB' : 
+                        network === Network.SOL ? 'SOL' : 'TON';
+    
+    try {                    
+      const priceResult = await getTokenPriceRequest({ symbol: nativeSymbol, network }).unwrap();
+      
+      return {
+        estimated_fee: estimatedFee,
+        estimated_fee_usd: estimatedFee * (priceResult.ok && priceResult.data?.price ? priceResult.data.price : 0)
+      };
+    } catch (e) {
+      console.error('Failed to get token price:', e);
+      return {
+        estimated_fee: estimatedFee,
+        estimated_fee_usd: 0
+      };
+    }
+  }, [selectedWallet?.network, fromToken, getTokenPriceRequest]);
+  
 
 
   useEffect(() => {
@@ -268,9 +297,11 @@ export const useSwapWindowLogic = () => {
     }
   }, [selectedToken]);
 
+
   const handleSelectToToken = (token: Token) => {
     setToToken(token);
     setCurrentView('swap');
+    dispatch(globalActions.removeWindow(GlobalWindow.SelectToken ));
     if (token.id === fromToken?.id) {
       setFromToken(undefined);
     }
@@ -329,8 +360,9 @@ export const useSwapWindowLogic = () => {
       tokenExtendedInfo,
       isTokenInfoLoading,
       historicalData,
-      slippage
-      //estimatedGas
+      slippage,
+      estimatedFee,
+      isSelectTokenWindowOpen,
     },
   };
 };

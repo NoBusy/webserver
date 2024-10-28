@@ -23,6 +23,8 @@ import notrans from '@/shared/assets/icons/notransicon.svg';
 import TokenInfoBlock from '@/widgets/SwapWindow/ui/TokenInfoBlock';
 import styles from '@/widgets/SwapWindow/ui/PrepareSwapWindow.module.scss';
 import { useToastManager } from '@/shared/lib/hooks/useToastManager/useToastManager';
+import { AnimatePresence, motion } from 'framer-motion';
+import Spinner from '@/shared/ui/Spinner/Spinner';
 
 export const TokenDetailsWindow: React.FC = () => {
   const dispatch = useDispatch();
@@ -39,19 +41,36 @@ export const TokenDetailsWindow: React.FC = () => {
   const { state: swapState, flow: swapFlow } = swapLogic;
 
   const [isInfoLoaded, setIsInfoLoaded] = useState(false);
+  const [isTransactionsLoading, setIsTransactionsLoading] = useState(true);
 
   const localToken = useMemo(() => selectedToken, [selectedToken]);
+
+  useEffect(() => {
+    setIsTransactionsLoading(true);
+    const loadTransactions = async () => {
+      try {
+        await new Promise(resolve => setTimeout(resolve, 1000)); 
+        setIsTransactionsLoading(false);
+      } catch (error) {
+        setIsTransactionsLoading(false);
+      }
+    };
+
+    if (localToken) {
+      loadTransactions();
+    }
+  }, [localToken, errorToast, showToast]);
 
   const loadTokenInfo = useCallback(async () => {
     if (localToken && !isInfoLoaded) {
       try {
-        await swapFlow.handleSelectToToken(localToken);
+        swapFlow.handleSelectToToken(localToken);
         setIsInfoLoaded(true);
       } catch (error) {
         showToast(errorToast, 'Failed to load token info')
       }
     }
-  }, [localToken, isInfoLoaded, swapFlow, showToast]);
+  }, [localToken, isInfoLoaded, swapFlow, showToast, errorToast]);
 
   useEffect(() => {
     setIsInfoLoaded(false);
@@ -78,7 +97,7 @@ export const TokenDetailsWindow: React.FC = () => {
       transferLogic.flow.handleTokenSelect(localToken);
       handleClose();
     }
-  }, [localToken, dispatch, showToast, transferLogic.flow, handleClose]);
+  }, [localToken, dispatch, showToast, transferLogic.flow, handleClose, errorToast]);
 
   const handleSwap = useCallback(() => {
     if (localToken && localToken.balance <= 0) {
@@ -113,15 +132,14 @@ export const TokenDetailsWindow: React.FC = () => {
     return null;
   }
 
-
   return (
     <>
       <Window isOpen={isWindowOpen} onClose={handleClose}>
-        <Flex direction="column" align="center" gap={16}>
+        <Flex direction="column" align="center" gap={12}>
           <Image width={64} height={64} src={getTokenImage(localToken)} alt={`${localToken.name} icon`} />
           <Flex align="baseline" gap={4}>
-            <Typography.Text text={`${localToken.balance !== 0? localToken.balance.toFixed(7) : localToken.balance.toFixed(2)}`} fontFamily="ClashDisplay-Bold" fontSize={40} />
-            <Typography.Text text={localToken.symbol} fontFamily="ClashDisplay-Bold" fontSize={40} type="secondary" />
+            <Typography.Text text={`${localToken.balance !== 0? localToken.balance.toFixed(7) : 0 }`} fontFamily="Clash Display" fontSize={25}/>
+            <Typography.Text text={localToken.symbol} fontFamily="Clash Display" fontSize={25} type="secondary"/>
           </Flex>
           <Typography.Text text={`≈ ${localToken.balance_usd.toFixed(2)} $`} type="secondary" />
           
@@ -160,7 +178,22 @@ export const TokenDetailsWindow: React.FC = () => {
           <div style={{ width: '100%', height: '1px', backgroundColor: '#d3d3d3', margin: '16px 0' }} />
 
           <Flex direction="column" width="100%" gap={8}>
-            <Typography.Text text="Transaction History" weight={600} fontSize={16} width={343} />
+            <Flex align="center" justify="flex-start" height="24px">
+              <Typography.Text text="Transaction History" weight={600} fontSize={16} />
+              <AnimatePresence>
+                {isTransactionsLoading && (
+                  <motion.div
+                    exit={{ width: 0, opacity: 0, paddingLeft: 0 }}
+                    animate={{ width: 30.6, opacity: 1, paddingLeft: '9px' }}
+                    initial={{ width: 0, opacity: 0, paddingLeft: 0 }}
+                    transition={{ ease: [0.32, 0.72, 0, 1], duration: 0.6 }}
+                  >
+                    <Spinner size="md" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Flex>
+
             {tokenTransactionsState.transactions.length > 0 ? (
               Object.entries(tokenTransactionsState.groupedTransactions).map(([date, transactions]) => (
                 <React.Fragment key={date}>

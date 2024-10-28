@@ -107,6 +107,7 @@ export const PrepareSwapWindow: React.FC<PrepareSwapWindowProps> = ({ logic }) =
             onAmountChange={handleFromAmountChange}
             onTokenSelect={flow.handleOpenSelectFromTokenModal}
             onMaxClick={flow.handleMaxButtonClick}
+            estimatedFee={state.estimatedFee}
           />
           <div className={styles.swapButtonWrapper}>
             <div className={styles.swapButton} onClick={flow.handleSwapTokens}>

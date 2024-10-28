@@ -37,7 +37,7 @@ export const WalletPageActions = () => {
           <Flex width="40px" height="35px" align="center" justify="center" radius="8px" bg="var(--accent)">
             <UsersOutlineIcon width={21} height={21} fill="white" />
           </Flex>
-          <Typography.Text text="Referal program" align="left" fontSize={16} weight={450} block />
+          <Typography.Text text="Referral program" align="left" fontSize={16} weight={450} block />
           <ArrowOutlineIcon direction="right" width={17} height={21} />
         </Flex>
       </Field>

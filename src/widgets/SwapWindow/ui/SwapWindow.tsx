@@ -10,40 +10,27 @@ export const SwapWindow: React.FC = () => {
   const logic: UseSwapWindowLogic = useSwapWindowLogic();
   const { state, flow } = logic;
 
-  const renderContent = () => {
-    switch (state.currentView) {
-      case 'selectFromToken':
-        return (
-          <SelectTokenPage
-            tokens={state.fromTokens}
-            onSelectToken={flow.handleSelectFromToken}
-            onBack={flow.handleBackToSwap}
-            title="Select token to swap from"
-          />
-        );
-      case 'selectToToken':
-        return (
-          <SelectTokenPage
-            tokens={state.toTokens}
-            onSelectToken={flow.handleSelectToToken}
-            onBack={flow.handleBackToSwap}
-            title="Select token to swap to"
-          />
-        );
-      default:
-        return (
-          <>
-            <PrepareSwapWindow logic={logic} />
-            {state.isConfirmSwapWindowOpen && <ConfirmSwapWindow logic={logic} />}
-          </>
-        );
-    }
-  };
-
   return (
-    <Window isOpen={state.isSwapWindowOpen}>
-      <WindowHeader title="Swap" />
-      {renderContent()}
-    </Window>
+    <>
+      <Window isOpen={state.isSwapWindowOpen}>
+        <WindowHeader title="Swap" />
+        <PrepareSwapWindow logic={logic} />
+      </Window>
+
+      <SelectTokenPage
+        tokens={state.currentView === 'selectFromToken' ? state.fromTokens : state.toTokens}
+        onSelectToken={state.currentView === 'selectFromToken' 
+          ? flow.handleSelectFromToken 
+          : flow.handleSelectToToken
+        }
+        title={state.currentView === 'selectFromToken' 
+          ? "Select token to swap from" 
+          : "Select token to swap to"
+        }
+        isOpen={state.currentView === 'selectFromToken' || state.currentView === 'selectToToken'}
+      />
+
+      {state.isConfirmSwapWindowOpen && <ConfirmSwapWindow logic={logic} />}
+    </>
   );
 };

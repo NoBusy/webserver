@@ -7,6 +7,7 @@ import { globalActions } from '@/entities/Global';
 import * as types from './walletApiTypes';
 import { api } from '@/shared/api/api';
 import { updateWalletData } from '../model/services/updateWalletData';
+import { updateWalletsList } from '../model/services/updateWalletsList';
 
 export const walletApi = api.injectEndpoints({
   endpoints: (build) => ({
@@ -69,6 +70,18 @@ export const walletApi = api.injectEndpoints({
         method: 'POST',
         body,
       }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data: response } = await queryFulfilled;
+          
+          if (response?.data && response.ok) {
+            dispatch(walletActions.setSelectedWallet(response.data));
+            await dispatch(updateWalletsList());
+          }
+        } catch (error) {
+        
+        }
+      }
     }),
     importWallet: build.mutation<ApiResponse<Wallet>, types.ImportWalletParams>({
       query: (body) => ({
@@ -76,6 +89,20 @@ export const walletApi = api.injectEndpoints({
         method: 'POST',
         body,
       }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        dispatch(walletActions.setIsLoading(true));
+        try {
+          const { data: response } = await queryFulfilled;
+          if (response?.data && response.ok) {
+            dispatch(walletActions.setSelectedWallet(response.data));
+            await dispatch(updateWalletsList());
+          }
+        } catch (error) {
+          console.error('Failed to import wallet:', error);
+        } finally {
+          dispatch(walletActions.setIsLoading(false));
+        }
+      }
     }),
     deleteWallet: build.mutation<ApiResponse<null>, types.DeleteWalletParams>({
       query: (body) => ({
@@ -83,6 +110,19 @@ export const walletApi = api.injectEndpoints({
         method: 'DELETE',
         body,
       }),
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        dispatch(walletActions.setIsLoading(true));
+        try {
+          const { data: response } = await queryFulfilled;
+          if (response.ok) {
+            await dispatch(updateWalletsList());
+          }
+        } catch (error) {
+          console.error('Failed to delete wallet:', error);
+        } finally {
+          dispatch(walletActions.setIsLoading(false));
+        }
+      }
     }),
     getTokenInfo: build.query<ApiResponse<types.GetTokenInfoResult>, types.GetTokenInfoParams>({
       query: (params) => ({
@@ -107,7 +147,7 @@ export const walletApi = api.injectEndpoints({
           await queryFulfilled;
           await dispatch(updateWalletData());
         } catch (error) {
-          console.error('Failed to add wallet token:', error);
+          
         }
       },
     }),

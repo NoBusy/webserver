@@ -59,8 +59,8 @@ export const WalletPageInfo = () => {
           </AnimatePresence>
         </Flex>
         <Flex align="center" gap={8}>
-          <Typography.Text text="$" fontFamily="ClashDisplay-Bold" type="secondary" fontSize={40} />
-          <Typography.Text text={(selectedWallet?.balance_usd ?? 0).toFixed(2)} fontFamily="ClashDisplay-Bold" fontSize={40} />
+          <Typography.Text text="$" fontFamily="Clash Display" type="secondary" fontSize={40} />
+          <Typography.Text text={(selectedWallet?.balance_usd ?? 0).toFixed(2)} fontFamily="Clash Display" fontSize={40} />
         </Flex>
         <Flex align="center" gap={8} onClick={handleOnCopy}>
           <Typography.Text

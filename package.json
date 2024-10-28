@@ -18,7 +18,7 @@
     "chartjs-adapter-date-fns": "^3.0.0",
     "classnames": "^2.5.1",
     "date-fns": "^4.1.0",
-    "framer-motion": "^11.3.28",
+    "framer-motion": "^11.11.10",
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",

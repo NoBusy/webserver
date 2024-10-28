@@ -32,11 +32,36 @@ export const AddTokenWindow = () => {
           onChange={flow.handleTokenAddressChange}
         />
         {state.tokenInfo && (
-          <Field justify="space-between" align="center" gap={12}>
-            <Image width={40} height={40} src={state.tokenInfo.icon} alt="token-icon" style={{ borderRadius: '50%' }} />
-            <Typography.Text text={`${state.tokenInfo.name} (${state.tokenInfo.symbol})`} weight={550} fontSize={16} width="100%" />
-            <Typography.Text align="right" text={`${state.tokenInfo.price.toFixed(4)}$`} textOverflow="inital" wrap="nowrap" overflow="visible" />
-          </Field>
+           <Flex 
+           justify="space-between" 
+           align="center" 
+           gap={12}
+           padding="10px 16px"
+           radius="16px"
+           bg="var(--secondaryBg)"
+           onClick={flow.handleAddWalletToken}
+         >
+           <Image 
+             width={40} 
+             height={40} 
+             src={state.tokenInfo.icon} 
+             alt="token-icon" 
+             style={{ borderRadius: '50%' }} 
+           />
+           <Typography.Text 
+             text={`${state.tokenInfo.name} (${state.tokenInfo.symbol})`} 
+             weight={550} 
+             fontSize={16} 
+             width="100%" 
+           />
+           <Typography.Text 
+             align="right" 
+             text={`${state.tokenInfo.price.toFixed(4)}$`} 
+             textOverflow="inital" 
+             wrap="nowrap" 
+             overflow="visible" 
+           />
+         </Flex>
         )}
       </Flex>
     </Window>

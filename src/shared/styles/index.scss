@@ -10,3 +10,13 @@
   font-display: swap;
   font-style: normal;
 }
+
+@font-face {
+  font-family: 'Clash Display';
+  src: url('../assets/fonts/ClashDisplay-Semibold.woff2') format('woff2'),
+      url('../assets/fonts/ClashDisplay-Semibold.woff') format('woff'),
+      url('../assets/fonts/ClashDisplay-Semibold.ttf') format('truetype');
+  font-weight: 600;
+  font-display: swap;
+  font-style: normal;
+}

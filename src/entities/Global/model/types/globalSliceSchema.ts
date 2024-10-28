@@ -18,7 +18,8 @@ export enum GlobalWindow {
   SelectFromToken = 'SelectFromToken',
   SelectToToken = 'SelectToToken',
   TokenDetails = 'TokenDetails',
-  TokenInfo = 'TokenInfo'
+  TokenInfo = 'TokenInfo',
+  SelectToken = 'SelectToken'
 }
 
 export interface GlobalWindowType<T> {

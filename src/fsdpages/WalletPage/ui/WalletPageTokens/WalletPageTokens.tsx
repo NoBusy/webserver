@@ -7,15 +7,14 @@ import { globalActions, GlobalWindow } from '@/entities/Global';
 import { Typography } from '@/shared/ui/Typography/Typography';
 import { getSelectedWallet, Wallet, Token, Network, walletApi } from '@/entities/Wallet';
 import { useDispatch, useSelector } from 'react-redux';
-import styles from './WalletPageTokens.module.scss';
 import { Button } from '@/shared/ui/Button/Button';
 import { Flex } from '@/shared/ui/Flex/Flex';
 import React, { useState, useMemo } from 'react';
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const TOKEN_HEIGHT = 66;
-const SPACING = 12;
+const SPACING = 8;
 const MAX_VISIBLE_TOKENS = 4;
 
 const isEssentialToken = (token: Token, network: Network): boolean => {
@@ -38,13 +37,18 @@ export const WalletPageTokens = () => {
   const { errorToast, successToast } = useToasts();
   const [getWalletsRequest] = walletApi.useLazyGetWalletsQuery();
   const [deleteWalletToken] = walletApi.useDeleteWalletTokenMutation();
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
-  const selectedWallet: Wallet | undefined = useSelector(getSelectedWallet);
+  const [isCollapsed, setIsCollapsed] = useState(true);
+  const selectedWallet = useSelector(getSelectedWallet);
 
   const tokens = selectedWallet?.tokens || [];
   const visibleTokens = useMemo(() => {
     return isCollapsed ? tokens.slice(0, MAX_VISIBLE_TOKENS) : tokens;
   }, [tokens, isCollapsed]);
+
+  const containerHeight = useMemo(() => {
+    const tokenCount = isCollapsed ? Math.min(MAX_VISIBLE_TOKENS, tokens.length) : tokens.length;
+    return tokenCount * TOKEN_HEIGHT + (tokenCount - 1) * SPACING;
+  }, [tokens.length, isCollapsed]);
 
   const handleDeleteToken = async (token: Token) => {
     if (!selectedWallet) return;
@@ -64,61 +68,61 @@ export const WalletPageTokens = () => {
     }
   };
 
-  const handleShowMoreClick = (): void => {
+  const handleShowMoreClick = () => {
     setIsCollapsed(prev => !prev);
   };
 
-  const handleAddTokenButtonClick = async (): Promise<void> => {
+  const handleAddTokenButtonClick = () => {
     dispatch(globalActions.addWindow({ window: GlobalWindow.AddToken }));
   };
-
-  const initialHeight = Math.min(MAX_VISIBLE_TOKENS, tokens.length) * TOKEN_HEIGHT + 
-                       (Math.min(MAX_VISIBLE_TOKENS, tokens.length) - 1) * SPACING;
 
   return (
     <Flex width="100%" direction="column" gap={8}>
       <motion.div
-        initial={{ height: initialHeight }}
-        animate={{ height: isCollapsed ? initialHeight : 'auto' }}
+        animate={{ height: containerHeight }}
         transition={{ duration: 0.3 }}
-        className={styles.tokens_list}
+        style={{
+          width: '100%',
+          overflow: 'hidden'
+        }}
       >
-        <AnimatePresence>
+        <Flex direction="column" gap={8}>
           {visibleTokens.map((token) => (
-            <motion.div
+            <WalletPageToken
               key={token.id}
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <WalletPageToken
-                token={token}
-                isEssentialToken={selectedWallet?.network ? isEssentialToken(token, selectedWallet.network) : false}
-                onDeleteToken={handleDeleteToken}
-              />
-            </motion.div>
+              token={token}
+              isEssentialToken={selectedWallet?.network ? isEssentialToken(token, selectedWallet.network) : false}
+              onDeleteToken={handleDeleteToken}
+            />
           ))}
-        </AnimatePresence>
+        </Flex>
       </motion.div>
       
       {tokens.length > MAX_VISIBLE_TOKENS && (
-        <Button type="text" onClick={handleShowMoreClick}>
-          <Typography.Text 
-            text={isCollapsed ? 'Show more' : 'Show less'} 
-            type="secondary" 
-            weight={400} 
-            fontSize={16} 
-          />
-          <ArrowOutlineIcon 
-            style={{ transform: isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)' }} 
-          />
-        </Button>
+        <Flex justify="center" width="100%">
+          <Button type="text" onClick={handleShowMoreClick}>
+            <Flex align="center" gap={4}>
+              <Typography.Text 
+                text={isCollapsed ? 'Show more' : 'Show less'} 
+                type="secondary" 
+                weight={400} 
+                fontSize={16} 
+              />
+              <ArrowOutlineIcon 
+                style={{ 
+                  transform: isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)',
+                  transition: 'transform 0.3s ease'
+                }} 
+              />
+            </Flex>
+          </Button>
+        </Flex>
       )}
 
       <Button 
         type="primary" 
         height={50} 
-        className={styles.add_token_btn} 
+        style={{ marginTop: '12px' }}
         onClick={handleAddTokenButtonClick}
       >
         <DepositFillIcon width={17} height={17} fill="white" />

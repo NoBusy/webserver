@@ -5,11 +5,15 @@ import { getWindowsOpen, GlobalWindow } from '@/entities/Global';
 import { GetTokenInfoResult } from '@/entities/Wallet';
 import { ChangeEvent, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useToastManager } from '@/shared/lib/hooks/useToastManager/useToastManager';
 
 
 
 export const useAddTokenWindowLogic = () => {
   const { errorToast, successToast } = useToasts();
+  const { showToast } = useToastManager({maxCount: 1});
+
+  
 
 
   const [getTokenInfoRequest, getTokenInfoResult] = walletApi.useLazyGetTokenInfoQuery();
@@ -35,7 +39,7 @@ export const useAddTokenWindowLogic = () => {
 
       setTokenInfo(result.data);
     } catch (e) {
-      errorToast('Failed to get token info');
+      showToast(errorToast, 'Failed to get token info');
     } finally {
       setIsLoading(false);
     }
@@ -65,7 +69,7 @@ export const useAddTokenWindowLogic = () => {
         getWalletsRequest();
       }
     } catch (e) {
-      errorToast('Failed to add token');
+      showToast(errorToast, 'Failed to add token');
     } finally {
       setTokenInfo(undefined);
       setIsLoading(false);

@@ -3,10 +3,13 @@ import { getWindowsOpen, globalActions, GlobalWindow } from '@/entities/Global';
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useState } from 'react';
+import { useWalletUpdater } from '@/shared/lib/hooks/useWalletUpdate/useWalletUpdate';
 
 export const useImportWalletWindowLogic = () => {
   const dispatch = useDispatch();
   const { errorToast, successToast } = useToasts();
+
+
 
   const [importWalletRequest, importWalletResult] = walletApi.useImportWalletMutation();
   const [getWalletsRequest] = walletApi.useLazyGetWalletsQuery();
@@ -46,7 +49,7 @@ export const useImportWalletWindowLogic = () => {
       setIsLoading(false);
       setWalletName('');
       setPrivateKey('');
-      getWalletsRequest();
+     // getWalletsRequest();
     }
   };
 

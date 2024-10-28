@@ -17,6 +17,7 @@ export const useCreateWalletWindowLogic = () => {
   const isWindowOpen: boolean = useSelector(getWindowsOpen).some((w) => w.window === GlobalWindow.CreateWallet);
   const wallets: Wallet[] = useSelector(getWallets);
 
+
   const handleCreateWallet = async () => {
     try {
       setIsLoading(true);

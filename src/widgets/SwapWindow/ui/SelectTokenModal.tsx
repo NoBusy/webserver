@@ -9,27 +9,29 @@ import { walletApi, Network, Token } from '@/entities/Wallet';
 import { useSelector } from 'react-redux';
 import { getSelectedWallet } from '@/entities/Wallet';
 import { Window } from '@/shared/ui/Window/Window';
-import { useSwapWindowLogic } from '../lib/hooks/useSwapWindowLogic';
 import { WindowHeader } from '@/shared/ui/Header/WindowHeader';
+import { getTokenImage } from '@/fsdpages/WalletPage';
+import { GlobalWindow, getIsWindowOpen } from '@/entities/Global';
 
 interface SelectTokenPageProps {
   tokens: Token[];
   onSelectToken: (token: Token) => void;
-  onBack: () => void;
   title: string;
+  isOpen: boolean;
 }
 
 export const SelectTokenPage: React.FC<SelectTokenPageProps> = ({
   tokens,
   onSelectToken,
-  onBack,
   title,
+  isOpen
 }) => {
-  const { state } = useSwapWindowLogic();
   const [tokenAddress, setTokenAddress] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [getTokenInfoRequest] = walletApi.useLazyGetTokenInfoQuery();
   const selectedWallet = useSelector(getSelectedWallet);
+  const isSelectTokenWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.SelectToken);
+
 
   const handleGetTokenInfo = useDebounce(async (address: string) => {
     if (!address || !selectedWallet) return;
@@ -75,55 +77,56 @@ export const SelectTokenPage: React.FC<SelectTokenPageProps> = ({
   }, [handleGetTokenInfo]);
 
   return (
-    <Window isOpen={state.isSwapWindowOpen}>
-    <WindowHeader title={title} isLoading={state.isLoading} />
-    <Flex direction="column" gap={12}>
-      <Button 
-        onClick={onBack} 
-        style={{
-          width: '100%',
-          padding: '12px',
-          borderRadius: '20px',
-          backgroundColor: 'rgba(233, 237, 242, 1)',
-          justifyContent: 'center',
-        }}
-      >
-        <Typography.Text text="Back to Swap" />
-      </Button>
-      
-      <Input
-        label={`Enter ${selectedWallet?.network || ''} token contract address`}
-        placeholder="0x..."
-        value={tokenAddress}
-        onChange={handleTokenAddressChange}
+    <Window 
+      isOpen={isSelectTokenWindowOpen}
+      zIndex={5005}
+    >
+      <WindowHeader 
+        title={title} 
+        isLoading={isLoading}
       />
+      <Flex direction="column" gap={12} style={{ padding: '16px' }}>
+        <Input
+          label={`Enter ${selectedWallet?.network || ''} token contract address`}
+          placeholder="0x..."
+          value={tokenAddress}
+          onChange={handleTokenAddressChange}
+        />
 
-      
-      {tokens.map((token) => (
-        <Button
-          key={token.id}
-          onClick={() => onSelectToken(token)}
-          style={{
-            width: '100%',
-            justifyContent: 'flex-start',
-            padding: '12px',
-            borderRadius: '12px',
-          }}
-        >
-          <Flex align="center" gap={12} style={{ width: '100%' }}>
-            <Image src={token.icon} alt={token.symbol} width={32} height={32} />
-            <Flex direction="column" align="flex-start">
-              <Typography.Text text={token.symbol} weight="bold" />
-              <Typography.Text text={token.name} type="secondary" />
+        <Typography.Text 
+          text="Or choose from your wallet" 
+          type="secondary" 
+          fontSize={14} 
+          weight={450}
+        />
+        
+        {tokens.map((token) => (
+          <Button
+            key={token.id}
+            onClick={() => onSelectToken(token)}
+            style={{
+              width: '100%',
+              justifyContent: 'flex-start',
+              padding: '12px',
+              borderRadius: '12px',
+            }}
+          >
+            <Flex align="center" gap={12} style={{ width: '100%' }}>
+              <Image src={getTokenImage(token)} alt={token.symbol} width={32} height={32} />
+              <Flex direction="column" align="flex-start">
+                <Typography.Text text={token.symbol} />
+                <Typography.Text text={token.name} type="secondary" />
+              </Flex>
+              <Flex direction="column" align="flex-end" style={{ marginLeft: 'auto' }}>
+                <Typography.Text text={`${token.balance.toFixed(4)} ${token.symbol}`} />
+                <Typography.Text text={`$${token.balance_usd.toFixed(2)}`} type="secondary" />
+              </Flex>
             </Flex>
-            <Flex direction="column" align="flex-end" style={{ marginLeft: 'auto' }}>
-              <Typography.Text text={`${token.balance.toFixed(4)} ${token.symbol}`} />
-              <Typography.Text text={`$${token.balance_usd.toFixed(2)}`} type="secondary" />
-            </Flex>
-          </Flex>
-        </Button>
-      ))}
-    </Flex>
+          </Button>
+        ))}
+      </Flex>
     </Window>
   );
 };
+
+export default SelectTokenPage;
