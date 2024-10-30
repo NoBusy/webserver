@@ -102,7 +102,7 @@ export const PrepareSwapWindow: React.FC<PrepareSwapWindowProps> = ({ logic }) =
           <TokenBlock 
             isFrom={true}
             token={state.fromToken}
-            amount={state.fromAmount}
+            amount={Number(Number(state.fromAmount).toFixed(9))}
             usdAmount={state.fromToken ? (Number(state.fromAmount) * (state.fromToken.price || 0)).toFixed(2) : '0.00'}
             onAmountChange={handleFromAmountChange}
             onTokenSelect={flow.handleOpenSelectFromTokenModal}
@@ -117,7 +117,7 @@ export const PrepareSwapWindow: React.FC<PrepareSwapWindowProps> = ({ logic }) =
           <TokenBlock 
             isFrom={false}
             token={state.toToken}
-            amount={state.toAmount}
+            amount={Number(state.toAmount)}
             usdAmount={state.toToken ? (Number(state.toAmount) * (state.toToken.price || 0)).toFixed(2) : '0.00'}
             onTokenSelect={flow.handleOpenSelectToTokenModal}
             showTokenInfoButton={!!state.toToken}

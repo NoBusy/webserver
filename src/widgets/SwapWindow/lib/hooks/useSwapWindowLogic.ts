@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useWalletUpdater } from '@/shared/lib/hooks/useWalletUpdate/useWalletUpdate';
 import { useToastManager } from '@/shared/lib/hooks/useToastManager/useToastManager';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 
 export const useSwapWindowLogic = () => {
   const { errorToast, successToast } = useToasts();
@@ -13,8 +14,7 @@ export const useSwapWindowLogic = () => {
   const dispatch = useDispatch();
   const selectedToken = useSelector(getSelectedToken);
   const { updateWalletData, updateAfterDelay } = useWalletUpdater();
-
-
+  const { impact, notify } = useHapticFeedback();
 
   const [fromToken, setFromToken] = useState<Token | undefined>();
   const [toToken, setToToken] = useState<Token | undefined>();
@@ -32,6 +32,9 @@ export const useSwapWindowLogic = () => {
   const [getTokenPriceRequest] = walletApi.useLazyGetTokenPriceQuery();
   const [swapRequest, { isLoading: isSwapLoading }] = walletApi.useSwapMutation();
   const [getTokenExtendedInfoRequest] = walletApi.useLazyGetTokenExtendedInfoQuery();
+  const [addTokenRequest, addTokenResult] = walletApi.useAddWalletTokenMutation();
+  const [getWalletsRequest] = walletApi.useLazyGetWalletsQuery();
+  const [getTokenInfoRequest, getTokenInfoResult] = walletApi.useLazyGetTokenInfoQuery();
 
   const selectedWallet: Wallet | undefined = useSelector(getSelectedWallet);
   const isSwapWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.Swap);
@@ -75,7 +78,6 @@ export const useSwapWindowLogic = () => {
         setHistoricalData([]);
       }
     } catch (e) {
-      showToast(errorToast, 'Failed to get historical quotes');
       setHistoricalData([]);
     } finally {
       setIsLoading(false);
@@ -92,6 +94,20 @@ export const useSwapWindowLogic = () => {
     try {
       setIsLoading(true);
       if (!fromToken || !toToken || !selectedWallet || !amount || Number(amount) > fromToken?.balance) return;
+  
+      // Получаем актуальные данные кошелька
+      const walletsResult = await getWalletsRequest().unwrap();
+      
+      if (walletsResult.ok && walletsResult.data) {
+        const updatedWallet = walletsResult.data.find(w => w.id === selectedWallet.id);
+        const actualFromToken = updatedWallet?.tokens.find(t => t.contract === fromToken.contract);
+        const actualToToken = updatedWallet?.tokens.find(t => t.contract === toToken.contract);
+  
+        if (actualFromToken && actualToToken) {
+          setFromToken(actualFromToken);
+          setToToken(actualToToken);
+        }
+      }
   
       const result = await getTokenPriceRequest({
         symbol: fromToken?.symbol,
@@ -117,7 +133,7 @@ export const useSwapWindowLogic = () => {
         }
       }
     } catch (e) {
-      showToast(errorToast, 'Failed to get token price');
+    
     } finally {
       setIsLoading(false);
     }
@@ -136,7 +152,7 @@ export const useSwapWindowLogic = () => {
         setTokenExtendedInfo(result.data);
       }
     } catch (e) {
-      showToast(errorToast, 'Failed to get extended token info');
+   
     } finally {
       setIsTokenInfoLoading(false);
     }
@@ -160,30 +176,40 @@ export const useSwapWindowLogic = () => {
   }, [handleClearState]);
 
   const handleSwapConfirm = async () => {
+    await impact('light')
     try {
-      setIsLoading(true)
-      if (!fromToken || !toToken || !selectedWallet || !fromAmount) return;
-
-      const slippageBps = Math.round(slippage * 100); // Преобразуем проценты в базисные пункты
-
-      const result = await swapRequest({
+      setIsLoading(true);
+      if (!fromToken?.id || !toToken?.id || !selectedWallet?.id || !fromAmount) {
+        showToast(errorToast, 'Missing required data for swap');
+        return;
+      }
+  
+      // Округляем amount до 9 знаков после запятой
+      const roundedAmount = Number(Number(fromAmount).toFixed(9));
+  
+      const swapParams = {
         wallet_id: selectedWallet.id,
         from_token_id: fromToken.id,
         to_token_id: toToken.id,
-        amount: Number(fromAmount),
-        slippageBps: slippageBps,
-      }).unwrap();
-
+        amount: roundedAmount,
+        slippageBps: Math.round(slippage * 100)
+      };
+  
+      console.log('Swap request params:', swapParams);
+  
+      const result = await swapRequest(swapParams).unwrap();
+  
       if (result.ok) {
+        notify('success')
         showToast(successToast, 'Swap successful');
         handleClearState();
         dispatch(globalActions.removeAllWindows());
         updateAfterDelay(50000);
       }
     } catch (e) {
-      showToast(errorToast, 'Please try again');
+      
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -192,6 +218,7 @@ export const useSwapWindowLogic = () => {
     setFromAmount(newAmount);
 
     if (fromToken && Number(newAmount) > fromToken.balance) {
+      notify('warning')
       showToast(errorToast, 'Insufficient funds');
     }
 
@@ -212,22 +239,59 @@ export const useSwapWindowLogic = () => {
   };
 
   const handleOpenConfirmWindow = async () => {
-    const fee = await getEstimatedFee();
-    setEstimatedFee(fee);
-    dispatch(globalActions.addWindow({ window: GlobalWindow.ConfirmSwap }));
+    try {
+      setIsLoading(true);
+      
+      // Сначала получаем актуальные данные кошелька
+      const walletsResult = await getWalletsRequest().unwrap();
+      
+      if (!walletsResult.ok || !walletsResult.data || !selectedWallet) {
+        return;
+      }
+  
+      const updatedWallet = walletsResult.data.find(w => w.id === selectedWallet.id);
+      if (!updatedWallet) {
+        showToast(errorToast, 'Wallet not found');
+        return;
+      }
+  
+      // Находим актуальные токены по их контрактам
+      const actualFromToken = updatedWallet.tokens.find(t => t.contract === fromToken?.contract);
+      const actualToToken = updatedWallet.tokens.find(t => t.contract === toToken?.contract);
+  
+      if (!actualFromToken || !actualToToken) {
+        showToast(errorToast, 'Token data not found');
+        return;
+      }
+  
+      // Обновляем состояния с актуальными данными
+      setFromToken(actualFromToken);
+      setToToken(actualToToken);
+  
+      // Получаем и устанавливаем комиссию
+      const fee = await getEstimatedFee();
+      setEstimatedFee(fee);
+  
+      // Открываем окно подтверждения только если все данные актуальны
+      dispatch(globalActions.addWindow({ window: GlobalWindow.ConfirmSwap }));
+    } catch (error) {
+      
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleOpenSelectFromTokenModal = () => {
+  const handleOpenSelectFromTokenModal = async () => {
     dispatch(globalActions.addWindow({ window: GlobalWindow.SelectToken }));
     setCurrentView('selectFromToken');
   };
 
-  const handleOpenSelectToTokenModal = () => {
+  const handleOpenSelectToTokenModal = async () => {
     dispatch(globalActions.addWindow({ window: GlobalWindow.SelectToken }));
     setCurrentView('selectToToken');
   };
 
-  const handleSelectFromToken = (token: Token) => {
+  const handleSelectFromToken = async (token: Token) => {
     setFromToken(token);
     setCurrentView('swap');
     dispatch(globalActions.removeWindow(GlobalWindow.SelectToken ));
@@ -253,10 +317,10 @@ export const useSwapWindowLogic = () => {
     
     switch (network) {
       case Network.ETH:
-        estimatedFee = 0.005;
+        estimatedFee = 0.008;
         break;
       case Network.BSC:
-        estimatedFee = 0.003;
+        estimatedFee = 0.0004;
         break;
       case Network.SOL:
         estimatedFee = 0.00022; 
@@ -281,7 +345,7 @@ export const useSwapWindowLogic = () => {
         estimated_fee_usd: estimatedFee * (priceResult.ok && priceResult.data?.price ? priceResult.data.price : 0)
       };
     } catch (e) {
-      console.error('Failed to get token price:', e);
+   
       return {
         estimated_fee: estimatedFee,
         estimated_fee_usd: 0
@@ -298,18 +362,43 @@ export const useSwapWindowLogic = () => {
   }, [selectedToken]);
 
 
-  const handleSelectToToken = (token: Token) => {
-    setToToken(token);
-    setCurrentView('swap');
-    dispatch(globalActions.removeWindow(GlobalWindow.SelectToken ));
-    if (token.id === fromToken?.id) {
-      setFromToken(undefined);
-    }
-    if (selectedWallet?.network) {
-      handleGetTokenExtendedInfo(token, selectedWallet.network);
-    }
-    if (fromAmount) {
-      handleGetRate(fromAmount);
+  const handleSelectToToken = async (token: Token) => {
+    try {
+      // Проверяем, есть ли токен уже в кошельке
+      const existingToken = selectedWallet?.tokens.find(t => t.contract === token.contract);
+  
+      if (!existingToken && selectedWallet) {
+        // Если токена нет в кошельке, добавляем его
+        const addResult = await addTokenRequest({
+          wallet_id: selectedWallet.id,
+          wallet_address: selectedWallet.address,
+          network: selectedWallet.network,
+          contract: token.contract,
+        }).unwrap();
+  
+        if (addResult.ok) {
+          await getWalletsRequest().unwrap(); // Обновляем данные кошелька
+        }
+      }
+  
+      // В любом случае устанавливаем токен (актуальные данные получим позже)
+      setToToken(token);
+      setCurrentView('swap');
+      dispatch(globalActions.removeWindow(GlobalWindow.SelectToken));
+  
+      if (token.id === fromToken?.id) {
+        setFromToken(undefined);
+      }
+  
+      if (selectedWallet?.network) {
+        handleGetTokenExtendedInfo(token, selectedWallet.network);
+      }
+  
+      if (fromAmount) {
+        handleGetRate(fromAmount);
+      }
+    } catch (error) {
+      showToast(errorToast, 'Failed to process token');
     }
   };
 
@@ -317,7 +406,7 @@ export const useSwapWindowLogic = () => {
     setCurrentView('swap');
   };
 
-  const handleSwapTokens = () => {
+  const handleSwapTokens = async () => {
     setFromToken(toToken);
     setToToken(fromToken);
     setFromAmount(toAmount);

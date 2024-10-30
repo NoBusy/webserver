@@ -1,4 +1,5 @@
 import { getWindowsOpen, globalActions, GlobalWindow } from '@/entities/Global';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const useAddWalletWindowLogic = () => {
@@ -6,11 +7,11 @@ export const useAddWalletWindowLogic = () => {
 
   const isWindowOpen: boolean = useSelector(getWindowsOpen).some((w) => w.window === GlobalWindow.AddWallet);
 
-  const handleCreateWalletClick = () => {
+  const handleCreateWalletClick = async () => {
     dispatch(globalActions.addWindow({ window: GlobalWindow.CreateWallet }));
   };
 
-  const handleImportWalletClick = () => {
+  const handleImportWalletClick = async () => {
     dispatch(globalActions.addWindow({ window: GlobalWindow.ImportWallet }));
   };
 

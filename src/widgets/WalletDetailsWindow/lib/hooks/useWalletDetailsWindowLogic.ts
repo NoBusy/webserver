@@ -4,11 +4,12 @@ import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 import { useWalletUpdater } from '@/shared/lib/hooks/useWalletUpdate/useWalletUpdate';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 
 export const useWalletDetailsWindowLogic = () => {
   const dispatch = useDispatch();
   const { errorToast, successToast } = useToasts();
-
+  const { notify } = useHapticFeedback();
 
   const [deleteWalletRequest, deleteWalletResult] = walletApi.useDeleteWalletMutation();
   const [getWalletsRequest] = walletApi.useLazyGetWalletsQuery();
@@ -30,6 +31,7 @@ export const useWalletDetailsWindowLogic = () => {
       }).unwrap();
 
       if (result.ok) {
+        notify('success')
         successToast('Wallet deleted');
         //getWalletsRequest();
         const wallet: Wallet | undefined = wallets.find((w) => w.id === openedWallet.id);
@@ -37,6 +39,7 @@ export const useWalletDetailsWindowLogic = () => {
         dispatch(globalActions.removeLastWindow());
       }
     } catch (e) {
+      notify('error')
       errorToast(`Failed to delete wallet`);
     } finally {
       setIsLoading(false);

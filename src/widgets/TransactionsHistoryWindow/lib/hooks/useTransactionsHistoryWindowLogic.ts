@@ -7,7 +7,7 @@ import { useToastManager } from '@/shared/lib/hooks/useToastManager/useToastMana
 
 export const useTransactionsHistoryWindowLogic = () => {
   const { errorToast } = useToasts();
-  const { showToast } = useToastManager({maxCount: 2});
+  const { showToast } = useToastManager({maxCount: 1});
 
 
   const isWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.TransactionsHistory);

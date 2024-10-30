@@ -3,10 +3,12 @@ import { getWindowsOpen, globalActions, GlobalWindow } from '@/entities/Global';
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useState } from 'react';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 
 export const useCreateWalletWindowLogic = () => {
   const dispatch = useDispatch();
   const { errorToast, successToast } = useToasts();
+  const { notify } = useHapticFeedback();
 
   const [createWalletRequest, createWalletResult] = walletApi.useCreateWalletMutation();
   const [getWalletsRequest] = walletApi.useLazyGetWalletsQuery();
@@ -24,6 +26,7 @@ export const useCreateWalletWindowLogic = () => {
       if (!walletName || !selectedNetwork) return;
 
       if (wallets.find((w) => w.name === walletName)) {
+        notify('error')
         errorToast('Wallet name already exists');
         return;
       }
@@ -34,11 +37,13 @@ export const useCreateWalletWindowLogic = () => {
       }).unwrap();
 
       if (result.ok && result.data) {
+        notify('success')
         dispatch(walletActions.setSelectedWallet(result.data));
         successToast('Wallet created successfully');
         dispatch(globalActions.removeAllWindows());
       }
     } catch (e) {
+      notify('error')
       errorToast('Failed to create wallet');
       dispatch(globalActions.removeLastWindow());
     } finally {

@@ -28,7 +28,9 @@ export const SelectTokenPage: React.FC<SelectTokenPageProps> = ({
 }) => {
   const [tokenAddress, setTokenAddress] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [getTokenInfoRequest] = walletApi.useLazyGetTokenInfoQuery();
+
   const selectedWallet = useSelector(getSelectedWallet);
   const isSelectTokenWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.SelectToken);
 
@@ -67,6 +69,7 @@ export const SelectTokenPage: React.FC<SelectTokenPageProps> = ({
       setIsLoading(false);
     }
   }, 350);
+
 
   const handleTokenAddressChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -112,7 +115,7 @@ export const SelectTokenPage: React.FC<SelectTokenPageProps> = ({
             }}
           >
             <Flex align="center" gap={12} style={{ width: '100%' }}>
-              <Image src={getTokenImage(token)} alt={token.symbol} width={32} height={32} />
+              <Image src={getTokenImage(token)} alt={token.symbol} width={32} height={32} style={{ borderRadius: '50%' }} />
               <Flex direction="column" align="flex-start">
                 <Typography.Text text={token.symbol} />
                 <Typography.Text text={token.name} type="secondary" />

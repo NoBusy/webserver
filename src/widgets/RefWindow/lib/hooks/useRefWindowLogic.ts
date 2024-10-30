@@ -3,9 +3,11 @@ import { getTgWebAppSdk } from '@/shared/lib/helpers/getTgWebAppSdk';
 import { getWallets, Wallet } from '@/entities/Wallet';
 import { useDispatch, useSelector } from 'react-redux';
 import { referralApi } from '@/entities/Referral';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 
 export const useRefWindowLogic = () => {
   const dispatch = useDispatch();
+  const { impact } = useHapticFeedback();
 
   const isWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.Referral);
   const wallets: Wallet[] = useSelector(getWallets);
@@ -17,6 +19,7 @@ export const useRefWindowLogic = () => {
   };
 
   const handleSendLinkClick = async () => {
+    await impact('light')
     const TgWebAppSdk = await getTgWebAppSdk();
     if (!TgWebAppSdk || !data?.data) return;
     TgWebAppSdk.openTelegramLink(`https://t.me/share?url=${data.data.link}&text=Join to TestCryptoSwapBot for crypto exchange into telegram 🍻`);

@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useWalletUpdater } from '@/shared/lib/hooks/useWalletUpdate/useWalletUpdate';
 import { useToastManager } from '@/shared/lib/hooks/useToastManager/useToastManager';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 
 export const useTransferWindowLogic = () => {
   const { errorToast, successToast } = useToasts();
@@ -14,6 +15,7 @@ export const useTransferWindowLogic = () => {
   const selectedToken = useSelector(getSelectedToken);
   const { updateWalletData, updateAfterDelay } = useWalletUpdater();
   const { showToast } = useToastManager({maxCount: 1});
+  const { impact, notify} = useHapticFeedback();
 
 
   
@@ -48,7 +50,6 @@ export const useTransferWindowLogic = () => {
         setBalanceUsd(result.data.price * tokenToTransfer.balance);
       }
     } catch (e) {
-      showToast(errorToast, 'Failed to get token price');
     } finally {
       setIsLoading(false);
     }
@@ -72,6 +73,7 @@ export const useTransferWindowLogic = () => {
 
   
   const handleTransferConfirm = async () => {
+    await impact('light')
     try {
       setIsLoading(true);
       if (!tokenToTransfer || !selectedWallet || !toAddress || !amount) return;
@@ -85,11 +87,13 @@ export const useTransferWindowLogic = () => {
       }).unwrap();
 
       if (result.ok) {
+        notify('success')
         successToast('Transfer successful');
         handleClearState();
         updateAfterDelay(30000);
       }
     } catch (e) {
+      notify('error')
       errorToast('Failed to transfer tokens');
     } finally {
       setIsLoading(false);
@@ -103,7 +107,7 @@ export const useTransferWindowLogic = () => {
     }
   }, [selectedToken]);
 
-  const handleTokenSelect = useCallback((token: Token) => {
+  const handleTokenSelect = useCallback( async (token: Token) => {
     setTokenToTransfer(token);
     dispatch(walletActions.setSelectedToken(token));
     dispatch(globalActions.addWindow({ window: GlobalWindow.PrepareTransfer }));
@@ -122,6 +126,7 @@ export const useTransferWindowLogic = () => {
     if (!tokenToTransfer) return;
 
     if (Number(e.target.value) > tokenToTransfer?.balance) {
+      notify('error')
       errorToast('Insufficient funds');
     }
 
@@ -157,6 +162,7 @@ export const useTransferWindowLogic = () => {
     const isSenderAddress: boolean = toAddress === selectedWallet?.address;
 
     if (isSenderAddress) {
+      notify('error')
       errorToast('Please, enter the recipient address, not the sender address');
       return;
     }
@@ -179,11 +185,12 @@ export const useTransferWindowLogic = () => {
     if (regex.test(e.target.value)) {
       setToAddress(e.target.value);
     } else {
+      notify('error')
       errorToast(`Invalid ${networkSymbol[tokenToTransfer.network]} address`);
     }
   };
 
-  const handleOpenConfirmWindow = () => {
+  const handleOpenConfirmWindow = async () => {
     dispatch(globalActions.addWindow({ window: GlobalWindow.ConfirmTransfer }));
   };
 

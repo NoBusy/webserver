@@ -21,8 +21,8 @@ export const ConfirmTransferWindow: React.FC<ConfirmTransferWindowProps> = (prop
       <Flex width="100%" direction="column" align="center" gap={24}>
         <Flex width="100%" direction="column" align="center" gap={4}>
           <Flex align="center" gap={9}>
-            <Typography.Title text={state.amount} fontFamily="ClashDisplay-Bold" />
-            <Typography.Title text={state.tokenToTransfer?.symbol} fontFamily="ClashDisplay-Bold" />
+            <Typography.Title text={state.amount} fontFamily="Clash Display" />
+            <Typography.Title text={state.tokenToTransfer?.symbol} fontFamily="Clash Display" />
           </Flex>
           <Typography.Text text={`≈ ${state.rate.toFixed(2)} $`} type="secondary" />
         </Flex>

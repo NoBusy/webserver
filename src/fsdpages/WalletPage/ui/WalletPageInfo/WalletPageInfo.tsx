@@ -14,16 +14,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@/shared/ui/Button/Button';
 import Spinner from '@/shared/ui/Spinner/Spinner';
 import { Flex } from '@/shared/ui/Flex/Flex';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 
 
 export const WalletPageInfo = () => {
   const dispatch = useDispatch();
   const { successToast } = useToasts();
+  const { impact } = useHapticFeedback();
 
   const selectedWallet: Wallet | undefined = useSelector(getSelectedWallet);
   const isLoading: boolean = walletApi.endpoints.getWallets.useQueryState().isLoading;
 
-  const handleOnCopy = () => {
+  const handleOnCopy = async () => {
+    await impact('light');
     navigator.clipboard.writeText(selectedWallet?.address ?? '');
     successToast('Copied', { icon: <SuccessFillIcon width={21} height={21} /> });
   };

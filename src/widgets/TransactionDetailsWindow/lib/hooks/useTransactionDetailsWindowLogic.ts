@@ -4,6 +4,7 @@ import { getTgWebAppSdk } from '@/shared/lib/helpers/getTgWebAppSdk';
 import { Transaction } from '@/entities/Wallet';
 import { useSelector } from 'react-redux';
 import moment from 'moment-timezone';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 
 export const useTransactionDetailsWindowLogic = () => {
   const isWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.TransactionDetails);

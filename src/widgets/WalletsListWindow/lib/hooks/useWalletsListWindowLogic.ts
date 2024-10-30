@@ -1,5 +1,6 @@
 import { getIsGlobalLoading, getIsWindowCurrentlyOpen, globalActions, GlobalWindow } from '@/entities/Global';
 import { getSelectedWallet, getWallets, Wallet, walletActions, walletApi, getSelectedNetwork, Network } from '@/entities/Wallet';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -7,6 +8,7 @@ export const useWalletsListWindowLogic = () => {
   const dispatch = useDispatch();
   const { errorToast } = useToasts();
   const [getWalletRequest] = walletApi.useLazyGetWalletQuery();
+  const { impact, notify } = useHapticFeedback();
   
   const isGlobalLoading: boolean = useSelector(getIsGlobalLoading);
   const selectedWallet: Wallet | undefined = useSelector(getSelectedWallet);
@@ -29,6 +31,7 @@ export const useWalletsListWindowLogic = () => {
       dispatch(walletActions.setSelectedNetwork(wallet.network));
       result.ok && dispatch(globalActions.removeWindow(GlobalWindow.WalletsList));
     } catch (e) {
+      notify('error')
       errorToast('Failed to change wallet');
     }
   };

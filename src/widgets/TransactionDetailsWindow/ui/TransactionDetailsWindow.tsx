@@ -38,8 +38,8 @@ export const TransactionDetailsWindow = () => {
 
         <Flex width="100%" direction="column" align="center" gap={4}>
           <Flex align="center" gap={9}>
-            <Typography.Title text={state.transaction?.amount} fontFamily="ClashDisplay-Bold" />
-            <Typography.Title text={state.transaction?.currency} fontFamily="ClashDisplay-Bold" />
+            <Typography.Title text={state.transaction?.amount} fontFamily="Clash Display" />
+            <Typography.Title text={state.transaction?.currency} fontFamily="Clash Display" />
           </Flex>
           <Typography.Text text={state.createdAtLocalTime.format('D MMMM, HH:mm')} type="secondary" />
         </Flex>

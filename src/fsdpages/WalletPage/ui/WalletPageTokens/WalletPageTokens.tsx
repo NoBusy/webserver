@@ -12,6 +12,7 @@ import { Flex } from '@/shared/ui/Flex/Flex';
 import React, { useState, useMemo } from 'react';
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
 import { motion } from 'framer-motion';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 
 const TOKEN_HEIGHT = 66;
 const SPACING = 8;
@@ -39,6 +40,8 @@ export const WalletPageTokens = () => {
   const [deleteWalletToken] = walletApi.useDeleteWalletTokenMutation();
   const [isCollapsed, setIsCollapsed] = useState(true);
   const selectedWallet = useSelector(getSelectedWallet);
+  const { notify } = useHapticFeedback();
+
 
   const tokens = selectedWallet?.tokens || [];
   const visibleTokens = useMemo(() => {
@@ -58,13 +61,12 @@ export const WalletPageTokens = () => {
         token_id: token.id,
       }).unwrap();
       if (result.ok) {
+        notify('success');
         successToast('Token deleted');
         getWalletsRequest();
-      } else {
-        errorToast('Failed to delete token');
-      }
+      } 
     } catch (e) {
-      errorToast('Failed to delete token');
+ 
     }
   };
 
@@ -72,7 +74,7 @@ export const WalletPageTokens = () => {
     setIsCollapsed(prev => !prev);
   };
 
-  const handleAddTokenButtonClick = () => {
+  const handleAddTokenButtonClick = async () => {
     dispatch(globalActions.addWindow({ window: GlobalWindow.AddToken }));
   };
 

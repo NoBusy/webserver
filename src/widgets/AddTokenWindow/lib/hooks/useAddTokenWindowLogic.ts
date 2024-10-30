@@ -6,12 +6,14 @@ import { GetTokenInfoResult } from '@/entities/Wallet';
 import { ChangeEvent, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useToastManager } from '@/shared/lib/hooks/useToastManager/useToastManager';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 
 
 
 export const useAddTokenWindowLogic = () => {
   const { errorToast, successToast } = useToasts();
   const { showToast } = useToastManager({maxCount: 1});
+  const { notify } = useHapticFeedback();
 
   
 
@@ -39,7 +41,7 @@ export const useAddTokenWindowLogic = () => {
 
       setTokenInfo(result.data);
     } catch (e) {
-      showToast(errorToast, 'Failed to get token info');
+    
     } finally {
       setIsLoading(false);
     }
@@ -53,6 +55,7 @@ export const useAddTokenWindowLogic = () => {
       const isTokenAlreadyAdded: boolean = selectedWallet.tokens.some((t) => t.contract === tokenAddress);
 
       if (isTokenAlreadyAdded) {
+        notify('error')
         errorToast('Token already added');
         return;
       }
@@ -65,11 +68,12 @@ export const useAddTokenWindowLogic = () => {
       }).unwrap();
 
       if (result.ok) {
+        notify('success')
         successToast('Token added');
         getWalletsRequest();
       }
     } catch (e) {
-      showToast(errorToast, 'Failed to add token');
+    
     } finally {
       setTokenInfo(undefined);
       setIsLoading(false);

@@ -1,18 +1,17 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { Typography } from '@/shared/ui/Typography/Typography';
 import { getTokenImage } from '../../lib/helpers/getTokenImage';
 import { Flex } from '@/shared/ui/Flex/Flex';
-import { Token, walletActions } from '@/entities/Wallet';
+import { Token } from '@/entities/Wallet';
 import Image from 'next/image';
 import Trash from '@/shared/assets/icons/trash.svg';
-import { globalActions, GlobalWindow } from '@/entities/Global';
-import { useDispatch } from 'react-redux';
-import { motion, useAnimation } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useTokenTransactionsWindowLogic } from './useTokenTransactionWindowLogic';
 
 export interface WalletTokenProps {
   token: Token;
   isHidePrice?: boolean;
-  onTokenClick?: (token: Token) => void;
+  onTokenClick?: (token: Token) => void; 
   onDeleteToken?: (token: Token) => void;
   isEssentialToken?: boolean;
 }
@@ -20,46 +19,14 @@ export interface WalletTokenProps {
 export const WalletPageToken: React.FC<WalletTokenProps> = React.memo(({ 
   token, 
   onDeleteToken, 
-  isHidePrice, 
   onTokenClick,
+  isHidePrice,
   isEssentialToken = false
 }) => {
-  const dispatch = useDispatch();
-  const controls = useAnimation();
-  const [isDragging, setIsDragging] = React.useState(false);
-  const [isOpen, setIsOpen] = React.useState(false);
-
-  const handleClick = useCallback(() => {
-    if (!isDragging) {
-      dispatch(walletActions.setSelectedToken(token));
-      dispatch(globalActions.addWindow({ window: GlobalWindow.TokenDetails }));
-      onTokenClick?.(token);
-    }
-  }, [dispatch, onTokenClick, token, isDragging]);
-
-  const handleDelete = useCallback(() => {
-    onDeleteToken?.(token);
-    controls.start({ x: 0 });
-    setIsOpen(false);
-  }, [onDeleteToken, token, controls]);
-
-  const handleDragEnd = useCallback((event: any, info: any) => {
-    const shouldOpen = !isOpen 
-      ? info.offset.x < -40
-      : info.offset.x > -40;
-
-    if (shouldOpen && !isOpen) {
-      controls.start({ x: -80 });
-      setIsOpen(true);
-    } else {
-      controls.start({ x: 0 });
-      setIsOpen(false);
-    }
-    setIsDragging(false);
-  }, [controls, isOpen]);
+  const { flow, state } = useTokenTransactionsWindowLogic();
 
   const priceChangeColor = token.price_change_percentage > 0 ? 'var(--green)' : 'var(--red)';
-  const formattedBalance = token.balance !== 0 ? token.balance.toFixed(7) : '0';
+  const formattedBalance = flow.formatBalance(token.balance);
 
   return (
     <div style={{ 
@@ -86,7 +53,7 @@ export const WalletPageToken: React.FC<WalletTokenProps> = React.memo(({
           }}
           onClick={(e) => {
             e.stopPropagation();
-            handleDelete();
+            onDeleteToken?.(token);
           }}
         >
           <Flex align="center" gap={8}>
@@ -97,12 +64,12 @@ export const WalletPageToken: React.FC<WalletTokenProps> = React.memo(({
       )}
 
       <motion.div
-        animate={controls}
+        animate={flow.controls}
         drag={!isEssentialToken ? "x" : false}
         dragConstraints={{ left: -80, right: 0 }}
         dragElastic={0}
-        onDragStart={() => setIsDragging(true)}
-        onDragEnd={handleDragEnd}
+        onDragStart={() => flow.setIsDragging(true)}
+        onDragEnd={flow.handleDragEnd}
         style={{
           width: '100%',
           height: '100%',
@@ -112,7 +79,7 @@ export const WalletPageToken: React.FC<WalletTokenProps> = React.memo(({
           zIndex: 1,
           cursor: !isEssentialToken ? 'grab' : 'pointer'
         }}
-        onClick={handleClick}
+        onClick={() => flow.handleTokenClick(token)}
       >
         <Flex
           width="100%"
@@ -126,19 +93,20 @@ export const WalletPageToken: React.FC<WalletTokenProps> = React.memo(({
               width={40} 
               height={40} 
               src={getTokenImage(token)} 
-              alt="token-icon" 
+              alt={`${token.symbol} icon`}
               priority 
+              style={{ borderRadius: '50%' }}
             />
             <Flex direction="column" gap={3}>
               <Typography.Text 
-                text={`${token.symbol}`} 
+                text={token.symbol}
                 weight={550} 
                 width={isHidePrice ? "250px" : "135px"} 
                 wrap="nowrap" 
               />
               {isHidePrice ? (
                 <Typography.Text 
-                  text={`${token.balance} ${token.symbol}`} 
+                  text={`${formattedBalance} ${token.symbol}`}
                   weight={450} 
                   align="left" 
                   wrap="nowrap" 
@@ -166,13 +134,13 @@ export const WalletPageToken: React.FC<WalletTokenProps> = React.memo(({
           {!isHidePrice && (
             <Flex direction="column" align="flex-end" gap={3}>
               <Typography.Text 
-                text={`${formattedBalance} ${token.symbol}`} 
+                text={`${formattedBalance} ${token.symbol}`}
                 weight={550} 
                 align="right" 
                 wrap="nowrap" 
               />
               <Typography.Text 
-                text={`${token.balance_usd.toFixed(2)}$`} 
+                text={`$${token.balance_usd.toFixed(2)}`}
                 type="secondary" 
                 align="right" 
                 wrap="nowrap" 

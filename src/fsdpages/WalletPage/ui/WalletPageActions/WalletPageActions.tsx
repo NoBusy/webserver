@@ -7,11 +7,12 @@ import { BurgerIcon } from '@/shared/assets/icons/BurgerIcon';
 import { Field } from '@/shared/ui/Field/Field';
 import { Flex } from '@/shared/ui/Flex/Flex';
 import { useDispatch } from 'react-redux';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 
 
 export const WalletPageActions = () => {
   const dispatch = useDispatch();
-
+  
   const handleReferralClick = async () => {
     dispatch(globalActions.addWindow({ window: GlobalWindow.Referral }));
   };

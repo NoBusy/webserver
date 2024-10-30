@@ -8,6 +8,7 @@ import { Flex } from '@/shared/ui/Flex/Flex';
 import { useDispatch } from 'react-redux';
 import moment from 'moment-timezone';
 import React from 'react';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 
 export interface TransactionProps {
   transaction: TransactionInterface;
@@ -18,7 +19,7 @@ export const Transaction: React.FC<TransactionProps> = ({ transaction, onTransac
   const dispatch = useDispatch();
   const createdAtLocalTime: moment.Moment = moment.tz(transaction.created_at, 'UTC').tz(moment.tz.guess());
 
-  const handleTransactionClick = () => {
+  const handleTransactionClick = async () => {
     if (onTransactionClick) {
       onTransactionClick(transaction);
     } else {

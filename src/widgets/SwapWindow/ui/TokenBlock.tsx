@@ -5,11 +5,12 @@ import { getTokenImage } from '@/fsdpages/WalletPage';
 import styles from './PrepareSwapWindow.module.scss';
 import arrowIcon from '@/shared/assets/icons/arrow-icon.svg';
 import { Token, Network } from '@/entities/Wallet';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 
 interface TokenBlockProps {
   isFrom: boolean;
   token?: Token;
-  amount: string;
+  amount: number;
   usdAmount: string;
   onAmountChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onTokenSelect: () => void;
@@ -21,9 +22,9 @@ interface TokenBlockProps {
 }
 
 const NETWORK_FEES = {
-  ETH: 0.005,
-  BSC: 0.003,
-  SOL: 0.00015,
+  ETH: 0.008,
+  BSC: 0.0004,
+  SOL: 0.00022,
   TON: 0.18
 } as const;
 
@@ -43,24 +44,15 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
     if (!token || !onAmountChange) return;
 
     let newAmount: number;
-
-    // Определяем является ли токен нативным
     const isNativeToken = token.symbol === 'ETH' || 
-                         token.symbol === 'BNB' || 
+                         token.symbol === 'BSC' || 
                          token.symbol === 'SOL' || 
                          token.symbol === 'TON';
 
     if (percent === 100 && isNativeToken) {
-      // Получаем фиксированную комиссию для сети
-      const networkFee = NETWORK_FEES[token.symbol as keyof typeof NETWORK_FEES];
+      const networkFee = NETWORK_FEES[token.symbol as keyof typeof NETWORK_FEES] || 0;
+      newAmount = token.balance - networkFee;
       
-      // Добавляем небольшой запас в 10% к комиссии для надежности
-      const safetyBuffer = networkFee * 1.1;
-      
-      // Вычисляем максимальную сумму
-      newAmount = token.balance - safetyBuffer;
-      
-      // Проверяем что сумма положительная
       if (newAmount <= 0) {
         newAmount = 0;
       }
@@ -68,14 +60,8 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
       newAmount = token.balance * (percent / 100);
     }
 
-    // Преобразуем в строку, сохраняя все значащие цифры
-    const formattedAmount = newAmount.toFixed(9); // Используем 9 знаков для SOL
-    
-    // Удаляем лишние нули в конце, но сохраняем необходимые
-    const trimmedAmount = formattedAmount.replace(/\.?0+$/, '');
-
     onAmountChange({
-      target: { value: trimmedAmount }
+      target: { value: newAmount.toString() }
     } as React.ChangeEvent<HTMLInputElement>);
   }, [token, onAmountChange]);
 

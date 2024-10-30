@@ -6,6 +6,7 @@ import { NetworkSelect } from '@/features/NetworkSelect';
 import { Button } from '@/shared/ui/Button/Button';
 import { Flex } from '@/shared/ui/Flex/Flex';
 import { useDispatch } from 'react-redux';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 
 export const WalletPageHeader = () => {
   const dispatch = useDispatch();

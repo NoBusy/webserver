@@ -2,10 +2,12 @@ import { getSelectedNetwork, getWallets, Network, Wallet, walletActions, walletA
 import { getIsGlobalLoading, getWindowsOpen, globalActions, GlobalWindow } from '@/entities/Global';
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 
 export const useNetworksWindowLogic = () => {
   const dispatch = useDispatch();
   const { errorToast } = useToasts();
+  const { notify } = useHapticFeedback();
 
   const [getWalletRequest] = walletApi.useLazyGetWalletQuery();
 
@@ -26,6 +28,7 @@ export const useNetworksWindowLogic = () => {
         }
       }
     } catch (e) {
+      notify('error')
       errorToast('Failed to get wallet');
     }
   };

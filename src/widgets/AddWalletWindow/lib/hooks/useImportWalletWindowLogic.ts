@@ -4,11 +4,12 @@ import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useState } from 'react';
 import { useWalletUpdater } from '@/shared/lib/hooks/useWalletUpdate/useWalletUpdate';
+import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 
 export const useImportWalletWindowLogic = () => {
   const dispatch = useDispatch();
   const { errorToast, successToast } = useToasts();
-
+  const { notify } = useHapticFeedback();
 
 
   const [importWalletRequest, importWalletResult] = walletApi.useImportWalletMutation();
@@ -27,6 +28,7 @@ export const useImportWalletWindowLogic = () => {
       if (!walletName || !selectedNetwork || !privateKey) return;
 
       if (wallets.find((w) => w.name === walletName)) {
+        notify('error')
         errorToast('Wallet name already exists');
         return;
       }
@@ -39,10 +41,12 @@ export const useImportWalletWindowLogic = () => {
 
       if (result.ok && result.data) {
         dispatch(walletActions.setSelectedWallet(result.data));
+        notify('success')
         successToast('Wallet import successfully');
         dispatch(globalActions.removeAllWindows());
       }
     } catch (e) {
+      notify('error')
       errorToast('Failed to import wallet');
       dispatch(globalActions.removeLastWindow());
     } finally {
