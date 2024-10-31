@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start --port 4000",
     "lint": "next lint",
-    "deploy": "next build && touch out/.nojekyll && gh-pages -d out -t true"
+    "build:gh-pages": "DEPLOYMENT_ENV=gh-pages next build",
+    "deploy": "DEPLOYMENT_ENV=gh-pages next build && touch out/.nojekyll && gh-pages -d out -t true"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.7",
