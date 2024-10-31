@@ -25,7 +25,7 @@ export const TransferWindow = () => {
         />
         <Flex width="100%" direction="column" gap={12}>
           {logic.state.tokens.map((t) => (
-            <WalletPageToken token={t} onTokenClick={logic.flow.handleTokenSelect} isHidePrice />
+            <WalletPageToken token={t} onTokenClick={logic.flow.handleTokenSelect} isHidePrice context='transfer' />
           ))}
         </Flex>
       </Window>

@@ -142,7 +142,11 @@ export const useTransferWindowLogic = () => {
   };
 
   const handleMaxButtonClick = () => {
-    tokenToTransfer && setAmount(tokenToTransfer.balance.toString());
+    if (tokenToTransfer) {
+      const maxAmount = tokenToTransfer.balance.toString();
+      setAmount(maxAmount);
+      handleGetRate(maxAmount);
+    }
   };
 
   const handleToAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {

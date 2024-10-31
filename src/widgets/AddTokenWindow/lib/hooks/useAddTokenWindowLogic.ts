@@ -1,16 +1,17 @@
 import { getSelectedWallet, Wallet, walletApi } from '@/entities/Wallet';
 import { useDebounce } from '@/shared/lib/hooks/useDebounce/useDebounce';
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
-import { getWindowsOpen, GlobalWindow } from '@/entities/Global';
+import { getWindowsOpen, globalActions, GlobalWindow } from '@/entities/Global';
 import { GetTokenInfoResult } from '@/entities/Wallet';
 import { ChangeEvent, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useToastManager } from '@/shared/lib/hooks/useToastManager/useToastManager';
 import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 
 
 
 export const useAddTokenWindowLogic = () => {
+  const dispatch = useDispatch();
   const { errorToast, successToast } = useToasts();
   const { showToast } = useToastManager({maxCount: 1});
   const { notify } = useHapticFeedback();
@@ -70,10 +71,11 @@ export const useAddTokenWindowLogic = () => {
       if (result.ok) {
         notify('success')
         successToast('Token added');
+        dispatch(globalActions.removeWindow(GlobalWindow.AddToken));
         getWalletsRequest();
       }
     } catch (e) {
-    
+      showToast(errorToast, 'Token not found')
     } finally {
       setTokenInfo(undefined);
       setIsLoading(false);

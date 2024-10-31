@@ -18,9 +18,9 @@ export const useTransactionsHistoryWindowLogic = () => {
     { skip: !selectedWallet || !isWindowOpen }
   );
 
-  useEffect(() => {
-    isError && showToast(errorToast, 'Failed to get transactions history');
-  }, [isError]);
+  // useEffect(() => {
+  //   isError && showToast(errorToast, 'Failed to get transactions history');
+  // }, [isError]);
 
   return {
     flow: {},

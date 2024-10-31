@@ -14,16 +14,26 @@ export interface WalletTokenProps {
   onTokenClick?: (token: Token) => void; 
   onDeleteToken?: (token: Token) => void;
   isEssentialToken?: boolean;
+  context?: 'transfer' | 'details';
 }
 
 export const WalletPageToken: React.FC<WalletTokenProps> = React.memo(({ 
   token, 
   onDeleteToken, 
   onTokenClick,
+  context = 'details',
   isHidePrice,
   isEssentialToken = false
 }) => {
   const { flow, state } = useTokenTransactionsWindowLogic();
+
+  const handleClick = () => {
+    if (context === 'transfer') {
+      onTokenClick?.(token); // Используем переданный обработчик для трансфера
+    } else {
+      flow.handleTokenClick(token); // Стандартное поведение для деталей
+    }
+  };
 
   const priceChangeColor = token.price_change_percentage > 0 ? 'var(--green)' : 'var(--red)';
   const formattedBalance = flow.formatBalance(token.balance);
@@ -79,7 +89,7 @@ export const WalletPageToken: React.FC<WalletTokenProps> = React.memo(({
           zIndex: 1,
           cursor: !isEssentialToken ? 'grab' : 'pointer'
         }}
-        onClick={() => flow.handleTokenClick(token)}
+        onClick={() => handleClick()}
       >
         <Flex
           width="100%"

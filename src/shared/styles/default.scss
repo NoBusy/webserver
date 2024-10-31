@@ -1,5 +1,9 @@
 @import "./variables.scss";
 
+:root {
+  --safe-area-bottom: (100vh - var(--tg-viewport-stable-height,100vh))
+}
+
 html, body {
   width: 100%;
   height: 100%;

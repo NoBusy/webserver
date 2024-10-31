@@ -13,6 +13,7 @@ import React, { useState, useMemo } from 'react';
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
 import { motion } from 'framer-motion';
 import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
+import styles from './WalletPageTokens.module.scss';
 
 const TOKEN_HEIGHT = 66;
 const SPACING = 8;
@@ -82,11 +83,7 @@ export const WalletPageTokens = () => {
     <Flex width="100%" direction="column" gap={8}>
       <motion.div
         animate={{ height: containerHeight }}
-        transition={{ duration: 0.3 }}
-        style={{
-          width: '100%',
-          overflow: 'hidden'
-        }}
+        className={styles.tokens_list}
       >
         <Flex direction="column" gap={8}>
           {visibleTokens.map((token) => (
@@ -113,7 +110,6 @@ export const WalletPageTokens = () => {
               <ArrowOutlineIcon 
                 style={{ 
                   transform: isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)',
-                  transition: 'transform 0.3s ease'
                 }} 
               />
             </Flex>
@@ -124,7 +120,7 @@ export const WalletPageTokens = () => {
       <Button 
         type="primary" 
         height={50} 
-        style={{ marginTop: '12px' }}
+        className={styles.add_token_btn}
         onClick={handleAddTokenButtonClick}
       >
         <DepositFillIcon width={17} height={17} fill="white" />

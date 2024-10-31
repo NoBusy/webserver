@@ -16,7 +16,6 @@ import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapti
 
 export const useWalletPageLogic = () => {
   const dispatch = useDispatch();
-  const { impact } = useHapticFeedback();
 
   const [profileRequestParams, setProfileRequestParams] = useState<GetUserParams | null>();
   const [getWalletRequest] = walletApi.useLazyGetWalletQuery();
@@ -80,7 +79,6 @@ export const useWalletPageLogic = () => {
   };
 
   const handleBackButtonClick = async () => {
-    await impact('light');
     dispatch(globalActions.removeLastWindow());
   };
 
