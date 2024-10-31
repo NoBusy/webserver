@@ -41,7 +41,7 @@ export const useSwapWindowLogic = () => {
   const isConfirmSwapWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.ConfirmSwap);
   const isSelectTokenWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.SelectToken);
 
-  const [slippage, setSlippage] = useState<number>(2);
+  const [slippage, setSlippage] = useState<number>(5);
 
   const updateSlippage = (newSlippage: number) => {
     setSlippage(newSlippage);
