@@ -56,7 +56,7 @@ const prepareHeaders = (headers: Headers): Headers => {
 };
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.NEXT_PUBLIC_BASE_API_URL,
+  baseUrl: "https://cryptoswaptg.ru/v1",
   credentials: 'include',
   prepareHeaders,
 });
@@ -78,7 +78,7 @@ const baseQueryWithInterceptors: BaseQueryFn<string | FetchArgs, unknown, FetchB
       if (refreshResult.data) {
         result = await baseQuery(args, api, extraOptions);
       } else {
-        console.error('Failed to refresh session');
+     
       }
     }
   }
