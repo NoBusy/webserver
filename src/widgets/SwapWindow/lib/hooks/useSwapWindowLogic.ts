@@ -207,7 +207,7 @@ export const useSwapWindowLogic = () => {
         updateAfterDelay(50000);
       }
     } catch (e) {
-      
+      showToast(errorToast, 'Failed to swap. Try again please')
     } finally {
       setIsLoading(false);
     }
