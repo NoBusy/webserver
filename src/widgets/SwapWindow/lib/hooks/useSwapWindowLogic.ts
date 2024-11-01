@@ -219,7 +219,7 @@ export const useSwapWindowLogic = () => {
 
     if (fromToken && Number(newAmount) > fromToken.balance) {
       notify('warning')
-      showToast(errorToast, 'Insufficient funds');
+      showToast(errorToast, 'Insufficient funds :(');
     }
 
     if (newAmount) {
