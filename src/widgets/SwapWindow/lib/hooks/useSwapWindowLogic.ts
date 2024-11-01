@@ -207,7 +207,7 @@ export const useSwapWindowLogic = () => {
         updateAfterDelay(50000);
       }
     } catch (e) {
-      
+      showToast(errorToast, 'Failed to swap. Try again please')
     } finally {
       setIsLoading(false);
     }
@@ -219,7 +219,7 @@ export const useSwapWindowLogic = () => {
 
     if (fromToken && Number(newAmount) > fromToken.balance) {
       notify('warning')
-      showToast(errorToast, 'Insufficient funds');
+      showToast(errorToast, 'Insufficient funds :(');
     }
 
     if (newAmount) {
