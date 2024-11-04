@@ -13,10 +13,10 @@ import styles from './StoryViewer.module.scss';
 import { useCloudStorage } from '@/shared/lib/hooks/useCloudStorage/useCloudStorage';
 
 // Импорт SVG
-import Story1 from '@/shared/assets/icons/story1.svg';
-import Story2 from '@/shared/assets/icons/story2.svg';
-import Story3 from '@/shared/assets/icons/story3.svg';
-import Story4 from '@/shared/assets/icons/story4.svg';
+import Story1 from '@/shared/assets/icons/story1.png';
+import Story2 from '@/shared/assets/icons/story2.png';
+import Story3 from '@/shared/assets/icons/story3.png';
+import Story4 from '@/shared/assets/icons/story4.png';
 
 interface HighlightedTextProps {
   text: string;

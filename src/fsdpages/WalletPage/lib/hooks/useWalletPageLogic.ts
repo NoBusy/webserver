@@ -113,13 +113,16 @@ export const useWalletPageLogic = () => {
 
   const initStories = async () => {
     try {
-      const storiesViewed = await getItem('stories_viewed');
+      // const storiesViewed = await getItem('stories_viewed');
       
-      if (storiesViewed) {
-        dispatch(globalActions.addWindow({
-          window: GlobalWindow.StoryViewer,
-        }));
-      }
+      // if (!storiesViewed) {
+      //   dispatch(globalActions.addWindow({
+      //     window: GlobalWindow.StoryViewer,
+      //   }));
+      // }
+      dispatch(globalActions.addWindow({
+        window: GlobalWindow.StoryViewer,
+      }))
     } catch (error) {
      
     }
