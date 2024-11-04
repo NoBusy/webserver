@@ -28,34 +28,29 @@ export const WalletPage = () => {
   useWalletPageLogic();
 
   return (
-    <>
-      {/* StoryViewer будет отображаться поверх всего контента при первом запуске */}
-      <StoryViewer />
-      
-      <Page>
-        <WalletPageHeader />
-        <WalletPageInfo />
-        <WalletPageTokens />
-        <WalletPageActions />
-        
-        {/* Windows */}
-        <TransactionsHistoryWindow />
-        <SwapWindow />
-        <DepositWindow />
-        <RefWindow />
-        <TransferWindow />
-        <NetworksWindow />
-        <LoadingWindow />
-        <AddWalletWindow />
-        <AddTokenWindow />
-        <TransactionsHistoryWindow />
-        <WalletDetailsWindow />
-        <WalletsListWindow />
-        <TransactionDetailsWindow />
-        <ImportWalletWindow />
-        <CreateWalletWindow />
-        <TokenDetailsWindow />
-      </Page>
-    </>
+    <Page>
+      <WalletPageHeader />
+      <WalletPageInfo />
+      <WalletPageTokens />
+      <WalletPageActions />
+      <TransactionsHistoryWindow />
+
+      <SwapWindow />
+      <DepositWindow />
+      <RefWindow />
+      <TransferWindow />
+      <NetworksWindow />
+      <LoadingWindow />
+      <AddWalletWindow />
+      <AddTokenWindow />
+      <TransactionsHistoryWindow />
+      <WalletDetailsWindow />
+      <WalletsListWindow />
+      <TransactionDetailsWindow />
+      <ImportWalletWindow />
+      <CreateWalletWindow />
+      <TokenDetailsWindow/>
+      <StoryViewer/>
+    </Page>
   );
 };
