@@ -33,6 +33,7 @@ export const PrepareTransferWindow: React.FC<PrepareTransferWindowProps> = (prop
           value={state.toAddress}
           onChange={flow.handleToAddressChange}
           placeholder={`Address (${state.network && networkSymbol[state.network]})`}
+          isQrScanEnabled
         />
         <Input
           type="number"
