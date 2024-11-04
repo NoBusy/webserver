@@ -10,14 +10,13 @@ import { getStoryViewerState } from '@/entities/Global';
 import { GlobalWindow } from '@/entities/Global';
 import { globalActions } from '@/entities/Global'; 
 import styles from './StoryViewer.module.scss';
+import { useCloudStorage } from '@/shared/lib/hooks/useCloudStorage/useCloudStorage';
 
 // Импорт SVG
 import Story1 from '@/shared/assets/icons/story1.svg';
 import Story2 from '@/shared/assets/icons/story2.svg';
 import Story3 from '@/shared/assets/icons/story3.svg';
 import Story4 from '@/shared/assets/icons/story4.svg';
-import { Window } from '@/shared/ui/Window/Window';
-import { useCloudStorage } from '@/shared/lib/hooks/useCloudStorage/useCloudStorage';
 
 interface HighlightedTextProps {
   text: string;
@@ -89,49 +88,9 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const dispatch = useDispatch();
   const isVisible = useSelector(getStoryViewerState);
-  const [isInitialized, setIsInitialized] = useState(false);
-  const { getItem, setItem } = useCloudStorage();
+  const { setItem } = useCloudStorage();
 
-  useEffect(() => {
-    const initializeStories = async () => {
-      try {
-        const storiesViewed = await getItem('stories_viewed');
-        
-        if (!storiesViewed) {
-          // Только если пользователь не смотрел сторис, добавляем окно
-          dispatch(globalActions.addWindow({
-            window: GlobalWindow.StoryViewer,
-          }));
-        } else {
-          // Если сторис уже были просмотрены, убеждаемся что окно закрыто
-          dispatch(globalActions.removeWindow(GlobalWindow.StoryViewer));
-        }
-      } catch (error) {
-        console.error('Error checking stories viewed:', error);
-        // В случае ошибки закрываем окно
-        dispatch(globalActions.removeWindow(GlobalWindow.StoryViewer));
-      } finally {
-        setIsInitialized(true);
-      }
-    };
-
-    initializeStories();
-  }, [dispatch, getItem]);
-
-
-  useEffect(() => {
-    console.log('StoryViewer mounted');
-    dispatch(globalActions.addWindow({
-      window: GlobalWindow.StoryViewer,
-    }));
-    console.log('Window added to store');
-  }, [dispatch]);
-
-//   useEffect(() => {
-//     console.log('Visibility changed:', isVisible);
-//   }, [isVisible]);
-
-const handleClose = async () => {
+  const handleClose = async () => {
     dispatch(globalActions.removeWindow(GlobalWindow.StoryViewer));
     try {
       await setItem('stories_viewed', 'true');
@@ -146,31 +105,18 @@ const handleClose = async () => {
     
     if (x < rect.width / 2) {
       if (currentStoryIndex > 0) {
-        console.log('Moving to previous story:', currentStoryIndex - 1);
         setCurrentStoryIndex(currentStoryIndex - 1);
       }
     } else {
       if (currentStoryIndex < stories.length - 1) {
-        console.log('Moving to next story:', currentStoryIndex + 1);
         setCurrentStoryIndex(currentStoryIndex + 1);
       } else {
-        console.log('Reached last story, closing');
         handleClose();
       }
     }
   };
 
-  console.log('Current render state:', {
-    isVisible,
-    currentStoryIndex,
-    totalStories: stories.length
-  });
-
   if (!isVisible) {
-    return null;
-  }
-
-  if (!isInitialized) {
     return null;
   }
 

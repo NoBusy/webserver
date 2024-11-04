@@ -11,11 +11,13 @@ import {  useEffect, useState } from 'react';
 import { userApi } from '@/entities/User';
 import cookies from 'js-cookie';
 import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
+import { useCloudStorage } from '@/shared/lib/hooks/useCloudStorage/useCloudStorage';
 
 
 
 export const useWalletPageLogic = () => {
   const dispatch = useDispatch();
+  const { getItem } = useCloudStorage();
 
   const [profileRequestParams, setProfileRequestParams] = useState<GetUserParams | null>();
   const [getWalletRequest] = walletApi.useLazyGetWalletQuery();
@@ -109,6 +111,20 @@ export const useWalletPageLogic = () => {
     }
   };
 
+  const initStories = async () => {
+    try {
+      const storiesViewed = await getItem('stories_viewed');
+      
+      if (!storiesViewed) {
+        dispatch(globalActions.addWindow({
+          window: GlobalWindow.StoryViewer,
+        }));
+      }
+    } catch (error) {
+     
+    }
+  };
+
   useEffect(() => {
     const telegramId: string | undefined = cookies.get(COOKIES_KEY_TELEGRAM_ID);
     setIsInited(!!telegramId);
@@ -121,6 +137,7 @@ export const useWalletPageLogic = () => {
   useEffect(() => {
     initTgWebAppSdk();
     getProfileRequestParams();
+    initStories()
   }, []);
 
   useEffect(() => {

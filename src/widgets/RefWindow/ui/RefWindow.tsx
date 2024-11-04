@@ -75,7 +75,7 @@ export const RefWindow = () => {
             </Flex>
           </Field>
 
-          <Field padding="14px 16px" direction="column" gap={8}>
+          <Field padding="14px 16px 14px" direction="column" gap={8}>
             <Flex width="100%" justify="space-between" noFlex>
               <Flex direction="column" gap={6}>
                 <Typography.Text text="Statistics" type="secondary" />
@@ -88,7 +88,7 @@ export const RefWindow = () => {
                     disabled={state.period == 'all'}
                     block
                   >
-                    All time 
+                    All the time 
                   </Button>
                   <Button 
                     className = {styles.button}
@@ -113,7 +113,6 @@ export const RefWindow = () => {
               <Typography.Text text="- Your referral share is 30% of the commission" type="secondary" />
             </Flex>
           </Field>
-
         </Flex>
       </Flex>
     </Window>
