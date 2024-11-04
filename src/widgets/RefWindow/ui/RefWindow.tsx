@@ -27,6 +27,16 @@ export const RefWindow = () => {
           </Flex>
         </Flex>
 
+        <Field padding="14px 16px" direction="column" gap={10}>
+            <Typography.Text text="Your referral link" type="secondary" fontSize={16} />
+            <Field bg="var(--bg)" align="center" justify="center" copyValue={state.refProgram?.link ?? ''} onCopyLabel="Referral link copied">
+              <Typography.Text text={state.refProgram?.link ?? '-'} align="center" width="275px" wrap="nowrap" weight={400} fontSize={17} />
+            </Field>
+            <Button type="primary" height="50px" onClick={flow.handleSendLinkClick} block>
+              Send link
+            </Button>
+          </Field>
+
         <Flex width="100%" direction="column" gap={8}>
           <Field justify="space-between" padding="14px 16px">
             <Flex direction="column" gap={6}>
@@ -64,15 +74,32 @@ export const RefWindow = () => {
             </Flex>
           </Field>
 
-          <Field padding="14px 16px" direction="column" gap={10}>
-            <Typography.Text text="Your referral link" type="secondary" fontSize={16} />
-            <Field bg="var(--bg)" align="center" justify="center" copyValue={state.refProgram?.link ?? ''} onCopyLabel="Referral link copied">
-              <Typography.Text text={state.refProgram?.link ?? '-'} align="center" width="275px" wrap="nowrap" weight={400} fontSize={17} />
-            </Field>
-            <Button type="primary" height="50px" onClick={flow.handleSendLinkClick} block>
-              Send link
-            </Button>
+          <Field padding="14px 16px" direction="column" gap={12}>
+            <Flex width="100%" justify="space-between">
+              <Flex direction="column" gap={6}>
+                <Typography.Text text="Statistics" type="secondary" />
+                <Typography.Text text="Referral turnover" type="secondary" />
+                <Flex align="center" gap={6}>
+                  <Image src={UsdtIcon} alt="usdt-icon" />
+                  <Typography.Text text={state.refProgram?.total_swap_volume_usd ?? 0} fontSize={18} />
+                </Flex>
+              </Flex>
+            </Flex>
+            <Divider />
+            <Flex width="100%" direction="column" gap={4.5}>
+              <Typography.Text text="- The YoYo's commission is 1 %" type="secondary" />
+              <Typography.Text text="- Your referral share is 30% of the commission" type="secondary" />
+            </Flex>
+            <Divider />
+            <Flex direction="column" gap={6}>
+              <Typography.Text text="Earned all the time" type="secondary" />
+              <Flex align="center" gap={6}>
+                <Image src={UsdtIcon} alt="usdt-icon" />
+                <Typography.Text text={state.refProgram?.total_earned ?? 0} fontSize={18} />
+              </Flex>
+            </Flex>
           </Field>
+
         </Flex>
       </Flex>
     </Window>
