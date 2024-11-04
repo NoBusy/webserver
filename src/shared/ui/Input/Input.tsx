@@ -1,10 +1,11 @@
 import { CloseInlineIcon } from '@/shared/assets/icons/CloseInlineIcon';
-import { QrIcon } from '@/shared/assets/icons/QrIcon'; // Добавляем импорт иконки
+import  Qr  from '@/shared/assets/icons/qr.svg'; // Добавляем импорт иконки
 import { useScanQrCode } from '@/shared/lib/hooks/useScanQr/useScanQr';// Добавляем импорт хука
 import { Flex } from '@/shared/ui/Flex/Flex';
 import styles from './Input.module.scss';
 import cn from 'classnames';
 import React from 'react';
+import Image from 'next/image';
 
 export interface InputProps {
   id?: string;
@@ -97,7 +98,7 @@ export const Input: React.FC<InputProps> = (props) => {
         )}
         {props.isQrScanEnabled && (
           <div onClick={handleScanQr} className={styles.qr_icon}>
-            <QrIcon />
+            <Image src={Qr} alt ='' width={18} height={18} />
           </div>
         )}
         {props.isHasMaxButton && !props.value && (
