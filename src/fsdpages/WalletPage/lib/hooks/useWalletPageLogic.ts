@@ -22,6 +22,7 @@ export const useWalletPageLogic = () => {
   const [profileRequestParams, setProfileRequestParams] = useState<GetUserParams | null>();
   const [getWalletRequest] = walletApi.useLazyGetWalletQuery();
   const [isInited, setIsInited] = useState<boolean>(false);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   const isGlobalLoading: boolean = useSelector(getIsGlobalLoading);
   const selectedNetwork: Network | undefined = useSelector(getSelectedNetwork);
@@ -112,6 +113,7 @@ export const useWalletPageLogic = () => {
   };
 
   const initStories = async () => {
+    if (!isFirstLoad) return;
     try {
       // const storiesViewed = await getItem('stories_viewed');
       
@@ -123,8 +125,9 @@ export const useWalletPageLogic = () => {
       dispatch(globalActions.addWindow({
         window: GlobalWindow.StoryViewer,
       }))
+      setIsFirstLoad(false);
     } catch (error) {
-     
+      setIsFirstLoad(false);
     }
   };
 
@@ -140,6 +143,11 @@ export const useWalletPageLogic = () => {
   useEffect(() => {
     initTgWebAppSdk();
     getProfileRequestParams();
+    initStories()
+  }, []);
+
+  useEffect(() => {
+
     initStories()
   }, []);
 
