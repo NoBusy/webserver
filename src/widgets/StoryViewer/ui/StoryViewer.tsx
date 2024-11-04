@@ -141,15 +141,21 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
       </div>
 
       <div className={styles.content} onClick={handleStoryClick}>
-        <div className={styles.image_container}>
-          <Image
-            src={stories[currentStoryIndex].image}
-            alt="Story image"
-            width={375}
-            height={812}
-            priority
-          />
-        </div>
+      <div className={styles.image_container}>
+  <Image
+    src={stories[currentStoryIndex].image}
+    alt="Story image"
+    fill
+    priority
+    quality={100}
+    sizes="100vw"
+    style={{
+      objectFit: 'contain',
+      objectPosition: 'center',
+    }}
+    className={styles.story_image}
+  />
+</div>
 
         <div className={styles.text_container}>
           <Flex direction="column" gap={8}>

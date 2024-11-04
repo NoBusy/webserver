@@ -115,7 +115,7 @@ export const useWalletPageLogic = () => {
     try {
       const storiesViewed = await getItem('stories_viewed');
       
-      if (!storiesViewed) {
+      if (storiesViewed) {
         dispatch(globalActions.addWindow({
           window: GlobalWindow.StoryViewer,
         }));
