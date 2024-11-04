@@ -1,13 +1,15 @@
 'use client';
 
 import { getIsGlobalLoading, getWindowsOpen, GlobalWindow, GlobalWindowType } from '@/entities/Global';
-import { Typography } from '@/shared/ui/Typography/Typography';
 import { AnimatePresence, motion } from 'framer-motion';
-import Spinner from '@/shared/ui/Spinner/Spinner';
 import styles from './LoadingWindow.module.scss';
 import { Flex } from '@/shared/ui/Flex/Flex';
 import { useSelector } from 'react-redux';
 import React, { useEffect } from 'react';
+import Image from 'next/image';
+import Yo from '@/shared/assets/icons/Yo.svg'
+import Oy from '@/shared/assets/icons/Oy.svg'
+import GradientSpinner from '@/shared/ui/GradientSpinner/GradientSpinner';
 
 export const LoadingWindow = () => {
   const [zIndex, setZIndex] = React.useState(10000);
@@ -39,8 +41,9 @@ export const LoadingWindow = () => {
         className={styles.loading_window}
       >
         <Flex direction="column" align="center" gap={12}>
-          <Spinner size="lg" />
-          <Typography.Description text="App initialization, please wait few moments..." align="center" width="150px" type="secondary" fontSize={16} />
+          <Image src={Yo} alt='' width={125} height={88}/>
+          <Image src={Oy} alt='' width={125} height={88}/>
+          <GradientSpinner size="lg" />
         </Flex>
       </motion.div>
     </AnimatePresence>

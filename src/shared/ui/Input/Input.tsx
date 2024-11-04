@@ -1,4 +1,6 @@
 import { CloseInlineIcon } from '@/shared/assets/icons/CloseInlineIcon';
+import { QrIcon } from '@/shared/assets/icons/QrIcon'; // Добавляем импорт иконки
+import { useScanQrCode } from '@/shared/lib/hooks/useScanQr/useScanQr';// Добавляем импорт хука
 import { Flex } from '@/shared/ui/Flex/Flex';
 import styles from './Input.module.scss';
 import cn from 'classnames';
@@ -22,11 +24,13 @@ export interface InputProps {
   onMaxButtonClick?: () => void;
   isHasMaxButton?: boolean;
   disabled?: boolean;
+  isQrScanEnabled?: boolean;
 }
 
 export const Input: React.FC<InputProps> = (props) => {
   const [isFocused, setIsFocused] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const { scanQr } = useScanQrCode();
 
   const options: Record<string, boolean | undefined> = {
     [styles.block]: props.block,
@@ -47,7 +51,15 @@ export const Input: React.FC<InputProps> = (props) => {
   };
 
   const handleClearClick = () => {
-    props.value && props.onChange && props.onChange({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>);
+    props.value && props.onChange &&
+    props.onChange({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>);
+  };
+
+  const handleScanQr = async () => {
+    const result = await scanQr();
+    if (result && props.onChange) {
+      props.onChange({ target: { value: result } } as React.ChangeEvent<HTMLInputElement>);
+    }
   };
 
   return (
@@ -57,10 +69,13 @@ export const Input: React.FC<InputProps> = (props) => {
           {props.label}
         </label>
       )}
-
-      <Flex width="inherit" height="fit-content" gap={0} className={cn(styles.input_container, props.className)}>
+      <Flex
+        width="inherit"
+        height="fit-content"
+        gap={0}
+        className={cn(styles.input_container, props.className)}
+      >
         {props.icon && props.icon}
-
         <input
           id={props.id}
           ref={inputRef}
@@ -73,9 +88,18 @@ export const Input: React.FC<InputProps> = (props) => {
           placeholder={props.placeholder}
           className={styles.input}
         />
-
-        {props.value && <CloseInlineIcon width={18.5} height={18.5} onClick={handleClearClick} />}
-
+        {props.value && (
+          <CloseInlineIcon
+            width={18.5}
+            height={18.5}
+            onClick={handleClearClick}
+          />
+        )}
+        {props.isQrScanEnabled && (
+          <div onClick={handleScanQr} className={styles.qr_icon}>
+            <QrIcon />
+          </div>
+        )}
         {props.isHasMaxButton && !props.value && (
           <Flex onClick={props.onMaxButtonClick} className={styles.max_btn}>
             Max
