@@ -89,34 +89,35 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const dispatch = useDispatch();
   const isVisible = useSelector(getStoryViewerState);
-  const [hasSeenStories, setHasSeenStories] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const { getItem, setItem } = useCloudStorage();
 
   useEffect(() => {
-    const checkStoriesViewed = async () => {
+    const initializeStories = async () => {
       try {
         const storiesViewed = await getItem('stories_viewed');
+        
         if (!storiesViewed) {
-          // Если пользователь еще не смотрел сторис, показываем их
+          // Только если пользователь не смотрел сторис, добавляем окно
           dispatch(globalActions.addWindow({
             window: GlobalWindow.StoryViewer,
           }));
-          // Записываем в storage, что сторис были просмотрены
-          await setItem('stories_viewed', 'true');
         } else {
-          setHasSeenStories(true);
+          // Если сторис уже были просмотрены, убеждаемся что окно закрыто
+          dispatch(globalActions.removeWindow(GlobalWindow.StoryViewer));
         }
       } catch (error) {
         console.error('Error checking stories viewed:', error);
-        // В случае ошибки все равно показываем сторис
-        dispatch(globalActions.addWindow({
-          window: GlobalWindow.StoryViewer,
-        }));
+        // В случае ошибки закрываем окно
+        dispatch(globalActions.removeWindow(GlobalWindow.StoryViewer));
+      } finally {
+        setIsInitialized(true);
       }
     };
 
-    checkStoriesViewed();
-  }, [dispatch, getItem, setItem]);
+    initializeStories();
+  }, [dispatch, getItem]);
+
 
   useEffect(() => {
     console.log('StoryViewer mounted');
@@ -131,12 +132,9 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
 //   }, [isVisible]);
 
 const handleClose = async () => {
-    console.log('Closing story viewer');
     dispatch(globalActions.removeWindow(GlobalWindow.StoryViewer));
-    // При закрытии также записываем в storage
     try {
       await setItem('stories_viewed', 'true');
-      setHasSeenStories(true);
     } catch (error) {
       console.error('Error setting stories viewed:', error);
     }
@@ -169,11 +167,10 @@ const handleClose = async () => {
   });
 
   if (!isVisible) {
-    console.log('Component not visible, returning null');
     return null;
   }
 
-  if (hasSeenStories || !isVisible) {
+  if (!isInitialized) {
     return null;
   }
 
