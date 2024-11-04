@@ -4,10 +4,12 @@ import { getWallets, Wallet } from '@/entities/Wallet';
 import { useDispatch, useSelector } from 'react-redux';
 import { referralApi } from '@/entities/Referral';
 import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
+import { useState } from 'react';
 
 export const useRefWindowLogic = () => {
   const dispatch = useDispatch();
   const { impact } = useHapticFeedback();
+  const [period, setPeriod] = useState<'all' | '30days'>('all');
 
   const isWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.Referral);
   const wallets: Wallet[] = useSelector(getWallets);
@@ -29,10 +31,12 @@ export const useRefWindowLogic = () => {
     flow: {
       handleWindowClose,
       handleSendLinkClick,
+      setPeriod
     },
     state: {
       refProgram: data?.data,
       isWindowOpen,
+      period
     },
   };
 };

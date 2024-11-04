@@ -10,6 +10,7 @@ import { Button } from '@/shared/ui/Button/Button';
 import { Field } from '@/shared/ui/Field/Field';
 import { Flex } from '@/shared/ui/Flex/Flex';
 import Image from 'next/image';
+import styles from './RefWindow.module.scss'
 
 export const RefWindow = () => {
   const { flow, state } = useRefWindowLogic();
@@ -74,14 +75,35 @@ export const RefWindow = () => {
             </Flex>
           </Field>
 
-          <Field padding="14px 16px" direction="column" gap={12}>
-            <Flex width="100%" justify="space-between">
+          <Field padding="14px 16px" direction="column" gap={8}>
+            <Flex width="100%" justify="space-between" noFlex>
               <Flex direction="column" gap={6}>
                 <Typography.Text text="Statistics" type="secondary" />
-                <Typography.Text text="Referral turnover" type="secondary" />
+                <Flex bg="var(--bg)" radius="12px" padding="2px" width="100%" >
+                  <Button 
+                    className = {styles.button}
+                    type="primary"
+                    height="36px"
+                    onClick={() => flow.setPeriod('all')}
+                    disabled={state.period == 'all'}
+                    block
+                  >
+                    All time 
+                  </Button>
+                  <Button 
+                    className = {styles.button}
+                    type="primary"
+                    height="36px"
+                    onClick={() => flow.setPeriod('30days')}
+                    disabled={state.period == '30days'}
+                    block
+                  >
+                    Last 30 days
+                  </Button>
+                </Flex>
                 <Flex align="center" gap={6}>
                   <Image src={UsdtIcon} alt="usdt-icon" />
-                  <Typography.Text text={state.refProgram?.total_swap_volume_usd ?? 0} fontSize={18} />
+                  <Typography.Text text={state.refProgram?.[state.period === 'all' ? 'total_swap_volume_usd' : 'monthly_swap_volume_usd'] ?? 0} fontSize={18} />
                 </Flex>
               </Flex>
             </Flex>
@@ -89,14 +111,6 @@ export const RefWindow = () => {
             <Flex width="100%" direction="column" gap={4.5}>
               <Typography.Text text="- The YoYo's commission is 1 %" type="secondary" />
               <Typography.Text text="- Your referral share is 30% of the commission" type="secondary" />
-            </Flex>
-            <Divider />
-            <Flex direction="column" gap={6}>
-              <Typography.Text text="Earned all the time" type="secondary" />
-              <Flex align="center" gap={6}>
-                <Image src={UsdtIcon} alt="usdt-icon" />
-                <Typography.Text text={state.refProgram?.total_earned ?? 0} fontSize={18} />
-              </Flex>
             </Flex>
           </Field>
 

@@ -20,6 +20,7 @@ import { DepositWindow } from '@/widgets/DepositWindow';
 import { RefWindow } from '@/widgets/RefWindow';
 import { SwapWindow } from '@/widgets/SwapWindow';
 import { TokenDetailsWindow } from '../WalletPageToken/TokenDetailsWindow';
+import { StoryViewer } from '@/widgets/StoryViewer';
 
 
 
@@ -27,28 +28,34 @@ export const WalletPage = () => {
   useWalletPageLogic();
 
   return (
-    <Page>
-      <WalletPageHeader />
-      <WalletPageInfo />
-      <WalletPageTokens />
-      <WalletPageActions />
-      <TransactionsHistoryWindow />
-
-      <SwapWindow />
-      <DepositWindow />
-      <RefWindow />
-      <TransferWindow />
-      <NetworksWindow />
-      <LoadingWindow />
-      <AddWalletWindow />
-      <AddTokenWindow />
-      <TransactionsHistoryWindow />
-      <WalletDetailsWindow />
-      <WalletsListWindow />
-      <TransactionDetailsWindow />
-      <ImportWalletWindow />
-      <CreateWalletWindow />
-      <TokenDetailsWindow/>
-    </Page>
+    <>
+      {/* StoryViewer будет отображаться поверх всего контента при первом запуске */}
+      <StoryViewer />
+      
+      <Page>
+        <WalletPageHeader />
+        <WalletPageInfo />
+        <WalletPageTokens />
+        <WalletPageActions />
+        
+        {/* Windows */}
+        <TransactionsHistoryWindow />
+        <SwapWindow />
+        <DepositWindow />
+        <RefWindow />
+        <TransferWindow />
+        <NetworksWindow />
+        <LoadingWindow />
+        <AddWalletWindow />
+        <AddTokenWindow />
+        <TransactionsHistoryWindow />
+        <WalletDetailsWindow />
+        <WalletsListWindow />
+        <TransactionDetailsWindow />
+        <ImportWalletWindow />
+        <CreateWalletWindow />
+        <TokenDetailsWindow />
+      </Page>
+    </>
   );
 };

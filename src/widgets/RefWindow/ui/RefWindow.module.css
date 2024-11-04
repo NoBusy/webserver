@@ -1,0 +1,18 @@
+.button {
+  background-color: transparent;
+  color: var(--primaryText);
+  border: none;
+  cursor: pointer;
+}
+
+.button:disabled {
+  color: #fff;
+  background: #007AFF;
+  font-size: 12;
+}
+
+.button:not(:disabled) {
+  background-color: var(--withdrawalBtnBg);
+  color: #A0A0B3;
+  font-size: 12;
+}
