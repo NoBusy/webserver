@@ -7,7 +7,6 @@ import { networkSymbol } from '@/shared/consts/networkSymbol';
 import { Window } from '@/shared/ui/Window/Window';
 import { Field } from '@/shared/ui/Field/Field';
 import { Flex } from '@/shared/ui/Flex/Flex';
-import { Button } from '@/shared/ui/Button/Button';
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
 
 interface WarningModalProps {
@@ -41,25 +40,25 @@ const WarningModal: React.FC<WarningModalProps> = ({
             fontSize={16}
           />
         </div>
-        <div className="flex flex-col gap-2">
-          <Button
-            type="primary"
-            text="Показать seed-фразу"
+        <Flex direction="column" gap={2}>
+          <div
             onClick={() => {
               if (seedPhrase) {
                 navigator.clipboard.writeText(seedPhrase);
                 onCopy();
               }
             }}
-            block
-          />
-          <Button
-            type="default"
-            text="Назад"
+            className="w-full p-4 text-center bg-blue-500 text-white rounded cursor-pointer"
+          >
+            Скопировать seed-фразу
+          </div>
+          <div
             onClick={onClose}
-            block
-          />
-        </div>
+            className="w-full p-4 text-center bg-gray-100 rounded cursor-pointer"
+          >
+            Назад
+          </div>
+        </Flex>
       </div>
     </div>
   );
@@ -69,33 +68,6 @@ export const WalletDetailsWindow = () => {
   const { flow, state } = useWalletDetailsWindowLogic();
   const [showWarning, setShowWarning] = useState(false);
   const { successToast } = useToasts();
-
-  // Создаем отдельный компонент для seed-фразы
-  const SeedPhraseField = () => (
-    <Flex width="100%" direction="column" gap={10}>
-      <Typography.Text text="Seed-фраза" type="secondary" weight={450} />
-      <Flex
-        width="100%"
-        align="center"
-        radius="16px"
-        padding="10px 16px"
-        bg="var(--secondaryBg)"
-        style={{
-          minHeight: '60px',
-          cursor: 'pointer',
-        }}
-        onClick={() => setShowWarning(true)}
-      >
-        <Typography.Text 
-          text="Показать seed-фразу"
-          wrap="nowrap"
-          width="85%"
-          weight={350}
-          fontSize={17}
-        />
-      </Flex>
-    </Flex>
-  );
 
   return (
     <>
@@ -157,19 +129,34 @@ export const WalletDetailsWindow = () => {
             />
           </Field>
 
-          <SeedPhraseField />
+          <Field 
+            label="Seed-фраза"
+            onClick={() => setShowWarning(true)}
+            style={{ cursor: 'pointer' }}
+          >
+            <Flex width="100%" justify="space-between" align="center">
+              <Typography.Text 
+                text="Показать seed-фразу"
+                wrap="nowrap"
+                weight={350}
+                fontSize={17}
+              />
+            </Flex>
+          </Field>
         </Flex>
       </Window>
 
-      <WarningModal 
-        isOpen={showWarning}
-        onClose={() => setShowWarning(false)}
-        onCopy={() => {
-          setShowWarning(false);
-          successToast('Seed-фраза скопирована');
-        }}
-        seedPhrase={state.openedWallet?.private_key}
-      />
+      {showWarning && (
+        <WarningModal 
+          isOpen={showWarning}
+          onClose={() => setShowWarning(false)}
+          onCopy={() => {
+            setShowWarning(false);
+            successToast('Seed-фраза скопирована');
+          }}
+          seedPhrase={state.openedWallet?.private_key}
+        />
+      )}
     </>
   );
 };
