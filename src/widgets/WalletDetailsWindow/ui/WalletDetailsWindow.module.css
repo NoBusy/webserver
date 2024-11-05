@@ -1,0 +1,12 @@
+.clickableField {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.clickableField:hover {
+  background-color: var(--hover-bg, rgba(0, 0, 0, 0.05));
+}
+
+.clickableField:active {
+  background-color: var(--active-bg, rgba(0, 0, 0, 0.1));
+}

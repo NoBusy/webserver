@@ -8,7 +8,21 @@ import { Window } from '@/shared/ui/Window/Window';
 import { Field } from '@/shared/ui/Field/Field';
 import { Flex } from '@/shared/ui/Flex/Flex';
 import { Button } from '@/shared/ui/Button/Button';
+import styles from './WalletDetailsWindow.module.scss';
 
+// Добавьте эти стили в WalletDetailsWindow.module.scss
+// .clickableField {
+//   cursor: pointer;
+//   transition: background-color 0.2s;
+//
+//   &:hover {
+//     background-color: var(--hover-bg, rgba(0, 0, 0, 0.05));
+//   }
+//
+//   &:active {
+//     background-color: var(--active-bg, rgba(0, 0, 0, 0.1));
+//   }
+// }
 
 interface WarningModalProps {
   isOpen: boolean;
@@ -26,7 +40,12 @@ const WarningModal: React.FC<WarningModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-center z-[6000]">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-center z-[6000]"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <div className="bg-white w-full max-w-md rounded-t-xl p-4 animate-slide-up">
         <div className="mb-4">
           <Typography.Text 
@@ -68,6 +87,10 @@ const WarningModal: React.FC<WarningModalProps> = ({
 export const WalletDetailsWindow = () => {
   const { flow, state } = useWalletDetailsWindowLogic();
   const [showWarning, setShowWarning] = useState(false);
+
+  const handleSeedPhraseClick = () => {
+    setShowWarning(true);
+  };
 
   return (
     <>
@@ -129,22 +152,17 @@ export const WalletDetailsWindow = () => {
             />
           </Field>
 
-          <Field 
-            label="Seed-фраза"
-            justify="space-between"
-            gap={15}
-            onClick={() => setShowWarning(true)}
-            style={{ cursor: 'pointer' }}
-          >
-            <Typography.Text 
-              text="Показать seed-фразу"
-              wrap="nowrap"
-              width="85%"
-              weight={350}
-              fontSize={17}
-            />
-            <div style={{ width: 18, height: 18 }} /> {/* Placeholder for spacing */}
-          </Field>
+          <Button
+            type="text"
+            text="Показать seed-фразу"
+            onClick={handleSeedPhraseClick}
+            style={{
+              textAlign: 'left',
+              fontSize: '17px',
+              fontWeight: 350,
+              padding: '8px 12px',
+            }}
+          />
         </Flex>
       </Window>
 
