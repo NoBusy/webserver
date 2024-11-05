@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { getTgWebAppSdk } from '@/shared/lib/helpers/getTgWebAppSdk';
 
 // Создаем синглтон для WebApp
@@ -19,35 +19,19 @@ export const useScanQrCode = () => {
       try {
         const webApp = await getWebApp();
         
-        // Подписываемся на событие получения QR кода
-        const handleQrReceived = (event: any) => {
-          console.log('QR data received:', event);
-          webApp.removeEventListener('qrTextReceived', handleQrReceived);
-          resolve(event.data);
-        };
-
-        // Добавляем слушатель события
-        webApp.addEventListener('qrTextReceived', handleQrReceived);
-        
-        // Показываем попап сканера
-        webApp.showScanQrPopup({
+        webApp?.showScanQrPopup({
           text: "Scan QR code to get address"
+        }, (result: string) => {
+          console.log('QR scan result:', result);
+          resolve(result);
+          return true; // закрываем попап после успешного сканирования
         });
-
+        
       } catch (error) {
         console.error('QR scan error:', error);
         resolve(null);
       }
     });
-  }, []);
-
-  // Очищаем слушатель при размонтировании компонента
-  useEffect(() => {
-    return () => {
-      getWebApp().then(webApp => {
-        webApp?.removeEventListener('qrTextReceived', () => {});
-      });
-    };
   }, []);
 
   return { scanQr };
