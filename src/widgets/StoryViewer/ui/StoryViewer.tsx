@@ -100,6 +100,7 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
     const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
     const [progress, setProgress] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
+    const [buttonText, setButtonText] = useState("Next");
     const progressInterval = useRef<NodeJS.Timeout | null>(null);
     const STORY_DURATION = 5000; // 5 секунд на историю
     const PROGRESS_UPDATE_INTERVAL = 10; // Интервал обновления прогресса в мс
@@ -212,17 +213,27 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
 
     const isLastStory = currentStoryIndex === stories.length - 1;
 
+    useEffect(() => {
+        if (isLastStory) {
+          
+            setTimeout(() => {
+                setButtonText("Go to the wallet");
+            }, 100);
+        } else {
+            setButtonText("Next");
+        }
+    }, [isLastStory]);
+
     return (
         <Window
             isOpen={isVisible}
-            btnText={isLastStory ? " Go to the wallet" : "Next"}
+            btnText={buttonText}
             btnOnClick={handleButtonClick}
             isBtnActive={true}
             height="100%"
             borderRadius="0"
             wrapperBorderRadius="0"
             bg="#F4F7FA"
-            key={isLastStory ? "wallet-btn" : "next-btn"}
         >
             <motion.div
                 initial={{ opacity: 0 }}
