@@ -215,7 +215,7 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
     return (
         <Window
             isOpen={isVisible}
-            btnText={isLastStory ? "Go to the wallet" : "Next"}
+            btnText={isLastStory ? " Go to the wallet" : "Next"}
             btnOnClick={handleButtonClick}
             isBtnActive={true}
             height="100%"
