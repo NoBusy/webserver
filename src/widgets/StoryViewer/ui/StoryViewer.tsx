@@ -63,7 +63,7 @@ const HighlightedText: FC<HighlightedTextProps> = ({ text, highlights = [], font
               color={isHighlighted ? '#007AFF' : '#000'}
               fontSize={fontSize}
               align="center"
-              weight={650}
+              weight={700}
               fontFamily='-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;'
             />
           );
