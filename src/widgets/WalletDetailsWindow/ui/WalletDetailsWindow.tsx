@@ -7,6 +7,7 @@ import { networkSymbol } from '@/shared/consts/networkSymbol';
 import { Window } from '@/shared/ui/Window/Window';
 import { Field } from '@/shared/ui/Field/Field';
 import { Flex } from '@/shared/ui/Flex/Flex';
+import { Button } from '@/shared/ui/Button/Button';
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
 
 interface WarningModalProps {
@@ -41,23 +42,23 @@ const WarningModal: React.FC<WarningModalProps> = ({
           />
         </div>
         <Flex direction="column" gap={2}>
-          <div
+          <Button
+            type="primary"
+            text="Скопировать seed-фразу"
             onClick={() => {
               if (seedPhrase) {
                 navigator.clipboard.writeText(seedPhrase);
                 onCopy();
               }
             }}
-            className="w-full p-4 text-center bg-blue-500 text-white rounded cursor-pointer"
-          >
-            Скопировать seed-фразу
-          </div>
-          <div
+            block
+          />
+          <Button
+            type="default"
+            text="Назад"
             onClick={onClose}
-            className="w-full p-4 text-center bg-gray-100 rounded cursor-pointer"
-          >
-            Назад
-          </div>
+            block
+          />
         </Flex>
       </div>
     </div>
@@ -129,20 +130,24 @@ export const WalletDetailsWindow = () => {
             />
           </Field>
 
-          <Field 
-            label="Seed-фраза"
-            onClick={() => setShowWarning(true)}
-            style={{ cursor: 'pointer' }}
-          >
-            <Flex width="100%" justify="space-between" align="center">
-              <Typography.Text 
-                text="Показать seed-фразу"
-                wrap="nowrap"
-                weight={350}
-                fontSize={17}
-              />
-            </Flex>
-          </Field>
+          <Flex direction="column" gap={10}>
+            <Typography.Text text="Seed-фраза" type="secondary" weight={450} />
+            <Button
+              type="text"
+              text="Показать seed-фразу"
+              onClick={() => setShowWarning(true)}
+              style={{
+                width: '100%',
+                height: '60px',
+                justifyContent: 'flex-start',
+                background: 'var(--secondaryBg)',
+                borderRadius: '16px',
+                padding: '10px 16px',
+                fontSize: '17px',
+                fontWeight: 350
+              }}
+            />
+          </Flex>
         </Flex>
       </Window>
 
