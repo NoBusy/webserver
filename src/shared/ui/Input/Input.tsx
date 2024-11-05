@@ -59,12 +59,7 @@ export const Input: React.FC<InputProps> = (props) => {
   const handleScanQr = async () => {
     const result = await scanQr();
     if (result && props.onChange) {
-      props.onChange({ 
-        target: { 
-          value: result,
-          name: props.name 
-        } 
-      } as React.ChangeEvent<HTMLInputElement>);
+      props.onChange({ target: { value: result } } as React.ChangeEvent<HTMLInputElement>);
     }
   };
 
