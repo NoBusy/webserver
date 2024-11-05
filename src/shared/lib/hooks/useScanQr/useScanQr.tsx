@@ -14,17 +14,24 @@ const getWebApp = async () => {
 
 // Hook для сканирования QR
 export const useScanQrCode = () => {
-  const scanQr = useCallback(async () => {
-    try {
-      const webApp = await getWebApp();
-      const result = await webApp?.showScanQrPopup({
-        text: "Scan QR code to get address"
-      });
-      return result;
-    } catch (error) {
-      console.error('QR scan error:', error);
-      return null;
-    }
+  const scanQr = useCallback(() => {
+    return new Promise<string | null>(async (resolve) => {
+      try {
+        const webApp = await getWebApp();
+        
+        webApp?.showScanQrPopup({
+          text: "Scan QR code to get address"
+        }, (result: string) => {
+          console.log('QR scan result:', result);
+          resolve(result);
+          return true; // закрываем попап после успешного сканирования
+        });
+        
+      } catch (error) {
+        console.error('QR scan error:', error);
+        resolve(null);
+      }
+    });
   }, []);
 
   return { scanQr };
