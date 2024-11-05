@@ -5,14 +5,14 @@ const DotSpinner = ({ size = 'lg' }) => {
   
   return (
     <div className="relative" style={{ width: spinnerSize, height: spinnerSize }}>
-      <svg 
-        width={spinnerSize} 
-        height={spinnerSize} 
-        viewBox="-10 -10 72 72" 
-        fill="none" 
+      <svg
+        width={spinnerSize}
+        height={spinnerSize}
+        viewBox="-8 -8 68 68" // Изменили viewBox чтобы добавить отступы, но меньше чем было
+        fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Статичные серые точки */}
+        {/* Статичные серые точки - позиции остаются как в оригинале */}
         <circle cx="25.6232" cy="2.26087" r="2.26087" fill="#A0A0B3"/>
         <circle cx="25.6232" cy="49.7391" r="2.26087" fill="#A0A0B3"/>
         <circle cx="2.26087" cy="25.6232" r="2.26087" fill="#A0A0B3"/>
@@ -21,20 +21,17 @@ const DotSpinner = ({ size = 'lg' }) => {
         <circle cx="42.7984" cy="42.6157" r="2.26087" fill="#A0A0B3"/>
         <circle cx="42.9565" cy="9.22634" r="2.26087" fill="#A0A0B3"/>
         <circle cx="9.3844" cy="42.7985" r="2.26087" fill="#A0A0B3"/>
-        
         {/* Анимированная синяя точка */}
-        <circle 
-          r="6.78261" 
+        <circle
+          r="6.78261"
           fill="#007AFF"
           className="blue-dot"
         />
       </svg>
-
       <style jsx>{`
         .blue-dot {
           animation: moveDot 2s steps(1) infinite;
         }
-
         @keyframes moveDot {
           0% {
             transform: translate(25.6232px, 7.26088px);

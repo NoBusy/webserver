@@ -36,13 +36,11 @@ export const LoadingWindow = () => {
         className={styles.loading_window}
       >
         <Flex direction="column" align="center" gap={16} style={{ transform: 'translateY(-40px)' }}>
-          <div style={{ height: '52px' }}>
-            <DotSpinner size='lg' />
-          </div>
-          <Typography.Text 
-            text='Loading...' 
-            type='secondary'
-          />
+          <DotSpinner size="lg" />
+          {/* <Typography.Text
+            text="Loading..."
+            type="secondary"
+          /> */}
         </Flex>
       </motion.div>
     </AnimatePresence>
