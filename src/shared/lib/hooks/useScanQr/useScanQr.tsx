@@ -1,8 +1,10 @@
 import { useCallback, useEffect } from 'react';
 import { getTgWebAppSdk } from '@/shared/lib/helpers/getTgWebAppSdk';
 
+// Создаем синглтон для WebApp
 let webAppInstance: any = null;
 
+// Функция для получения инстанса WebApp
 const getWebApp = async () => {
   if (!webAppInstance) {
     webAppInstance = await getTgWebAppSdk();
@@ -10,35 +12,22 @@ const getWebApp = async () => {
   return webAppInstance;
 };
 
+// Hook для сканирования QR
 export const useScanQrCode = () => {
   const scanQr = useCallback(() => {
     return new Promise<string | null>(async (resolve) => {
       try {
         const webApp = await getWebApp();
         
-        // Обработчик получения QR кода
+        // Подписываемся на событие получения QR кода
         const handleQrReceived = (event: any) => {
           console.log('QR data received:', event);
-          cleanup();
+          webApp.removeEventListener('qrTextReceived', handleQrReceived);
           resolve(event.data);
         };
 
-        // Обработчик закрытия попапа
-        const handlePopupClosed = () => {
-          console.log('QR popup closed');
-          cleanup();
-          resolve(null);
-        };
-
-        // Функция очистки слушателей
-        const cleanup = () => {
-          webApp.removeEventListener('qrTextReceived', handleQrReceived);
-          webApp.removeEventListener('scanQrPopupClosed', handlePopupClosed);
-        };
-
-        // Добавляем слушатели
+        // Добавляем слушатель события
         webApp.addEventListener('qrTextReceived', handleQrReceived);
-        webApp.addEventListener('scanQrPopupClosed', handlePopupClosed);
         
         // Показываем попап сканера
         webApp.showScanQrPopup({
@@ -52,12 +41,11 @@ export const useScanQrCode = () => {
     });
   }, []);
 
-  // Очищаем слушатели при размонтировании
+  // Очищаем слушатель при размонтировании компонента
   useEffect(() => {
     return () => {
       getWebApp().then(webApp => {
         webApp?.removeEventListener('qrTextReceived', () => {});
-        webApp?.removeEventListener('scanQrPopupClosed', () => {});
       });
     };
   }, []);
