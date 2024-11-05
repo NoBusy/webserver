@@ -132,6 +132,11 @@ export const useWalletPageLogic = () => {
   };
 
   useEffect(() => {
+
+    initStories()
+  }, []);
+
+  useEffect(() => {
     const telegramId: string | undefined = cookies.get(COOKIES_KEY_TELEGRAM_ID);
     setIsInited(!!telegramId);
   }, []);
@@ -145,12 +150,7 @@ export const useWalletPageLogic = () => {
     getProfileRequestParams();
     initStories()
   }, []);
-
-  useEffect(() => {
-
-    initStories()
-  }, []);
-
+  
   useEffect(() => {
     checkBackButtonState(openedWindows);
   }, [openedWindows]);
