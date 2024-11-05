@@ -109,6 +109,8 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
     const isVisible = useSelector(getStoryViewerState);
     const { setItem } = useCloudStorage();
 
+    const isLastStory = currentStoryIndex === stories.length - 1;
+
     const startProgressAnimation = useCallback(() => {
         if (progressInterval.current) {
             clearInterval(progressInterval.current);
@@ -156,6 +158,18 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
             }
         };
     }, []);
+
+    useEffect(() => {
+        if (isLastStory) {
+          
+            setTimeout(() => {
+                setButtonText("Go to the wallet");
+            }, 100);
+        } else {
+            setButtonText("Next");
+        }
+    }, [isLastStory]);
+
 
     const handleClose = async () => {
         if (progressInterval.current) {
@@ -211,18 +225,7 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
         return null;
     }
 
-    const isLastStory = currentStoryIndex === stories.length - 1;
 
-    useEffect(() => {
-        if (isLastStory) {
-          
-            setTimeout(() => {
-                setButtonText("Go to the wallet");
-            }, 100);
-        } else {
-            setButtonText("Next");
-        }
-    }, [isLastStory]);
 
     return (
         <Window
