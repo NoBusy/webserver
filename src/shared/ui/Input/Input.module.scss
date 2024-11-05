@@ -74,4 +74,16 @@
       }
     }
   }
+
+  .qr_icon {
+    cursor: pointer;
+    margin: 0 8px;
+    color: var(--tg-theme-hint-color, #999999);
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: var(--tg-theme-text-color, #000000);
+    }
+  }
+  
 }

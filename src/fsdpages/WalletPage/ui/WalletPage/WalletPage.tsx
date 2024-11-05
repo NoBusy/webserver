@@ -20,6 +20,7 @@ import { DepositWindow } from '@/widgets/DepositWindow';
 import { RefWindow } from '@/widgets/RefWindow';
 import { SwapWindow } from '@/widgets/SwapWindow';
 import { TokenDetailsWindow } from '../WalletPageToken/TokenDetailsWindow';
+import { StoryViewer } from '@/widgets/StoryViewer';
 
 
 
@@ -49,6 +50,7 @@ export const WalletPage = () => {
       <ImportWalletWindow />
       <CreateWalletWindow />
       <TokenDetailsWindow/>
+      <StoryViewer/>
     </Page>
   );
 };

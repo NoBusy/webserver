@@ -11,15 +11,18 @@ import {  useEffect, useState } from 'react';
 import { userApi } from '@/entities/User';
 import cookies from 'js-cookie';
 import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
+import { useCloudStorage } from '@/shared/lib/hooks/useCloudStorage/useCloudStorage';
 
 
 
 export const useWalletPageLogic = () => {
   const dispatch = useDispatch();
+  const { getItem } = useCloudStorage();
 
   const [profileRequestParams, setProfileRequestParams] = useState<GetUserParams | null>();
   const [getWalletRequest] = walletApi.useLazyGetWalletQuery();
   const [isInited, setIsInited] = useState<boolean>(false);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   const isGlobalLoading: boolean = useSelector(getIsGlobalLoading);
   const selectedNetwork: Network | undefined = useSelector(getSelectedNetwork);
@@ -109,6 +112,25 @@ export const useWalletPageLogic = () => {
     }
   };
 
+  const initStories = async () => {
+    if (!isFirstLoad) return;
+    try {
+      // const storiesViewed = await getItem('stories_viewed');
+      
+      // if (!storiesViewed) {
+      //   dispatch(globalActions.addWindow({
+      //     window: GlobalWindow.StoryViewer,
+      //   }));
+      // }
+      dispatch(globalActions.addWindow({
+        window: GlobalWindow.StoryViewer,
+      }))
+      setIsFirstLoad(false);
+    } catch (error) {
+      setIsFirstLoad(false);
+    }
+  };
+
   useEffect(() => {
     const telegramId: string | undefined = cookies.get(COOKIES_KEY_TELEGRAM_ID);
     setIsInited(!!telegramId);
@@ -121,6 +143,12 @@ export const useWalletPageLogic = () => {
   useEffect(() => {
     initTgWebAppSdk();
     getProfileRequestParams();
+    initStories()
+  }, []);
+
+  useEffect(() => {
+
+    initStories()
   }, []);
 
   useEffect(() => {

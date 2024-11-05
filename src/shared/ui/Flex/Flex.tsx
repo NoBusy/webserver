@@ -18,6 +18,7 @@ export interface FlexProps {
   direction?: React.CSSProperties['flexDirection'];
   className?: string;
   onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
+  noFlex? : boolean
 }
 
 export const Flex = React.forwardRef<any, FlexProps>((props, ref) => {
@@ -33,7 +34,7 @@ export const Flex = React.forwardRef<any, FlexProps>((props, ref) => {
     flexDirection: props.direction,
     justifyContent: props.justify,
     ...props.style,
-    display: 'flex',
+    display: props.noFlex ? 'block' : 'flex',
   };
 
   return (

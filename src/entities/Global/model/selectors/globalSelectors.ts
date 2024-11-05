@@ -17,3 +17,6 @@ export const getIsGlobalLoading = (state: StateSchema) => state.global.isLoading
 export const getIsWindowCurrentlyOpen = createSelector(getWindowsOpen, (windowsOpen) => (window: GlobalWindow) => {
   return windowsOpen.some((w) => w.window === window) && windowsOpen[windowsOpen.length - 1].window === window;
 });
+
+export const getStoryViewerState = (state: StateSchema) => 
+  state.global.windowsOpen.some(window => window.window === GlobalWindow.StoryViewer);
