@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, ReactNode, useEffect, useState } from 'react';
+import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSelector, useDispatch } from 'react-redux';
 import { Flex } from '@/shared/ui/Flex/Flex';
@@ -98,69 +98,161 @@ const stories = [
 
 export const StoryViewer: FC<{ children?: ReactNode }> = () => {
     const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
+    const [progress, setProgress] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
+    const progressInterval = useRef<NodeJS.Timeout | null>(null);
+    const STORY_DURATION = 5000; // 5 секунд на историю
+    const PROGRESS_UPDATE_INTERVAL = 10; // Интервал обновления прогресса в мс
+    
     const dispatch = useDispatch();
     const isVisible = useSelector(getStoryViewerState);
     const { setItem } = useCloudStorage();
-  
+
+    const startProgressAnimation = useCallback(() => {
+        if (progressInterval.current) {
+            clearInterval(progressInterval.current);
+        }
+
+        setProgress(0);
+        const startTime = Date.now();
+
+        progressInterval.current = setInterval(() => {
+            const elapsedTime = Date.now() - startTime;
+            const newProgress = (elapsedTime / STORY_DURATION) * 100;
+
+            if (newProgress >= 100) {
+                if (currentStoryIndex < stories.length - 1) {
+                    setCurrentStoryIndex(prev => prev + 1);
+                } else {
+                    handleClose();
+                }
+                if (progressInterval.current) {
+                    clearInterval(progressInterval.current);
+                }
+            } else {
+                setProgress(newProgress);
+            }
+        }, PROGRESS_UPDATE_INTERVAL);
+    }, [currentStoryIndex, stories.length]);
+
+    // Запуск анимации при изменении текущей истории
+    useEffect(() => {
+        if (!isPaused) {
+            startProgressAnimation();
+        }
+        return () => {
+            if (progressInterval.current) {
+                clearInterval(progressInterval.current);
+            }
+        };
+    }, [currentStoryIndex, isPaused, startProgressAnimation]);
+
+    // Очистка при размонтировании
+    useEffect(() => {
+        return () => {
+            if (progressInterval.current) {
+                clearInterval(progressInterval.current);
+            }
+        };
+    }, []);
+
     const handleClose = async () => {
-      dispatch(globalActions.removeWindow(GlobalWindow.StoryViewer));
-      try {
-        await setItem('stories_viewed', 'true');
-      } catch (error) {
-        console.error('Error setting stories viewed:', error);
-      }
-    };
-  
-    const handleStoryClick = (event: React.MouseEvent<HTMLDivElement>) => {
-      const rect = event.currentTarget.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      
-      if (x < rect.width / 2) {
-        if (currentStoryIndex > 0) {
-          setCurrentStoryIndex(currentStoryIndex - 1);
+        if (progressInterval.current) {
+            clearInterval(progressInterval.current);
         }
-      } else {
-        if (currentStoryIndex < stories.length - 1) {
-          setCurrentStoryIndex(currentStoryIndex + 1);
+        dispatch(globalActions.removeWindow(GlobalWindow.StoryViewer));
+        try {
+            await setItem('stories_viewed', 'true');
+        } catch (error) {
+            console.error('Error setting stories viewed:', error);
+        }
+    };
+
+    const handleButtonClick = () => {
+        if (currentStoryIndex === stories.length - 1) {
+            handleClose();
         } else {
-          handleClose();
+            setCurrentStoryIndex(currentStoryIndex + 1);
         }
-      }
     };
-  
+
+    const handleStoryClick = (event: React.MouseEvent<HTMLDivElement>) => {
+        const rect = event.currentTarget.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        
+        if (x < rect.width / 2) {
+            if (currentStoryIndex > 0) {
+                setCurrentStoryIndex(currentStoryIndex - 1);
+            }
+        } else {
+            if (currentStoryIndex < stories.length - 1) {
+                setCurrentStoryIndex(currentStoryIndex + 1);
+            } else {
+                handleClose();
+            }
+        }
+    };
+
+    // Добавляем обработчики для паузы при удержании
+    const handleTouchStart = () => {
+        setIsPaused(true);
+        if (progressInterval.current) {
+            clearInterval(progressInterval.current);
+        }
+    };
+
+    const handleTouchEnd = () => {
+        setIsPaused(false);
+        startProgressAnimation();
+    };
+
     if (!isVisible) {
-      return null;
+        return null;
     }
-  
+
+    const isLastStory = currentStoryIndex === stories.length - 1;
+
     return (
-      <Window
-        isOpen={isVisible}
-        btnText="Go to the wallet"
-        btnOnClick={handleClose}
-        isBtnActive={true}
-        height="100%"
-        borderRadius="0"
-        wrapperBorderRadius="0"
-        bg="#F4F7FA"
-      >
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className={styles.story_viewer}
+        <Window
+            isOpen={isVisible}
+            btnText={isLastStory ? "Go to the wallet" : "Next"}
+            btnOnClick={handleButtonClick}
+            isBtnActive={true}
+            height="100%"
+            borderRadius="0"
+            wrapperBorderRadius="0"
+            bg="#F4F7FA"
         >
-          <div className={styles.progress_container}>
-            {stories.map((_, index) => (
-              <div key={index} className={styles.progress_bar}>
-                <div
-                  className={styles.progress_fill}
-                  style={{
-                    width: index <= currentStoryIndex ? '100%' : '0%'
-                  }}
-                />
-              </div>
-            ))}
-          </div>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className={styles.story_viewer}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+                onMouseDown={handleTouchStart}
+                onMouseUp={handleTouchEnd}
+                onMouseLeave={handleTouchEnd}
+            >
+                <div className={styles.progress_container}>
+                    {stories.map((_, index) => (
+                        <div key={index} className={styles.progress_bar}>
+                            <div
+                                className={styles.progress_fill}
+                                style={{
+                                    width: index < currentStoryIndex 
+                                        ? '100%' 
+                                        : index === currentStoryIndex 
+                                            ? `${progress}%` 
+                                            : '0%',
+                                    transition: index === currentStoryIndex && !isPaused 
+                                        ? 'none' 
+                                        : 'width 0.3s ease'
+                                }}
+                            />
+                        </div>
+                    ))}
+                </div>
   
           <div className={styles.content} onClick={handleStoryClick}>
             <div className={styles.image_container}>
