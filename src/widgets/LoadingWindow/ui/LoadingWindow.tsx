@@ -10,7 +10,7 @@ import Image from 'next/image';
 import Yo from '@/shared/assets/icons/Yo.svg'
 import Oy from '@/shared/assets/icons/Oy.svg'
 import GradientSpinner from '@/shared/ui/GradientSpinner/GradientSpinner';
-import DotSpinner from '@/shared/ui/DotSpinner/DotSpinnet';
+import DotSpinner from '@/shared/ui/DotSpinner/DotSpinner';
 import { Typography } from '@/shared/ui/Typography/Typography';
 
 export const LoadingWindow = () => {
@@ -45,9 +45,8 @@ export const LoadingWindow = () => {
         <Flex direction="column" align="center" gap={12}>
           {/* <Image src={Yo} alt='' width={125} height={88}/>
           <Image src={Oy} alt='' width={125} height={88}/> */}
-          <DotSpinner size="lg" />
-          <Typography.Text text = 'Loading' type = 'secondary'/>
-          <DotSpinner size="lg" />
+          <DotSpinner />
+          <Typography.Text text = 'Loading...' type = 'secondary'/>
         </Flex>
       </motion.div>
     </AnimatePresence>

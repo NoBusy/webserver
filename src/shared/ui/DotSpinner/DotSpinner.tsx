@@ -8,7 +8,7 @@ const DotSpinner = ({ size = 'lg' }) => {
       <svg 
         width={spinnerSize} 
         height={spinnerSize} 
-        viewBox="0 0 52 52" 
+        viewBox="-10 -10 72 72" 
         fill="none" 
         xmlns="http://www.w3.org/2000/svg"
       >
