@@ -34,7 +34,7 @@ const HighlightedText: FC<HighlightedTextProps> = ({ text, highlights = [], font
           fontSize={fontSize}
           align="center"
           letterSpacing="-0.5px"
-          weight={500}
+          weight={600}
           fontFamily='"SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
         />
       );
@@ -47,7 +47,7 @@ const HighlightedText: FC<HighlightedTextProps> = ({ text, highlights = [], font
       <div style={{ 
         fontSize: `${fontSize}px`,
         fontFamily: '"SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-        fontWeight: 700,
+        fontWeight: 600,
         lineHeight: '24px',
         letterSpacing: '-0.5px'
       }}>
@@ -63,9 +63,8 @@ const HighlightedText: FC<HighlightedTextProps> = ({ text, highlights = [], font
               color={isHighlighted ? '#007AFF' : '#000'}
               fontSize={fontSize}
               align="center"
-              letterSpacing="-0.5px"
-              weight={600}
-              fontFamily='"SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+              weight={650}
+              fontFamily='-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;'
             />
           );
         })}
@@ -87,7 +86,7 @@ const stories = [
   {
     description: "Earn up to 30% referral commission. Develop income in YoYo Swap!",
     image: Story3,
-    highlights: ['up to 30 %', 'referral commission']
+    highlights: ['up to 30%', 'referral commission']
   },
   {
     description: "Welcome to YoYo Swap!",
@@ -292,7 +291,7 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
                   <HighlightedText 
                     text={stories[currentStoryIndex].description}
                     highlights={stories[currentStoryIndex].highlights}
-                    fontSize={24}
+                    fontSize={20}
                   />
                 )}
               </Flex>
