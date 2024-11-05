@@ -222,6 +222,7 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
             borderRadius="0"
             wrapperBorderRadius="0"
             bg="#F4F7FA"
+            key={isLastStory ? "wallet-btn" : "next-btn"}
         >
             <motion.div
                 initial={{ opacity: 0 }}
