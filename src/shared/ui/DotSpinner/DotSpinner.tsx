@@ -1,29 +1,30 @@
 import React from 'react';
 
 const DotSpinner = ({ size = 'lg' }) => {
-  const spinnerSize = size === 'lg' ? 52 : 24;
+  // Увеличим размер спиннера
+  const spinnerSize = size === 'lg' ? 80 : 24;
   
   return (
-    <div className="relative" style={{ width: spinnerSize, height: spinnerSize }}>
+    <div className="relative flex items-center justify-center" style={{ width: spinnerSize, height: spinnerSize }}>
       <svg
         width={spinnerSize}
         height={spinnerSize}
-        viewBox="-8 -8 68 68" // Изменили viewBox чтобы добавить отступы, но меньше чем было
+        viewBox="0 0 80 80"  // Новый viewBox с равномерными отступами
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Статичные серые точки - позиции остаются как в оригинале */}
-        <circle cx="25.6232" cy="2.26087" r="2.26087" fill="#A0A0B3"/>
-        <circle cx="25.6232" cy="49.7391" r="2.26087" fill="#A0A0B3"/>
-        <circle cx="2.26087" cy="25.6232" r="2.26087" fill="#A0A0B3"/>
-        <circle cx="49.7391" cy="25.6232" r="2.26087" fill="#A0A0B3"/>
-        <circle cx="9.22628" cy="9.04346" r="2.26087" fill="#A0A0B3"/>
-        <circle cx="42.7984" cy="42.6157" r="2.26087" fill="#A0A0B3"/>
-        <circle cx="42.9565" cy="9.22634" r="2.26087" fill="#A0A0B3"/>
-        <circle cx="9.3844" cy="42.7985" r="2.26087" fill="#A0A0B3"/>
+        {/* Статичные серые точки - пересчитанные позиции для центра */}
+        <circle cx="40" cy="8" r="3" fill="#A0A0B3"/>
+        <circle cx="40" cy="72" r="3" fill="#A0A0B3"/>
+        <circle cx="8" cy="40" r="3" fill="#A0A0B3"/>
+        <circle cx="72" cy="40" r="3" fill="#A0A0B3"/>
+        <circle cx="17" cy="17" r="3" fill="#A0A0B3"/>
+        <circle cx="63" cy="63" r="3" fill="#A0A0B3"/>
+        <circle cx="63" cy="17" r="3" fill="#A0A0B3"/>
+        <circle cx="17" cy="63" r="3" fill="#A0A0B3"/>
         {/* Анимированная синяя точка */}
         <circle
-          r="6.78261"
+          r="8"
           fill="#007AFF"
           className="blue-dot"
         />
@@ -34,31 +35,31 @@ const DotSpinner = ({ size = 'lg' }) => {
         }
         @keyframes moveDot {
           0% {
-            transform: translate(25.6232px, 7.26088px);
+            transform: translate(40px, 8px);
           }
           12.5% {
-            transform: translate(42.7515px, 9.59206px);
+            transform: translate(63px, 17px);
           }
           25% {
-            transform: translate(49.7392px, 26.3768px);
+            transform: translate(72px, 40px);
           }
           37.5% {
-            transform: translate(42.7515px, 41.2443px);
+            transform: translate(63px, 63px);
           }
           50% {
-            transform: translate(25.6232px, 51.2464px);
+            transform: translate(40px, 72px);
           }
           62.5% {
-            transform: translate(9.59204px, 42.7514px);
+            transform: translate(17px, 63px);
           }
           75% {
-            transform: translate(7.26088px, 27.1304px);
+            transform: translate(8px, 40px);
           }
           87.5% {
-            transform: translate(7.33119px, 8.83842px);
+            transform: translate(17px, 17px);
           }
           100% {
-            transform: translate(25.6232px, 7.26088px);
+            transform: translate(40px, 8px);
           }
         }
       `}</style>
