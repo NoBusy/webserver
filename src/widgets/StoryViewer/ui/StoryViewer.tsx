@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Flex } from '@/shared/ui/Flex/Flex';
 import { Typography } from '@/shared/ui/Typography/Typography';
 import Image from 'next/image';
-import { getIsGlobalLoading, getStoryViewerState } from '@/entities/Global';
+import { getStoryViewerState } from '@/entities/Global';
 import { GlobalWindow } from '@/entities/Global';
 import { globalActions } from '@/entities/Global'; 
 import styles from './StoryViewer.module.scss';
@@ -100,9 +100,8 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
     const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
     const dispatch = useDispatch();
     const isVisible = useSelector(getStoryViewerState);
-    const isLoading = useSelector(getIsGlobalLoading);
     const { setItem } = useCloudStorage();
-
+  
     const handleClose = async () => {
       dispatch(globalActions.removeWindow(GlobalWindow.StoryViewer));
       try {
@@ -111,10 +110,8 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
         console.error('Error setting stories viewed:', error);
       }
     };
-
+  
     const handleStoryClick = (event: React.MouseEvent<HTMLDivElement>) => {
-      if (isLoading) return;
-      
       const rect = event.currentTarget.getBoundingClientRect();
       const x = event.clientX - rect.left;
       
@@ -130,16 +127,11 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
         }
       }
     };
-
+  
     if (!isVisible) {
       return null;
     }
-
-    // Не показываем контент, пока идет глобальная загрузка
-    if (isLoading) {
-      return null;
-    }
-
+  
     return (
       <Window
         isOpen={isVisible}
@@ -169,7 +161,7 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
               </div>
             ))}
           </div>
-
+  
           <div className={styles.content} onClick={handleStoryClick}>
             <div className={styles.image_container}>
               <Image
@@ -186,7 +178,7 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
                 className={styles.story_image}
               />
             </div>
-
+  
             <div className={styles.text_container}>
               <Flex direction="column" gap={8}>
                 {stories[currentStoryIndex].description && (
@@ -202,4 +194,4 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
         </motion.div>
       </Window>
     );
-};
+  };
