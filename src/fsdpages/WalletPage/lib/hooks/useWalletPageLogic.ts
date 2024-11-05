@@ -29,6 +29,7 @@ export const useWalletPageLogic = () => {
   const selectedWallet: Wallet | undefined = useSelector(getSelectedWallet);
   const openedWindows: GlobalWindowType<GlobalWindow>[] = useSelector(getWindowsOpen);
   const isLoading: boolean = useSelector(getIsLoading);
+  const [isStoriesLoaded, setIsStoriesLoaded] = useState(false);
  
 
 
@@ -113,7 +114,7 @@ export const useWalletPageLogic = () => {
   };
 
   const initStories = async () => {
-    if (!isFirstLoad) return;
+    if (!isFirstLoad || isStoriesLoaded) return;
     try {
       // const storiesViewed = await getItem('stories_viewed');
       
@@ -124,10 +125,13 @@ export const useWalletPageLogic = () => {
       // }
       dispatch(globalActions.addWindow({
         window: GlobalWindow.StoryViewer,
+        options: { ignoreGlobalLoading: true } 
       }))
+      setIsStoriesLoaded(true);
       setIsFirstLoad(false);
     } catch (error) {
       setIsFirstLoad(false);
+      setIsStoriesLoaded(true);
     }
   };
 
@@ -150,7 +154,7 @@ export const useWalletPageLogic = () => {
     getProfileRequestParams();
     initStories()
   }, []);
-  
+
   useEffect(() => {
     checkBackButtonState(openedWindows);
   }, [openedWindows]);
