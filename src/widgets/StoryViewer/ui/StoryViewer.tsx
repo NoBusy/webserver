@@ -80,6 +80,14 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
         }
     }, [isLastStory]);
 
+    useEffect(() => {
+        // Устанавливаем z-index выше, чем у лоадера
+        const storyElement = document.querySelector(`.${styles.story_viewer}`);
+        if (storyElement) {
+            (storyElement as HTMLElement).style.zIndex = '100001'; // Выше, чем у лоадера
+        }
+    }, []);
+
     const handleClose = async () => {
         if (progressInterval.current) {
             clearInterval(progressInterval.current);
