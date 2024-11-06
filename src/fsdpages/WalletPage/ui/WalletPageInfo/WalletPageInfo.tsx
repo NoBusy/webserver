@@ -17,6 +17,7 @@ import { Flex } from '@/shared/ui/Flex/Flex';
 import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 import { useWalletUpdater } from '@/shared/lib/hooks/useWalletUpdate/useWalletUpdate';
 import { RefreshIcon } from '@/shared/assets/icons/RefreshIcon';
+import { useState } from 'react';
 
 
 export const WalletPageInfo = () => {
@@ -28,9 +29,15 @@ export const WalletPageInfo = () => {
   const selectedWallet: Wallet | undefined = useSelector(getSelectedWallet);
   const isLoading: boolean = walletApi.endpoints.getWallets.useQueryState().isLoading;
 
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   const handleRefreshClick = async () => {
     await impact('light');
+    setIsRefreshing(true);
     updateWalletData();
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 1000);
   };
 
   const handleOnCopy = async () => {
@@ -70,6 +77,18 @@ export const WalletPageInfo = () => {
           >
             <RefreshIcon />
           </Button>
+          <AnimatePresence>
+              {isRefreshing && (
+                <motion.div
+                  exit={{ width: 0, opacity: 0, marginLeft: 0 }}
+                  animate={{ width: 16, opacity: 1, marginLeft: '8px' }}
+                  initial={{ width: 0, opacity: 0, marginLeft: 0 }}
+                  transition={{ ease: [0.32, 0.72, 0, 1], duration: 0.3 }}
+                >
+                  <Spinner size="md" />
+                </motion.div>
+              )}
+            </AnimatePresence>
           <AnimatePresence>
             {isLoading && (
               <motion.div
