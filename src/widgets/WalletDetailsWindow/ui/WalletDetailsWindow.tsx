@@ -15,18 +15,21 @@ interface PrivateKeyPopoverProps {
 }
 
 const PrivateKeyPopover: React.FC<PrivateKeyPopoverProps> = ({ onShowKey, onBack }) => (
-  <Flex direction="column" gap={16}>
+  <Flex direction="column" gap={24}>
     <Flex justify="space-between" align="center" width="100%">
       <Typography.Text 
         text="Important information!" 
-        weight={600} 
+        weight={500} 
         fontSize={20}
+        color="#000000"
       />
       <button 
         onClick={onBack}
-        className="p-1 hover:opacity-70"
+        className="p-1"
       >
-        ✕
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M18 6L6 18M6 6L18 18" stroke="#000000" strokeWidth="2" strokeLinecap="round"/>
+        </svg>
       </button>
     </Flex>
     
@@ -34,30 +37,38 @@ const PrivateKeyPopover: React.FC<PrivateKeyPopoverProps> = ({ onShowKey, onBack
       text="Your private key provides access to all your funds. Never share it with anyone."
       fontSize={16}
       weight={400}
-      color="var(--text)"
+      color="#000000"
     />
     
-    <button
-      onClick={onShowKey}
-      className="w-full bg-blue-500 text-white rounded-xl py-3 px-4 hover:bg-blue-600 font-medium"
-      style={{ marginTop: '8px' }}
-    >
-      Show private key
-    </button>
-    
-    <button
-      onClick={onBack}
-      className="w-full bg-gray-100 rounded-xl py-3 px-4 hover:bg-gray-200 font-medium text-gray-900"
-    >
-      Back
-    </button>
+    <Flex direction="column" gap={8}>
+      <button
+        onClick={onShowKey}
+        className="w-full h-12 bg-[#F7F7F7] rounded-xl hover:bg-[#EFEFEF] font-medium text-black"
+      >
+        Show private key
+      </button>
+      
+      <button
+        onClick={onBack}
+        className="w-full h-12 bg-[#F7F7F7] rounded-xl hover:bg-[#EFEFEF] font-medium text-black"
+      >
+        Back
+      </button>
+    </Flex>
   </Flex>
 );
 
+// В основном компоненте WalletDetailsWindow добавим обработку закрытия:
 export const WalletDetailsWindow = () => {
   const { flow, state } = useWalletDetailsWindowLogic();
-  const [showPrivateKey, setShowPrivateKey] = useState(false);
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [showPrivateKey, setShowPrivateKey] = useState<boolean>(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
+
+  // Обработчик закрытия попапа
+  const handleClose = () => {
+    setIsPopoverOpen(false);
+    setShowPrivateKey(false); // Сбрасываем состояние приватного ключа при закрытии
+  };
 
   return (
     <Window
@@ -124,38 +135,36 @@ export const WalletDetailsWindow = () => {
   justify="space-between"
   gap={15}
 >
-  <Popover
-    isOpen={isPopoverOpen}
-    setIsOpen={setIsPopoverOpen}
-    direction="bottom"
-    popoverWidth="100%"
-    wrapperWidth="100%"
-    trigger={
-      <Flex justify="space-between" width="100%" align="center">
-        <Typography.Text 
-          text={showPrivateKey ? state.openedWallet?.private_key : '••••••••••••'} 
-          wrap="nowrap" 
-          width="85%" 
-          weight={350} 
-          fontSize={17} 
-        />
-        <CopyFillIcon 
-          width={18} 
-          height={18} 
-          fill="var(--secondaryText)" 
-          style={{ minWidth: '18px' }} 
-        />
-      </Flex>
-    }
-  >
-    <PrivateKeyPopover
-      onShowKey={() => {
-        setShowPrivateKey(true);
-        setIsPopoverOpen(false);
-      }}
-      onBack={() => setIsPopoverOpen(false)}
-    />
-  </Popover>
+<Popover
+          isOpen={isPopoverOpen}
+          setIsOpen={setIsPopoverOpen}
+          direction="bottom"
+          popoverWidth="100%"
+          wrapperWidth="100%"
+          onClose={handleClose} // Добавляем обработчик закрытия
+          trigger={
+            <Flex justify="space-between" width="100%" align="center">
+              <Typography.Text 
+                text={showPrivateKey ? state.openedWallet?.private_key : '•••••••••••••'} 
+                wrap="nowrap" 
+                width="85%" 
+                weight={350} 
+                fontSize={17} 
+              />
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M15 7.5L10 12.5L5 7.5" stroke="#999999" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </Flex>
+          }
+        >
+          <PrivateKeyPopover
+            onShowKey={() => {
+              setShowPrivateKey(true);
+              setIsPopoverOpen(false);
+            }}
+            onBack={handleClose}
+          />
+        </Popover>
 </Field>
       </Flex>
     </Window>
