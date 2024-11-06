@@ -1,4 +1,4 @@
-import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { FC, ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getStoryViewerState } from '@/entities/Global';
 import { GlobalWindow } from '@/entities/Global';
@@ -12,7 +12,6 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
     const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
     const [progress, setProgress] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
-    const [buttonText, setButtonText] = useState("Next");
     const progressInterval = useRef<NodeJS.Timeout | null>(null);
     const STORY_DURATION = 5000;
     const PROGRESS_UPDATE_INTERVAL = 10;
@@ -68,16 +67,6 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
             }
         };
     }, []);
-
-    useEffect(() => {
-        if (isLastStory) {
-            setTimeout(() => {
-                setButtonText("Go to the wallet");
-            }, 100);
-        } else {
-            setButtonText("Next");
-        }
-    }, [isLastStory]);
 
     const handleClose = async () => {
         if (progressInterval.current) {
@@ -135,7 +124,7 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
     return (
         <StoryContent
             currentStoryIndex={currentStoryIndex}
-            buttonText={buttonText}
+            buttonText={"Next"}
             progress={progress}
             isPaused={isPaused}
             handleStoryClick={handleStoryClick}
