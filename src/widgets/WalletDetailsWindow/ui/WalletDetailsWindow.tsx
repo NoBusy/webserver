@@ -122,7 +122,7 @@ export const WalletDetailsWindow = () => {
   <Popover
     isOpen={isPopoverOpen}
     setIsOpen={setIsPopoverOpen}
-    direction="center"
+    direction="bottom"
     popoverWidth="100%"
     wrapperWidth="100%"
     trigger={

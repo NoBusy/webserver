@@ -1,3 +1,5 @@
+@import '@/shared/styles/variables';
+
 .popover_wrapper {
   position: relative;
   
@@ -6,23 +8,29 @@
   }
   
   .popover {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    min-width: 375px;
-    height: auto;
-    max-height: 338px;
+    position: absolute;
+    overflow: hidden;
+    min-width: 235px;
+    height: fit-content;
     background: rgba(#EDEDED, 0.8);
-    border-radius: 14px 14px 0 0;
+    border-radius: 12px;
     box-shadow: 0 0 64px 0 rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(40px);
     -webkit-backdrop-filter: blur(40px);
     z-index: 10000;
-    padding: 16px 0 0 0;
     
-    @media (max-width: 375px) {
-      min-width: 100%;
+    &.bottom {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      min-width: 375px;
+      border-radius: 14px 14px 0 0;
+      padding: 16px 0 0 0;
+      
+      @media (max-width: 375px) {
+        min-width: 100%;
+      }
     }
   }
 }
