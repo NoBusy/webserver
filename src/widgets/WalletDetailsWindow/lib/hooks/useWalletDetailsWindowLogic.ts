@@ -35,6 +35,10 @@ export const useWalletDetailsWindowLogic = () => {
     setShowPrivateKeyWarning(false);
   }
 
+  const handleCloseWarning = () => {
+    setShowPrivateKeyWarning(false);
+  };
+
   const handleDeleteWallet = async (): Promise<void> => {
     try {
       if (!openedWallet || !wallets.length) return;
@@ -60,13 +64,13 @@ export const useWalletDetailsWindowLogic = () => {
     }
   };
 
-  console.log('Warning modal state:', showPrivateKeyWarning);
 
   return {
     flow: {
       handleDeleteWallet,
       handlePrivateKeyClick,
-      handleShowPrivateKey
+      handleShowPrivateKey,
+      handleCloseWarning
     },
     state: {
       wallets,

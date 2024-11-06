@@ -11,6 +11,25 @@ import PrivateKeyWarning from './PrivateKeyWarning';
 export const WalletDetailsWindow = () => {
   const { flow, state } = useWalletDetailsWindowLogic();
 
+  const PrivateKeyField = (
+    <Field 
+      label="Private key" 
+      justify="space-between" 
+      copyValue={state.showPrivateKey ? state.openedWallet?.private_key : '********'} 
+      onCopyLabel="Private key copied" 
+      gap={15}
+    >
+      <Typography.Text 
+        text={state.showPrivateKey ? state.openedWallet?.private_key : '********'} 
+        wrap="nowrap" 
+        width="85%" 
+        weight={350} 
+        fontSize={17} 
+      />
+      <CopyFillIcon width={18} height={18} fill="var(--secondaryText)" style={{ minWidth: '18px' }} />
+    </Field>
+  );
+
   return (
     <>
       <Window
@@ -67,10 +86,12 @@ export const WalletDetailsWindow = () => {
       </Window>
 
       <PrivateKeyWarning
-        isOpen={state.showPrivateKeyWarning}
-        onClose={() => state.setShowPrivateKeyWarning(false)}
-        onShowKey={flow.handleShowPrivateKey}
-      />
+          isOpen={state.showPrivateKeyWarning}
+          setIsOpen={state.setShowPrivateKeyWarning}
+          onClose={flow.handleCloseWarning}
+          onShowKey={flow.handleShowPrivateKey}
+          trigger={PrivateKeyField}
+        />
     </>
   );
 };
