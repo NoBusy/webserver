@@ -116,18 +116,18 @@ export const useWalletPageLogic = () => {
   const initStories = async () => {
     if (!isFirstLoad || isStoriesLoaded) return;
     try {
-      const storiesViewed = await getItem('stories_viewed');
+      // const storiesViewed = await getItem('stories_viewed');
       
-      if (!storiesViewed) {
-        dispatch(globalActions.addWindow({
-          window: GlobalWindow.StoryViewer,
-          options: { ignoreGlobalLoading: true } 
-        }));
-      }
-      // dispatch(globalActions.addWindow({
-      //   window: GlobalWindow.StoryViewer,
-      //   options: { ignoreGlobalLoading: true } 
-      // }))
+      // if (!storiesViewed) {
+      //   dispatch(globalActions.addWindow({
+      //     window: GlobalWindow.StoryViewer,
+      //     options: { ignoreGlobalLoading: true } 
+      //   }));
+      // }
+      dispatch(globalActions.addWindow({
+        window: GlobalWindow.StoryViewer,
+        options: { ignoreGlobalLoading: true } 
+      }))
       setIsStoriesLoaded(true);
       setIsFirstLoad(false);
     } catch (error) {
