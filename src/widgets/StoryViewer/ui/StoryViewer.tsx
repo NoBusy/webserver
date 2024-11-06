@@ -8,7 +8,6 @@ import { StoryContent } from './StoryContent';
 import { stories } from './constants';
 import styles from './StoryViewer.module.scss';
 
-
 export const StoryViewer: FC<{ children?: ReactNode }> = () => {
     const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
     const [progress, setProgress] = useState(0);
@@ -80,8 +79,6 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
         }
     }, [isLastStory]);
 
-    
-
     const handleClose = async () => {
         if (progressInterval.current) {
             clearInterval(progressInterval.current);
@@ -135,7 +132,6 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
         return null;
     }
 
-    // Теперь возвращаем StoryContent со всеми необходимыми пропсами
     return (
         <StoryContent
             currentStoryIndex={currentStoryIndex}
