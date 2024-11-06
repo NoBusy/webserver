@@ -70,14 +70,8 @@ export const StoryViewer: FC<{ children?: ReactNode }> = () => {
     }, []);
 
     useEffect(() => {
-        if (isLastStory) {
-            setTimeout(() => {
-                setButtonText("Go to the wallet");
-            }, 100);
-        } else {
-            setButtonText("Next");
-        }
-    }, [isLastStory]);
+        setButtonText(isLastStory ? "Go to the wallet" : "Next");
+      }, [isLastStory]);
 
     const handleClose = async () => {
         if (progressInterval.current) {
