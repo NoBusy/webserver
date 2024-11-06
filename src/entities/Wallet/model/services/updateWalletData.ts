@@ -21,7 +21,7 @@ export const updateWalletData = createAsyncThunk<void, void, { state: StateSchem
           dispatch(walletActions.setSelectedWallet(result.data));
         }
       } catch (error) {
-        console.error('Failed to update wallet data:', error);
+    
       }
     }
   }

@@ -98,7 +98,7 @@ export const walletApi = api.injectEndpoints({
             await dispatch(updateWalletsList());
           }
         } catch (error) {
-          console.error('Failed to import wallet:', error);
+        
         } finally {
           dispatch(walletActions.setIsLoading(false));
         }
@@ -118,7 +118,7 @@ export const walletApi = api.injectEndpoints({
             await dispatch(updateWalletsList());
           }
         } catch (error) {
-          console.error('Failed to delete wallet:', error);
+       
         } finally {
           dispatch(walletActions.setIsLoading(false));
         }

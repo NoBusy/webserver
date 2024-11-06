@@ -18,7 +18,7 @@ export const updateWalletsList = createAsyncThunk<void, void, { state: StateSche
         dispatch(walletActions.setWallets(result.data));
       }
     } catch (error) {
-      console.error('Failed to update wallets list:', error);
+   
     }
   }
 );
