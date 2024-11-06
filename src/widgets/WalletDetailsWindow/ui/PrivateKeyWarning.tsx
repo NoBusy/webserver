@@ -8,13 +8,22 @@ import styles from './PrivateKeyWarning.module.scss';
 
 interface PrivateKeyWarningProps {
   isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
   onClose?: () => void;
   onShowKey?: () => void;
   trigger: React.ReactNode;
-  setIsOpen: (isOpen: boolean) => void;
 }
 
-const PrivateKeyWarning: FC<PrivateKeyWarningProps> = ({ isOpen, onClose, onShowKey, trigger, setIsOpen }) => {
+const PrivateKeyWarning: FC<PrivateKeyWarningProps> = ({ 
+  isOpen, 
+  setIsOpen, 
+  onClose, 
+  onShowKey, 
+  trigger 
+}) => {
+  // Добавим логи для отладки
+  console.log('PrivateKeyWarning render, isOpen:', isOpen);
+
   return (
     <Popover
       isOpen={isOpen}
@@ -22,42 +31,19 @@ const PrivateKeyWarning: FC<PrivateKeyWarningProps> = ({ isOpen, onClose, onShow
       trigger={trigger}
       onClose={onClose}
       direction="center"
-      wrapperWidth="100%"
-      popoverWidth="100%"
-      top="50%"
     >
-      <div className={styles.warningContent}>
-        <Flex 
-          direction="column" 
-          gap={20} 
-          align="center" 
-          justify="center"
-          className="p-4"
+      <div className="bg-white p-4 rounded-xl">
+        <Typography.Text
+          text="Важная информация!"
+          fontSize={20}
+          weight={600}
+        />
+        <button 
+          className="mt-4 w-full py-3 px-4 bg-blue-500 text-white rounded-xl"
+          onClick={onShowKey}
         >
-          <Typography.Text
-            text="Важная информация!"
-            fontSize={20}
-            weight={600}
-            className="mb-2"
-          />
-          
-          <Typography.Text
-            text="Ваш приватный ключ может быть использован для доступа ко всем вашим средствам, поэтому не передавайте его никому."
-            fontSize={16}
-            weight={400}
-            align="center"
-          />
-
-          <Flex direction="column" width="100%" gap={12}>
-            <button className={styles.primaryButton} onClick={onShowKey}>
-              Показать приватный ключ
-            </button>
-            
-            <button className={styles.secondaryButton} onClick={onClose}>
-              Назад
-            </button>
-          </Flex>
-        </Flex>
+          Показать
+        </button>
       </div>
     </Popover>
   );
