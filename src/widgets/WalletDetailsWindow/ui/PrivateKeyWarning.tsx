@@ -1,8 +1,9 @@
-// PrivateKeyWarning.module.css
+'use client';
+
 import React, { FC } from 'react';
 import { Typography } from '@/shared/ui/Typography/Typography';
 import { Flex } from '@/shared/ui/Flex/Flex';
-import styles from './PrivateKeyWarning.module.scss';
+import styles from './PrivateKeyWarning.module.css';
 
 interface PrivateKeyWarningProps {
   isOpen: boolean;
@@ -11,15 +12,21 @@ interface PrivateKeyWarningProps {
 }
 
 const PrivateKeyWarning: FC<PrivateKeyWarningProps> = ({ isOpen, onClose, onShowKey }) => {
+  console.log('PrivateKeyWarning rendered, isOpen:', isOpen); // Отладочный лог
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-center z-[5003]">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-center z-[5003]"
+      onClick={onClose} // Добавляем закрытие по клику на фон
+    >
       <div 
         className={`bg-white rounded-t-[12px] w-full max-h-[50vh] ${styles.slideUp}`}
         style={{
           boxShadow: '0px -4px 10px rgba(0, 0, 0, 0.1)'
         }}
+        onClick={e => e.stopPropagation()} // Предотвращаем закрытие при клике на контент
       >
         <Flex 
           direction="column" 

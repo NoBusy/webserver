@@ -24,6 +24,7 @@ export const useWalletDetailsWindowLogic = () => {
   const [showPrivateKey, setShowPrivateKey] = useState(false);
 
   const handlePrivateKeyClick = () => {
+    console.log('Private key field clicked');
     if (!showPrivateKey) {
       setShowPrivateKey(true);
     }
@@ -58,6 +59,8 @@ export const useWalletDetailsWindowLogic = () => {
       setIsLoading(false);
     }
   };
+
+  console.log('Warning modal state:', showPrivateKeyWarning);
 
   return {
     flow: {
