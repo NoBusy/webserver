@@ -15,15 +15,23 @@ import { Button } from '@/shared/ui/Button/Button';
 import Spinner from '@/shared/ui/Spinner/Spinner';
 import { Flex } from '@/shared/ui/Flex/Flex';
 import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
+import { useWalletUpdater } from '@/shared/lib/hooks/useWalletUpdate/useWalletUpdate';
+import { RefreshIcon } from '@/shared/assets/icons/RefreshIcon';
 
 
 export const WalletPageInfo = () => {
   const dispatch = useDispatch();
   const { successToast } = useToasts();
   const { impact } = useHapticFeedback();
+  const { updateWalletData } = useWalletUpdater();
 
   const selectedWallet: Wallet | undefined = useSelector(getSelectedWallet);
   const isLoading: boolean = walletApi.endpoints.getWallets.useQueryState().isLoading;
+
+  const handleRefreshClick = async () => {
+    await impact('light');
+    updateWalletData();
+  };
 
   const handleOnCopy = async () => {
     await impact('light');
@@ -48,6 +56,20 @@ export const WalletPageInfo = () => {
       <Flex direction="column" align="center" justify="center" gap={8}>
         <Flex align="center" height="25px">
           <Typography.Text text="Total Balance" fontSize={16} />
+          <Button
+            onClick={handleRefreshClick}
+            style={{
+              padding: '0 0 0 8px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              height: '16px'
+            }}
+          >
+            <RefreshIcon />
+          </Button>
           <AnimatePresence>
             {isLoading && (
               <motion.div
