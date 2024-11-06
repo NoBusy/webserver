@@ -122,9 +122,8 @@ export const WalletDetailsWindow = () => {
   <Popover
     isOpen={isPopoverOpen}
     setIsOpen={setIsPopoverOpen}
-    direction="center"
-    top="125%"  // Устанавливаем позицию ниже элемента
-    popoverWidth={280} // Добавляем фиксированную ширину для popover
+    direction="left" // Меняем на left, так как в исходном компоненте это работает с позиционированием
+    popoverWidth="280px"
     trigger={
       <Flex justify="space-between" width="100%" align="center">
         <Typography.Text 
@@ -143,13 +142,40 @@ export const WalletDetailsWindow = () => {
       </Flex>
     }
   >
-    <PrivateKeyPopover
-      onShowKey={() => {
-        setShowPrivateKey(true);
-        setIsPopoverOpen(false);
-      }}
-      onBack={() => setIsPopoverOpen(false)}
-    />
+    <Flex direction="column" gap={4} className="p-4 bg-white rounded-lg shadow-lg">
+      <Flex justify="space-between" align="center" className="mb-2">
+        <Typography.Text text="Important information!" weight={500} fontSize={16} />
+        <button 
+          onClick={() => setIsPopoverOpen(false)}
+          className="p-1 text-gray-500 hover:text-gray-700"
+        >
+          ✕
+        </button>
+      </Flex>
+      
+      <Typography.Text 
+        text="Your private key provides access to all your funds. Never share it with anyone."
+        fontSize={14}
+        className="mb-4"
+      />
+      
+      <button
+        onClick={() => {
+          setShowPrivateKey(true);
+          setIsPopoverOpen(false);
+        }}
+        className="w-full bg-blue-500 text-white rounded-lg py-2 px-4 hover:bg-blue-600"
+      >
+        Show private key
+      </button>
+      
+      <button
+        onClick={() => setIsPopoverOpen(false)}
+        className="w-full mt-2 bg-gray-100 rounded-lg py-2 px-4 hover:bg-gray-200"
+      >
+        Back
+      </button>
+    </Flex>
   </Popover>
 </Field>
       </Flex>
