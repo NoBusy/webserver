@@ -9,6 +9,8 @@ import { Flex } from '@/shared/ui/Flex/Flex';
 import { Popover } from '@/shared/ui/Popover/Popover';
 import React, { useState } from 'react';
 import { Button } from '@/shared/ui/Button/Button';
+import arrowIcon from '@/shared/assets/icons/arrow-icon.svg';
+import Image from 'next/image';
 
 interface PrivateKeyPopoverProps {
   onShowKey: () => void;
@@ -162,9 +164,7 @@ export const WalletDetailsWindow = () => {
                     style={{ minWidth: '18px' }} 
                   />
                 ) : (
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M15 7.5L10 12.5L5 7.5" stroke="#999999" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <Image src={arrowIcon} alt='' width={24} height={24} />
                 )}
               </Flex>
             }
