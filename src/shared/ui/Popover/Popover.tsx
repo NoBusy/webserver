@@ -121,30 +121,34 @@ export const Popover: React.FC<PopoverProps> = (props) => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            ref={popoverRef}
-            exit={{ transform: 'scale(0.35)', msTransform: 'scale(0.35)', opacity: 0 }}
-            animate={{
-              transform: `scale(1) ${position.transform ?? ''}`,
-              msTransform: 'scale(1)',
-              opacity: 1,
-              top: position.top,
-              bottom: position.bottom,
-            }}
-            initial={{ transform: 'scale(0.35)', msTransform: 'scale(0.35)', opacity: 0 }}
-            transition={{
-              ease: [0.32, 0.2, 0, 1.1],
-              duration: 0.42,
-            }}
-            style={{
-              left: position.left,
-              right: position.right,
-              ...popoverStyles,
-              transformOrigin,
-            }}
-            className={styles.popover}
-          >
-            {props.children}
-          </motion.div>
+          ref={popoverRef}
+          exit={{ 
+            y: "100%",
+            opacity: 0 
+          }}
+          animate={{
+            y: 0,
+            opacity: 1
+          }}
+          initial={{ 
+            y: "100%",
+            opacity: 0 
+          }}
+          transition={{
+            type: "spring",
+            damping: 25,
+            stiffness: 120
+          }}
+          style={{
+            left: position.left,
+            right: position.right,
+            ...popoverStyles,
+            transformOrigin,
+          }}
+          className={styles.popover}
+        >
+          {props.children}
+        </motion.div>
         )}
       </AnimatePresence>
     </div>
