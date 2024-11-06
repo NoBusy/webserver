@@ -14,14 +14,17 @@ interface PrivateKeyPopoverProps {
   onBack: () => void;
 }
 
-
 const PrivateKeyPopover: React.FC<PrivateKeyPopoverProps> = ({ onShowKey, onBack }) => (
-  <Flex direction="column" gap={4} className="p-4">
-    <Flex justify="space-between" align="center" className="mb-2">
-      <Typography.Text text="Important information!" weight={500} fontSize={16} />
+  <Flex direction="column" gap={16}>
+    <Flex justify="space-between" align="center" width="100%">
+      <Typography.Text 
+        text="Important information!" 
+        weight={600} 
+        fontSize={20}
+      />
       <button 
         onClick={onBack}
-        className="p-1 text-gray-500 hover:text-gray-700"
+        className="p-1 hover:opacity-70"
       >
         ✕
       </button>
@@ -29,20 +32,22 @@ const PrivateKeyPopover: React.FC<PrivateKeyPopoverProps> = ({ onShowKey, onBack
     
     <Typography.Text 
       text="Your private key provides access to all your funds. Never share it with anyone."
-      fontSize={14}
-      className="mb-4"
+      fontSize={16}
+      weight={400}
+      color="var(--text)"
     />
     
     <button
       onClick={onShowKey}
-      className="w-full bg-blue-500 text-white rounded-lg py-2 px-4 hover:bg-blue-600"
+      className="w-full bg-blue-500 text-white rounded-xl py-3 px-4 hover:bg-blue-600 font-medium"
+      style={{ marginTop: '8px' }}
     >
       Show private key
     </button>
     
     <button
       onClick={onBack}
-      className="w-full mt-2 bg-gray-100 rounded-lg py-2 px-4 hover:bg-gray-200"
+      className="w-full bg-gray-100 rounded-xl py-3 px-4 hover:bg-gray-200 font-medium text-gray-900"
     >
       Back
     </button>
