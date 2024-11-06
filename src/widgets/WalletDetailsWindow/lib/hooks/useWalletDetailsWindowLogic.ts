@@ -20,6 +20,24 @@ export const useWalletDetailsWindowLogic = () => {
   const isWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.WalletDetails);
   const openedWallet: Wallet | undefined = walletDetailsWindow?.payload?.wallet;
   const wallets: Wallet[] = useSelector(getWallets);
+  const [showPrivateKeyWarning, setShowPrivateKeyWarning] = useState(false);
+  const [showPrivateKey, setShowPrivateKey] = useState(false);
+
+  const handlePrivateKeyClick = () => {
+    console.log('Private key field clicked');
+    if (!showPrivateKey) {
+      setShowPrivateKey(true);
+    }
+  }
+
+  const handleShowPrivateKey = () => {
+    setShowPrivateKey(true);
+    setShowPrivateKeyWarning(false);
+  }
+
+  const handleCloseWarning = () => {
+    setShowPrivateKeyWarning(false);
+  };
 
   const handleDeleteWallet = async (): Promise<void> => {
     try {
@@ -46,9 +64,13 @@ export const useWalletDetailsWindowLogic = () => {
     }
   };
 
+
   return {
     flow: {
       handleDeleteWallet,
+      handlePrivateKeyClick,
+      handleShowPrivateKey,
+      handleCloseWarning
     },
     state: {
       wallets,
@@ -57,6 +79,8 @@ export const useWalletDetailsWindowLogic = () => {
       isWindowCurrentlyOpen,
       isLoading: isLoading || deleteWalletResult.isLoading,
       isBtnActive: isWindowCurrentlyOpen && openedWallet?.can_deleted,
+      showPrivateKeyWarning, setShowPrivateKeyWarning,
+      showPrivateKey, setShowPrivateKey
     },
   };
 };

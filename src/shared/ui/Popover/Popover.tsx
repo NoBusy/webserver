@@ -14,7 +14,7 @@ export interface PopoverProps {
   onClose?: () => void;
   children?: React.ReactNode;
   setIsOpen: (isOpen: boolean) => void;
-  direction?: 'left' | 'right' | 'center';
+  direction?: 'left' | 'right' | 'center' | 'bottom'; // добавляем 'bottom'
   wrapperWidth?: React.CSSProperties['width'];
   popoverWidth?: React.CSSProperties['width'];
   top?: React.CSSProperties['top'];
@@ -25,10 +25,10 @@ export const Popover: React.FC<PopoverProps> = (props) => {
 
   const [transformOrigin, setTransformOrigin] = React.useState<React.CSSProperties['transformOrigin']>('top right');
   const [position, setPosition] = React.useState<React.CSSProperties>({
-    top: props.top ?? '125%',
-    right: '-110%',
-    left: 'initial',
-    bottom: 'initial',
+    top: 'auto',
+    right: 'auto',
+    left: 'auto',
+    bottom: 'auto',
   });
 
   const popoverRef: React.RefObject<HTMLDivElement> = React.useRef(null);
@@ -45,7 +45,7 @@ export const Popover: React.FC<PopoverProps> = (props) => {
   };
 
   const popoverStyles: React.CSSProperties = {
-    width: props.popoverWidth,
+    width: props.direction === 'bottom' ? '100%' : props.popoverWidth,
   };
 
   const popoverWrapperStyles: React.CSSProperties = {
@@ -53,65 +53,27 @@ export const Popover: React.FC<PopoverProps> = (props) => {
   };
 
   React.useEffect(() => {
-    const checkPosition = (type?: 'secondary') => {
-      if (!popoverRef.current || !isOpen) return;
+    if (!popoverRef.current || !isOpen) return;
 
-      // Получаем данные о позиции и размерах поповера
-      const rect: DOMRect = popoverRef.current.getBoundingClientRect();
-
-      // Если выходит за правую границу экрана
-      // const isOutOfRightWindowBorder: boolean = rect.right > window.innerWidth;
-      // Если выходит за левую границу экрана
-      // const isOutOfLeftWindowBorder: boolean = rect.left < 0;
-      // Если выходит за нижнюю границу экрана
-      const isOutOfBottomWindowBorder: boolean = rect.bottom * 1.05 > window.innerHeight;
-
-      // if (isOutOfRightWindowBorder) {
-      //   setPosition({ top: props.top ?? '110%', right: '0' });
-      // }
-      //
-      // if (isOutOfLeftWindowBorder) {
-      //   setTransformOrigin('top left');
-      //   setPosition({ top: props.top ?? '110%', left: '0' });
-      // }
-
-      if (props.direction === 'center') {
-        setTransformOrigin('top center');
-        setPosition({ top: props.top ?? '125%', left: '-250%' });
-      }
-
-      if (props.direction === 'left') {
-        setTransformOrigin('top left');
-        setPosition({ top: props.top ?? '125%', left: '0' });
-      }
-
-      if (props.direction === 'right') {
-        setTransformOrigin('top right');
-        setPosition({ top: props.top ?? '125%', right: '0' });
-      }
-
-      if (isOutOfBottomWindowBorder && type === 'secondary') {
-        setPosition((prev) => ({
-          ...prev,
-          transform: `translate(0, -${(rect.bottom - window.innerHeight) * 1.075}px)`,
-        }));
-      }
-    };
-
-    checkPosition();
-
-    const timeout = setTimeout(() => checkPosition('secondary'), 350);
-
-    return () => {
-      clearTimeout(timeout);
+    if (props.direction === 'bottom') {
+      setTransformOrigin('center bottom');
       setPosition({
-        top: props.top ?? '110%',
-        right: '-110%',
-        left: 'initial',
-        bottom: 'initial',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        top: 'auto',
       });
-    };
-  }, [popoverRef, isOpen, props.direction]);
+    } else if (props.direction === 'center') {
+      setTransformOrigin('top center');
+      setPosition({ top: props.top ?? '125%', left: '-250%' });
+    } else if (props.direction === 'left') {
+      setTransformOrigin('top left');
+      setPosition({ top: props.top ?? '125%', left: '0' });
+    } else if (props.direction === 'right') {
+      setTransformOrigin('top right');
+      setPosition({ top: props.top ?? '125%', right: '0' });
+    }
+  }, [isOpen, props.direction, props.top]);
 
   return (
     <div ref={ref} className={styles.popover_wrapper} style={popoverWrapperStyles}>
@@ -122,15 +84,21 @@ export const Popover: React.FC<PopoverProps> = (props) => {
         {isOpen && (
           <motion.div
             ref={popoverRef}
-            exit={{ transform: 'scale(0.35)', msTransform: 'scale(0.35)', opacity: 0 }}
-            animate={{
-              transform: `scale(1) ${position.transform ?? ''}`,
-              msTransform: 'scale(1)',
-              opacity: 1,
-              top: position.top,
-              bottom: position.bottom,
+            exit={{ 
+              y: props.direction === 'bottom' ? 100 : 0,
+              scale: props.direction === 'bottom' ? 1 : 0.35,
+              opacity: 0 
             }}
-            initial={{ transform: 'scale(0.35)', msTransform: 'scale(0.35)', opacity: 0 }}
+            animate={{
+              y: 0,
+              scale: 1,
+              opacity: 1,
+            }}
+            initial={{ 
+              y: props.direction === 'bottom' ? 100 : 0,
+              scale: props.direction === 'bottom' ? 1 : 0.35,
+              opacity: 0 
+            }}
             transition={{
               ease: [0.32, 0.2, 0, 1.1],
               duration: 0.42,
@@ -138,10 +106,12 @@ export const Popover: React.FC<PopoverProps> = (props) => {
             style={{
               left: position.left,
               right: position.right,
+              top: position.top,
+              bottom: position.bottom,
               ...popoverStyles,
               transformOrigin,
             }}
-            className={styles.popover}
+            className={`${styles.popover} ${props.direction === 'bottom' ? styles.bottom : ''}`}
           >
             {props.children}
           </motion.div>

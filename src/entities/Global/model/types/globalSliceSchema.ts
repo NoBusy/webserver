@@ -26,6 +26,10 @@ export enum GlobalWindow {
 export interface GlobalWindowType<T> {
   window: T;
   payload?: Record<string, any>;
+  options?: {
+    ignoreGlobalLoading?: boolean;
+    [key: string]: any;
+  };
 }
 
 export interface GlobalSliceSchema {

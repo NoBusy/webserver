@@ -35,7 +35,7 @@ export const useWalletUpdater = () => {
         lastUpdateTime.current = now;
       }
     } catch (error) {
-      console.error('Failed to update wallet data:', error);
+     
     } finally {
       isUpdating.current = false;
     }

@@ -6,6 +6,8 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    pointer-events: auto !important;
+    z-index: 100001;
   }
   
   .progress_container {
