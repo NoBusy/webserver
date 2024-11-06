@@ -36,15 +36,15 @@ export const PrepareTransferWindow: React.FC<PrepareTransferWindowProps> = (prop
         <Input
           type="text"
           value={state.toAddress}
-          onChange={handleAddressChange}
+          onChange={flow.handleToAddressChange}
           placeholder={`Address (${state.network && networkSymbol[state.network]})`}
           isQrScanEnabled
         />
         
-        {/* Поле для отладки QR */}
+        {/* Поле для отладки QR
         <Flex direction="column" gap={4}>
           <Typography.Text text={`Raw QR: ${lastScannedQR}`} fontSize={12} />
-        </Flex>
+        </Flex> */}
 
         <Input
           type="number"
