@@ -115,41 +115,43 @@ export const WalletDetailsWindow = () => {
         </Field>
         
         <Field 
-          label="Private key" 
-          justify="space-between"
-          gap={15}
-        >
-          <Popover
-            isOpen={isPopoverOpen}
-            setIsOpen={setIsPopoverOpen}
-            direction="center"
-            trigger={
-              <Flex justify="space-between" width="100%" align="center">
-                <Typography.Text 
-                  text={showPrivateKey ? state.openedWallet?.private_key : '••••••••••••'} 
-                  wrap="nowrap" 
-                  width="85%" 
-                  weight={350} 
-                  fontSize={17} 
-                />
-                <CopyFillIcon 
-                  width={18} 
-                  height={18} 
-                  fill="var(--secondaryText)" 
-                  style={{ minWidth: '18px' }} 
-                />
-              </Flex>
-            }
-          >
-            <PrivateKeyPopover
-              onShowKey={() => {
-                setShowPrivateKey(true);
-                setIsPopoverOpen(false);
-              }}
-              onBack={() => setIsPopoverOpen(false)}
-            />
-          </Popover>
-        </Field>
+  label="Private key" 
+  justify="space-between"
+  gap={15}
+>
+  <Popover
+    isOpen={isPopoverOpen}
+    setIsOpen={setIsPopoverOpen}
+    direction="center"
+    top="125%"  // Устанавливаем позицию ниже элемента
+    popoverWidth={280} // Добавляем фиксированную ширину для popover
+    trigger={
+      <Flex justify="space-between" width="100%" align="center">
+        <Typography.Text 
+          text={showPrivateKey ? state.openedWallet?.private_key : '••••••••••••'} 
+          wrap="nowrap" 
+          width="85%" 
+          weight={350} 
+          fontSize={17} 
+        />
+        <CopyFillIcon 
+          width={18} 
+          height={18} 
+          fill="var(--secondaryText)" 
+          style={{ minWidth: '18px' }} 
+        />
+      </Flex>
+    }
+  >
+    <PrivateKeyPopover
+      onShowKey={() => {
+        setShowPrivateKey(true);
+        setIsPopoverOpen(false);
+      }}
+      onBack={() => setIsPopoverOpen(false)}
+    />
+  </Popover>
+</Field>
       </Flex>
     </Window>
   );
