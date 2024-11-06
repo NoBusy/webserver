@@ -1,6 +1,8 @@
+// PrivateKeyWarning.module.css
 import React, { FC } from 'react';
 import { Typography } from '@/shared/ui/Typography/Typography';
 import { Flex } from '@/shared/ui/Flex/Flex';
+import styles from './PrivateKeyWarning.module.scss';
 
 interface PrivateKeyWarningProps {
   isOpen: boolean;
@@ -14,7 +16,7 @@ const PrivateKeyWarning: FC<PrivateKeyWarningProps> = ({ isOpen, onClose, onShow
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-center z-[5003]">
       <div 
-        className="bg-white rounded-t-[12px] w-full max-h-[50vh] animate-slide-up"
+        className={`bg-white rounded-t-[12px] w-full max-h-[50vh] ${styles.slideUp}`}
         style={{
           boxShadow: '0px -4px 10px rgba(0, 0, 0, 0.1)'
         }}
@@ -60,26 +62,5 @@ const PrivateKeyWarning: FC<PrivateKeyWarningProps> = ({ isOpen, onClose, onShow
     </div>
   );
 };
-
-// Добавляем стили анимации
-const styles = `
-  @keyframes slide-up {
-    from {
-      transform: translateY(100%);
-    }
-    to {
-      transform: translateY(0);
-    }
-  }
-
-  .animate-slide-up {
-    animation: slide-up 0.3s ease-out forwards;
-  }
-`;
-
-// Добавляем стили в head
-const styleSheet = document.createElement("style");
-styleSheet.textContent = styles;
-document.head.appendChild(styleSheet);
 
 export default PrivateKeyWarning;
