@@ -13,11 +13,11 @@ import arrowIcon from '@/shared/assets/icons/arrow-icon.svg';
 import Image from 'next/image';
 
 interface PrivateKeyPopoverProps {
-  onShowKey: () => void;
+  onCopyKey: () => void;
   onBack: () => void;
 }
 
-const PrivateKeyPopover: React.FC<PrivateKeyPopoverProps> = ({ onShowKey, onBack }) => (
+const PrivateKeyPopover: React.FC<PrivateKeyPopoverProps> = ({ onCopyKey, onBack }) => (
   <Flex direction="column" gap={24}>
     <Flex justify="space-between" align="center" width="100%">
       <Typography.Text 
@@ -45,8 +45,8 @@ const PrivateKeyPopover: React.FC<PrivateKeyPopoverProps> = ({ onShowKey, onBack
     
     <Flex direction="column" gap={8}>
       <Button
-        text = 'Show private key'
-        onClick={onShowKey}
+        text = 'Copy private key'
+        onClick={onCopyKey}
         className="w-full h-12  rounded-xl hover:bg-[#EFEFEF] font-medium text-black"
         type= 'primary'
       />
@@ -67,7 +67,13 @@ export const WalletDetailsWindow = () => {
   const [showPrivateKey, setShowPrivateKey] = useState<boolean>(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
 
-  
+  const handleCopyPrivateKey = async () => {
+    if (state.openedWallet?.private_key) {
+      navigator.clipboard.writeText(state.openedWallet.private_key);
+      setIsPopoverOpen(false);
+    }
+  };
+
   const handleClose = () => {
     setIsPopoverOpen(false);
     setShowPrivateKey(false); 
@@ -170,10 +176,7 @@ export const WalletDetailsWindow = () => {
             }
           >
             <PrivateKeyPopover
-              onShowKey={() => {
-                setShowPrivateKey(true);
-                setIsPopoverOpen(false);
-              }}
+              onCopyKey={handleCopyPrivateKey}
               onBack={handleClose}
             />
           </Popover>
