@@ -3,31 +3,30 @@
 import React, { FC } from 'react';
 import { Typography } from '@/shared/ui/Typography/Typography';
 import { Flex } from '@/shared/ui/Flex/Flex';
-import styles from './PrivateKeyWarning.module.css';
+import { Popover } from '@/shared/ui/Popover/Popover';
+import styles from './PrivateKeyWarning.module.scss';
 
 interface PrivateKeyWarningProps {
   isOpen: boolean;
   onClose?: () => void;
   onShowKey?: () => void;
+  trigger: React.ReactNode;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
-const PrivateKeyWarning: FC<PrivateKeyWarningProps> = ({ isOpen, onClose, onShowKey }) => {
-  console.log('PrivateKeyWarning rendered, isOpen:', isOpen); // Отладочный лог
-
-  if (!isOpen) return null;
-
+const PrivateKeyWarning: FC<PrivateKeyWarningProps> = ({ isOpen, onClose, onShowKey, trigger, setIsOpen }) => {
   return (
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-center z-[5003]"
-      onClick={onClose} // Добавляем закрытие по клику на фон
+    <Popover
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      trigger={trigger}
+      onClose={onClose}
+      direction="center"
+      wrapperWidth="100%"
+      popoverWidth="100%"
+      top="50%"
     >
-      <div 
-        className={`bg-white rounded-t-[12px] w-full max-h-[50vh] ${styles.slideUp}`}
-        style={{
-          boxShadow: '0px -4px 10px rgba(0, 0, 0, 0.1)'
-        }}
-        onClick={e => e.stopPropagation()} // Предотвращаем закрытие при клике на контент
-      >
+      <div className={styles.warningContent}>
         <Flex 
           direction="column" 
           gap={20} 
@@ -50,23 +49,17 @@ const PrivateKeyWarning: FC<PrivateKeyWarningProps> = ({ isOpen, onClose, onShow
           />
 
           <Flex direction="column" width="100%" gap={12}>
-            <button
-              onClick={onShowKey}
-              className="w-full py-3 px-4 bg-[#007AFF] text-white rounded-xl font-medium active:bg-[#0056B3]"
-            >
+            <button className={styles.primaryButton} onClick={onShowKey}>
               Показать приватный ключ
             </button>
             
-            <button
-              onClick={onClose}
-              className="w-full py-3 px-4 bg-[#F2F2F7] text-black rounded-xl font-medium active:bg-[#E5E5EA]"
-            >
+            <button className={styles.secondaryButton} onClick={onClose}>
               Назад
             </button>
           </Flex>
         </Flex>
       </div>
-    </div>
+    </Popover>
   );
 };
 
