@@ -47,13 +47,13 @@ const PrivateKeyPopover: React.FC<PrivateKeyPopoverProps> = ({ onShowKey, onBack
       <Button
         text = 'Show private key'
         onClick={onShowKey}
-        className="w-full h-12 bg-[#F7F7F7] rounded-xl hover:bg-[#EFEFEF] font-medium text-black"
-        type= 'default'
+        className="w-full h-12  rounded-xl hover:bg-[#EFEFEF] font-medium text-black"
+        type= 'primary'
       />
       
       <Button
         onClick={onBack}
-        className="w-full h-12 bg-[#F7F7F7] rounded-xl hover:bg-[#EFEFEF] font-medium text-black"
+        className="w-full h-12 rounded-xl hover:bg-[#EFEFEF] font-medium text-black"
       >
         Back
       </Button>
@@ -61,16 +61,16 @@ const PrivateKeyPopover: React.FC<PrivateKeyPopoverProps> = ({ onShowKey, onBack
   </Flex>
 );
 
-// В основном компоненте WalletDetailsWindow добавим обработку закрытия:
+
 export const WalletDetailsWindow = () => {
   const { flow, state } = useWalletDetailsWindowLogic();
   const [showPrivateKey, setShowPrivateKey] = useState<boolean>(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
 
-  // Обработчик закрытия попапа
+  
   const handleClose = () => {
     setIsPopoverOpen(false);
-    setShowPrivateKey(false); // Сбрасываем состояние приватного ключа при закрытии
+    setShowPrivateKey(false); 
   };
 
   return (
