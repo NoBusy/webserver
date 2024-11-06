@@ -1,14 +1,13 @@
 'use client'
-import { useCallback, useEffect, useState, useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getSelectedWallet, Wallet, walletApi, Token, Transaction, walletActions } from '@/entities/Wallet';
+import { getSelectedWallet, walletApi, Token, Transaction, walletActions } from '@/entities/Wallet';
 import { getIsWindowOpen, GlobalWindow, globalActions } from '@/entities/Global';
 import { StateSchema } from '@/shared/lib/providers/StoreProvider';
 import { useSwapWindowLogic } from '@/widgets/SwapWindow/lib/hooks/useSwapWindowLogic';
 import { useTransferWindowLogic } from '@/widgets/TransferWindow/lib/hooks/useTransferWindowLogic';
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
 import { useToastManager } from '@/shared/lib/hooks/useToastManager/useToastManager';
-import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 import { useAnimation } from 'framer-motion';
 
 export const useTokenTransactionsWindowLogic = () => {
