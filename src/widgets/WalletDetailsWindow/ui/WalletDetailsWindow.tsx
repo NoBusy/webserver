@@ -135,37 +135,48 @@ export const WalletDetailsWindow = () => {
           label="Private key" 
           justify="space-between"
           gap={15}
+          copyValue={showPrivateKey ? state.openedWallet?.private_key : undefined} 
+          onCopyLabel="Private key copied" 
         >
-        <Popover
-                  isOpen={isPopoverOpen}
-                  setIsOpen={setIsPopoverOpen}
-                  direction="bottom"
-                  popoverWidth="100%"
-                  wrapperWidth="100%"
-                  onClose={handleClose} // Добавляем обработчик закрытия
-                  trigger={
-                    <Flex justify="space-between" width="100%" align="center">
-                      <Typography.Text 
-                        text={showPrivateKey ? state.openedWallet?.private_key : '•••••••••••••'} 
-                        wrap="nowrap" 
-                        width="85%" 
-                        weight={350} 
-                        fontSize={17} 
-                      />
-                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M15 7.5L10 12.5L5 7.5" stroke="#999999" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </Flex>
-                  }
-                >
-                  <PrivateKeyPopover
-                    onShowKey={() => {
-                      setShowPrivateKey(true);
-                      setIsPopoverOpen(false);
-                    }}
-                    onBack={handleClose}
+          <Popover
+            isOpen={isPopoverOpen}
+            setIsOpen={setIsPopoverOpen}
+            direction="bottom"
+            popoverWidth="100%"
+            wrapperWidth="100%"
+            onClose={handleClose}
+            trigger={
+              <Flex justify="space-between" width="100%" align="center">
+                <Typography.Text 
+                  text={showPrivateKey ? state.openedWallet?.private_key : '•••••••••••••'} 
+                  wrap="nowrap" 
+                  width="85%" 
+                  weight={350} 
+                  fontSize={17} 
+                />
+                {showPrivateKey ? (
+                  <CopyFillIcon 
+                    width={18} 
+                    height={18} 
+                    fill="var(--secondaryText)" 
+                    style={{ minWidth: '18px' }} 
                   />
-                </Popover>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M15 7.5L10 12.5L5 7.5" stroke="#999999" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
+              </Flex>
+            }
+          >
+            <PrivateKeyPopover
+              onShowKey={() => {
+                setShowPrivateKey(true);
+                setIsPopoverOpen(false);
+              }}
+              onBack={handleClose}
+            />
+          </Popover>
         </Field>
       </Flex>
     </Window>
