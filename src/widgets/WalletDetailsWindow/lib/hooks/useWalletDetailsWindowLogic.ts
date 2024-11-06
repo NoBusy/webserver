@@ -21,23 +21,24 @@ export const useWalletDetailsWindowLogic = () => {
   const openedWallet: Wallet | undefined = walletDetailsWindow?.payload?.wallet;
   const wallets: Wallet[] = useSelector(getWallets);
   const [showPrivateKeyWarning, setShowPrivateKeyWarning] = useState(false);
-  const [showPrivateKey, setShowPrivateKey] = useState(false);
+  const [showPrivateKey, setShowPrivateKey] = useState<boolean>(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
 
-  const handlePrivateKeyClick = () => {
-    console.log('Private key field clicked');
-    if (!showPrivateKey) {
-      setShowPrivateKey(true);
+  const handleCopyPrivateKey = async () => {
+    if (openedWallet?.private_key) {
+      navigator.clipboard.writeText(openedWallet.private_key);
+      setIsPopoverOpen(false);
+      notify('success')
+      successToast('Private key copied');
     }
   }
+  
 
   const handleShowPrivateKey = () => {
     setShowPrivateKey(true);
     setShowPrivateKeyWarning(false);
   }
 
-  const handleCloseWarning = () => {
-    setShowPrivateKeyWarning(false);
-  };
 
   const handleDeleteWallet = async (): Promise<void> => {
     try {
@@ -68,9 +69,8 @@ export const useWalletDetailsWindowLogic = () => {
   return {
     flow: {
       handleDeleteWallet,
-      handlePrivateKeyClick,
       handleShowPrivateKey,
-      handleCloseWarning
+      handleCopyPrivateKey
     },
     state: {
       wallets,
@@ -80,7 +80,9 @@ export const useWalletDetailsWindowLogic = () => {
       isLoading: isLoading || deleteWalletResult.isLoading,
       isBtnActive: isWindowCurrentlyOpen && openedWallet?.can_deleted,
       showPrivateKeyWarning, setShowPrivateKeyWarning,
-      showPrivateKey, setShowPrivateKey
+      showPrivateKey, setShowPrivateKey,
+      isPopoverOpen, setIsPopoverOpen
     },
   };
 };
+

@@ -64,19 +64,10 @@ const PrivateKeyPopover: React.FC<PrivateKeyPopoverProps> = ({ onCopyKey, onBack
 
 export const WalletDetailsWindow = () => {
   const { flow, state } = useWalletDetailsWindowLogic();
-  const [showPrivateKey, setShowPrivateKey] = useState<boolean>(false);
-  const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
-
-  const handleCopyPrivateKey = async () => {
-    if (state.openedWallet?.private_key) {
-      navigator.clipboard.writeText(state.openedWallet.private_key);
-      setIsPopoverOpen(false);
-    }
-  };
 
   const handleClose = () => {
-    setIsPopoverOpen(false);
-    setShowPrivateKey(false); 
+    state.setIsPopoverOpen(false);
+    state.setShowPrivateKey(false); 
   };
 
   return (
@@ -143,12 +134,12 @@ export const WalletDetailsWindow = () => {
           label="Private key" 
           justify="space-between"
           gap={15}
-          copyValue={showPrivateKey ? state.openedWallet?.private_key : undefined} 
+          copyValue={state.showPrivateKey ? state.openedWallet?.private_key : undefined} 
           onCopyLabel="Private key copied" 
         >
           <Popover
-            isOpen={isPopoverOpen}
-            setIsOpen={setIsPopoverOpen}
+            isOpen={state.isPopoverOpen}
+            setIsOpen={state.setIsPopoverOpen}
             direction="bottom"
             popoverWidth="100%"
             wrapperWidth="100%"
@@ -156,13 +147,13 @@ export const WalletDetailsWindow = () => {
             trigger={
               <Flex justify="space-between" width="100%" align="center">
                 <Typography.Text 
-                  text={showPrivateKey ? state.openedWallet?.private_key : '•••••••••••••'} 
+                  text={state.showPrivateKey ? state.openedWallet?.private_key : '•••••••••••••'} 
                   wrap="nowrap" 
                   width="85%" 
                   weight={350} 
                   fontSize={17} 
                 />
-                {showPrivateKey ? (
+                {state.showPrivateKey ? (
                   <CopyFillIcon 
                     width={18} 
                     height={18} 
@@ -176,7 +167,7 @@ export const WalletDetailsWindow = () => {
             }
           >
             <PrivateKeyPopover
-              onCopyKey={handleCopyPrivateKey}
+              onCopyKey={flow.handleCopyPrivateKey}
               onBack={handleClose}
             />
           </Popover>
