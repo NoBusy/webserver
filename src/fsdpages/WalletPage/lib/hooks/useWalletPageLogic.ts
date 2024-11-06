@@ -121,6 +121,7 @@ export const useWalletPageLogic = () => {
       if (!storiesViewed) {
         dispatch(globalActions.addWindow({
           window: GlobalWindow.StoryViewer,
+          options: { ignoreGlobalLoading: true } 
         }));
       }
       // dispatch(globalActions.addWindow({
