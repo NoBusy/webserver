@@ -65,6 +65,39 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
     } as React.ChangeEvent<HTMLInputElement>);
   }, [token, onAmountChange]);
 
+
+  const [inputValue, setInputValue] = React.useState(amount.toString());
+
+  // Обновляем локальный стейт при изменении внешнего значения
+  React.useEffect(() => {
+    setInputValue(amount === 0 && inputValue === '' ? '' : amount.toString());
+  }, [amount]);
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+
+    // Вызываем внешний обработчик только если есть значение
+    if (value !== '') {
+      onAmountChange?.({
+        ...e,
+        target: {
+          ...e.target,
+          value: value
+        }
+      });
+    } else {
+      // Если поле пустое, передаем 0
+      onAmountChange?.({
+        ...e,
+        target: {
+          ...e.target,
+          value: '0'
+        }
+      });
+    }
+  };
+
   return (
     <div className={styles.tokenBlock}>
       <div className={styles.label}>{isFrom ? "You give" : "You receive"}</div>
@@ -74,8 +107,8 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
             id={isFrom ? "fromAmount" : "toAmount"}
             name={isFrom ? "fromAmount" : "toAmount"}
             type="number"
-            value={amount}
-            onChange={onAmountChange}
+            value={inputValue}
+            onChange={handleAmountChange}
             placeholder="0"
             className={styles.amountInput}
             readOnly={!isFrom}
