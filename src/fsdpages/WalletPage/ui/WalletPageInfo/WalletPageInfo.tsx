@@ -72,28 +72,16 @@ export const WalletPageInfo = () => {
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              height: '16px'
+              height: '16px',
             }}
           >
             <RefreshIcon />
           </Button>
           <AnimatePresence>
-              {isRefreshing && (
-                <motion.div
-                  exit={{ width: 0, opacity: 0, marginLeft: 0 }}
-                  animate={{ width: 16, opacity: 1, marginLeft: 0 }}
-                  initial={{ width: 0, opacity: 0, marginLeft: 0 }}
-                  transition={{ ease: [0.32, 0.72, 0, 1], duration: 0.3 }}
-                >
-                  <Spinner size="md" />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          <AnimatePresence>
-            {isLoading && (
+            {(isRefreshing || isLoading) && (
               <motion.div
                 exit={{ width: 0, opacity: 0, paddingLeft: 0 }}
-                animate={{ width: 30.6, opacity: 1, paddingLeft: 0 }}
+                animate={{ width: 0, opacity: 1, paddingLeft: 0 }}
                 initial={{ width: 0, opacity: 0, paddingLeft: 0 }}
                 transition={{ ease: [0.32, 0.72, 0, 1], duration: 0.6 }}
               >
