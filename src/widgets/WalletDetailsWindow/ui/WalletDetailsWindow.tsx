@@ -11,6 +11,7 @@ import React, { useState } from 'react';
 import { Button } from '@/shared/ui/Button/Button';
 import arrowIcon from '@/shared/assets/icons/arrow-icon.svg';
 import Image from 'next/image';
+import Trash from '@/shared/assets/icons/trash.svg'
 
 interface PrivateKeyPopoverProps {
   onCopyKey: () => void;
@@ -67,7 +68,7 @@ interface DeleteWalletPopoverProps {
 }
 
 const DeleteWalletPopover: React.FC<DeleteWalletPopoverProps> = ({ onDelete, onBack }) => (
-  <Flex direction="column" gap={24}>
+  <Flex direction="column" gap={24} className="p-6">
     <Flex justify="space-between" align="center" width="100%">
       <Typography.Text 
         text="Delete Wallet" 
@@ -96,7 +97,8 @@ const DeleteWalletPopover: React.FC<DeleteWalletPopoverProps> = ({ onDelete, onB
       <Button
         text="Delete Wallet"
         onClick={onDelete}
-        className="w-full h-12 rounded-xl bg-red-500 hover:bg-red-600 font-medium text-white"
+        className="w-full h-12 rounded-xl bg-black hover:bg-gray-800 font-medium text-white"
+        //type="danger"
       />
       
       <Button
@@ -129,17 +131,12 @@ export const WalletDetailsWindow = () => {
 
   return (
     <Window
-      isOpen={state.isWindowOpen}
+      isOpen={true}
       zIndex={5002}
-      // btnText="Delete wallet"
-      // btnType="danger"
-      // btnOnClick={() => setIsDeletePopoverOpen(true)}
-      // isBtnActive={state.isBtnActive}
-      // isBtnDisabled={state.isLoading}
     >
       <WindowHeader title="Wallet details" />
       
-      <Flex width="100%" direction="column" gap={12}>
+      <Flex width="100%" direction="column" gap={12} className="flex-grow">
         <Field label="Name">
           <Typography.Text 
             text={state.openedWallet?.name} 
@@ -218,7 +215,7 @@ export const WalletDetailsWindow = () => {
                     style={{ minWidth: '18px' }} 
                   />
                 ) : (
-                  <Image src={arrowIcon} alt='' width={24} height={24} />
+                  <Image src={arrowIcon} alt="" width={24} height={24} />
                 )}
               </Flex>
             }
@@ -229,27 +226,30 @@ export const WalletDetailsWindow = () => {
             />
           </Popover>
         </Field>
-      </Flex>
-      <Popover
-        isOpen={isDeletePopoverOpen}
-        setIsOpen={setIsDeletePopoverOpen}
-        direction="bottom"
-        popoverWidth="100%"
-        wrapperWidth="100%"
-        onClose={handleDeleteClose}
-        trigger={
-          <Button
-            text="Delete wallet"
-            onClick={() => setIsDeletePopoverOpen(true)}
-            className="w-full h-12 rounded-xl mt-6"
-            disabled={state.isLoading}
+
+        <Popover
+          isOpen={isDeletePopoverOpen}
+          setIsOpen={setIsDeletePopoverOpen}
+          direction="bottom"
+          popoverWidth="100%"
+          wrapperWidth="100%"
+          onClose={handleDeleteClose}
+          trigger={
+            <Button
+              onClick={() => setIsDeletePopoverOpen(true)}
+              className="w-full h-14 rounded-2xl bg-black hover:bg-gray-800 text-white mt-auto mb-6 flex items-center justify-center gap-2"
+            >
+              <Image src={Trash} alt ='' />
+              Delete wallet
+            </Button>
+          }
+        >
+          <DeleteWalletPopover
+            onDelete={handleDelete}
+            onBack={handleDeleteClose}
           />
-        }
-      />
-        <DeleteWalletPopover
-          onDelete={handleDelete}
-          onBack={handleDeleteClose}
-        />
+        </Popover>
+      </Flex>
     </Window>
   );
 };
