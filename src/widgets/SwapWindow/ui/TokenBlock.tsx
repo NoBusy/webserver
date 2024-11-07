@@ -64,7 +64,34 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
       target: { value: newAmount.toString() }
     } as React.ChangeEvent<HTMLInputElement>);
   }, [token, onAmountChange]);
-  
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!onAmountChange) return;
+
+    let value = e.target.value;
+    
+    // Заменяем точку на запятую
+    value = value.replace('.', ',');
+    
+    // Проверяем, что в строке только одна запятая
+    const commaCount = (value.match(/,/g) || []).length;
+    if (commaCount > 1) {
+      // Если запятых больше одной, оставляем только первую
+      const parts = value.split(',');
+      value = parts[0] + ',' + parts.slice(1).join('');
+    }
+    
+    // Создаем новый event с обработанным значением
+    const newEvent = {
+      ...e,
+      target: {
+        ...e.target,
+        value: value
+      }
+    } as React.ChangeEvent<HTMLInputElement>;
+
+    onAmountChange(newEvent);
+  }, [onAmountChange]);
 
   return (
     <div className={styles.tokenBlock}>
@@ -76,10 +103,12 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
             name={isFrom ? "fromAmount" : "toAmount"}
             type="number"
             value={amount}
-            onChange={onAmountChange}
+            onChange={handleInputChange}
             placeholder="0"
             className={styles.amountInput}
             readOnly={!isFrom}
+            inputMode="decimal"
+            pattern="[0-9]*[.,]?[0-9]*"
           />
           <div className={styles.usdAmount}>{usdAmount} $</div>
         </div>
