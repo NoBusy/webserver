@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import moment from 'moment-timezone';
 import React from 'react';
 import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
+import { isInteger } from 'lodash';
 
 export interface TransactionProps {
   transaction: TransactionInterface;
@@ -29,11 +30,11 @@ export const Transaction: React.FC<TransactionProps> = ({ transaction, onTransac
 
   const amountContent = transaction.type === TransactionType.SWAP && transaction.fromCurrency && transaction.toCurrency
     ? {
-        mainText: `${transaction.amount} ${transaction.fromCurrency} -> ${transaction.toCurrency}`,
+        mainText: `${isInteger(transaction.amount)? transaction.amount.toString() : transaction.amount.toFixed(5)} ${transaction.fromCurrency} -> ${transaction.toCurrency}`,
         subText: `≈ ${transaction.amount_usd.toFixed(2)} $`
       }
     : {
-        mainText: `${transaction.amount} ${transaction.currency || transaction.fromCurrency || ''}`,
+        mainText: `${isInteger(transaction.amount)? transaction.amount.toString() : transaction.amount.toFixed(5)} ${transaction.currency || transaction.fromCurrency || ''}`,
         subText: `≈ ${transaction.amount_usd.toFixed(2)} $`
       };
 
