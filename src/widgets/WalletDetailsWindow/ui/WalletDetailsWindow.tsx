@@ -93,17 +93,17 @@ const DeleteWalletPopover: React.FC<DeleteWalletPopoverProps> = ({ onDelete, onB
       color="#000000"
     />
     
-    <Flex direction="column" gap={8}>
+    <Flex direction="column" gap={8} className="w-full">
       <Button
-        text="Delete Wallet"
         onClick={onDelete}
-        className="w-full h-12 rounded-xl bg-black hover:bg-gray-800 font-medium text-white"
-        //type="danger"
-      />
+        className="w-full h-14 rounded-2xl bg-red-500 hover:bg-red-600 font-medium text-white"
+      >
+        Delete Wallet
+      </Button>
       
       <Button
         onClick={onBack}
-        className="w-full h-12 rounded-xl hover:bg-[#EFEFEF] font-medium text-black"
+        className="w-full h-14 rounded-2xl hover:bg-[#EFEFEF] font-medium text-black"
       >
         Cancel
       </Button>
@@ -237,10 +237,10 @@ export const WalletDetailsWindow = () => {
           trigger={
             <Button
               onClick={() => setIsDeletePopoverOpen(true)}
-              className="w-full h-14 rounded-2xl bg-black hover:bg-gray-800 text-white mt-auto mb-6 flex items-center justify-center gap-2"
+              className="w-full h-14 rounded-2xl bg-black text-white mt-auto mb-6 flex items-center justify-center gap-2 px-4"
             >
-              <Image src={Trash} alt ='' />
-              Delete wallet
+              <Image src={Trash} alt="" width={20} height={20} />
+              <span className="flex-grow text-center">Delete wallet</span>
             </Button>
           }
         >
