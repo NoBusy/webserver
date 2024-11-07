@@ -185,6 +185,11 @@
 .amountInfo {
   flex-grow: 1;
   margin-right: 12px;
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }
 
 .amountInput {
