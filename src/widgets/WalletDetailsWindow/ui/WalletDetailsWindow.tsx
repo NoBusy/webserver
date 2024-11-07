@@ -131,11 +131,11 @@ export const WalletDetailsWindow = () => {
     <Window
       isOpen={state.isWindowOpen}
       zIndex={5002}
-      btnText="Delete wallet"
-      btnType="danger"
-      btnOnClick={() => setIsDeletePopoverOpen(true)}
-      isBtnActive={state.isBtnActive}
-      isBtnDisabled={state.isLoading}
+      // btnText="Delete wallet"
+      // btnType="danger"
+      // btnOnClick={() => setIsDeletePopoverOpen(true)}
+      // isBtnActive={state.isBtnActive}
+      // isBtnDisabled={state.isLoading}
     >
       <WindowHeader title="Wallet details" />
       
@@ -230,6 +230,26 @@ export const WalletDetailsWindow = () => {
           </Popover>
         </Field>
       </Flex>
+      <Popover
+        isOpen={isDeletePopoverOpen}
+        setIsOpen={setIsDeletePopoverOpen}
+        direction="bottom"
+        popoverWidth="100%"
+        wrapperWidth="100%"
+        onClose={handleDeleteClose}
+        trigger={
+          <Button
+            text="Delete wallet"
+            onClick={() => setIsDeletePopoverOpen(true)}
+            className="w-full h-12 rounded-xl mt-6"
+            disabled={state.isLoading}
+          />
+        }
+      />
+        <DeleteWalletPopover
+          onDelete={handleDelete}
+          onBack={handleDeleteClose}
+        />
     </Window>
   );
 };
