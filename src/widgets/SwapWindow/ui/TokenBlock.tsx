@@ -104,9 +104,9 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
           <input
             id={isFrom ? "fromAmount" : "toAmount"}
             name={isFrom ? "fromAmount" : "toAmount"}
-            type="text"
+            type="number"
             value={inputValue}
-            onChange={onAmountChange}
+            onChange={handleAmountChange}
             placeholder="0"
             className={styles.amountInput}
             readOnly={!isFrom}
