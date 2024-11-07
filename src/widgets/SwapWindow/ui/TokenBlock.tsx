@@ -73,7 +73,7 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
           <input
             id={isFrom ? "fromAmount" : "toAmount"}
             name={isFrom ? "fromAmount" : "toAmount"}
-            type="text"
+            type="number"
             value={amount}
             onChange={onAmountChange}
             placeholder="0"
