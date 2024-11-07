@@ -37,7 +37,7 @@ const PrivateKeyPopover: React.FC<PrivateKeyPopoverProps> = ({ onCopyKey, onBack
     </Flex>
     
     <Typography.Text 
-      text="Your private key provides access to all your funds. Never share it with anyone."
+      text="Your seed phrase provides access to all your funds. Never share it with anyone."
       fontSize={16}
       weight={400}
       color="#000000"
@@ -45,7 +45,7 @@ const PrivateKeyPopover: React.FC<PrivateKeyPopoverProps> = ({ onCopyKey, onBack
     
     <Flex direction="column" gap={8}>
       <Button
-        text = 'Copy private key'
+        text = 'Copy Seed phrase'
         onClick={onCopyKey}
         className="w-full h-12  rounded-xl hover:bg-[#EFEFEF] font-medium text-black"
         type= 'primary'
@@ -131,11 +131,11 @@ export const WalletDetailsWindow = () => {
         </Field>
         
         <Field 
-          label="Private key" 
+          label="Seed phrase" 
           justify="space-between"
           gap={15}
           copyValue={state.showPrivateKey ? state.openedWallet?.private_key : undefined} 
-          onCopyLabel="Private key copied" 
+          onCopyLabel="Seed phrase copied" 
         >
           <Popover
             isOpen={state.isPopoverOpen}

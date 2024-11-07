@@ -29,7 +29,7 @@ export const useWalletDetailsWindowLogic = () => {
       navigator.clipboard.writeText(openedWallet.private_key);
       setIsPopoverOpen(false);
       notify('success')
-      successToast('Private key copied');
+      successToast('Seed phrase copied');
     }
   }
   

@@ -30,7 +30,7 @@ export const ImportWalletWindow = () => {
 
       <Flex width="100%" direction="column" gap={12}>
         <Input placeholder="..." label="Wallet name" value={state.walletName} onChange={flow.handleWalletNameChange} />
-        <Input placeholder="..." label="Private key" value={state.mnemonic} onChange={flow.handlePrivateKeyChange} />
+        <Input placeholder="..." label="Seed phrase" value={state.mnemonic} onChange={flow.handlePrivateKeyChange} />
       </Flex>
     </Window>
   );
