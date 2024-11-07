@@ -14,7 +14,7 @@ export const useImportWalletWindowLogic = () => {
 
   const [importWalletRequest, importWalletResult] = walletApi.useImportWalletMutation();
   const [getWalletsRequest] = walletApi.useLazyGetWalletsQuery();
-  const [privateKey, setPrivateKey] = useState<string>('');
+  const [mnemonic, setMnemonic] = useState<string>('');
   const [walletName, setWalletName] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -25,7 +25,7 @@ export const useImportWalletWindowLogic = () => {
   const handleImportWallet = async () => {
     try {
       setIsLoading(true);
-      if (!walletName || !selectedNetwork || !privateKey) return;
+      if (!walletName || !selectedNetwork || !mnemonic) return;
 
       if (wallets.find((w) => w.name === walletName)) {
         notify('error')
@@ -36,7 +36,7 @@ export const useImportWalletWindowLogic = () => {
       const result = await importWalletRequest({
         name: walletName,
         network: selectedNetwork,
-        private_key: privateKey,
+        mnemonic: mnemonic,
       }).unwrap();
 
       if (result.ok && result.data) {
@@ -52,7 +52,7 @@ export const useImportWalletWindowLogic = () => {
     } finally {
       setIsLoading(false);
       setWalletName('');
-      setPrivateKey('');
+      setMnemonic('');
      // getWalletsRequest();
     }
   };
@@ -62,7 +62,7 @@ export const useImportWalletWindowLogic = () => {
   };
 
   const handlePrivateKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPrivateKey(e.target.value);
+    setMnemonic(e.target.value);
   };
 
   return {
@@ -73,11 +73,11 @@ export const useImportWalletWindowLogic = () => {
     },
     state: {
       walletName,
-      privateKey,
+      mnemonic,
       isWindowOpen,
       network: selectedNetwork,
       isLoading: isLoading || importWalletResult.isLoading,
-      isBtnActive: Boolean(walletName && privateKey && selectedNetwork),
+      isBtnActive: Boolean(walletName && mnemonic && selectedNetwork),
     },
   };
 };
