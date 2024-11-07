@@ -29,11 +29,11 @@ export const Transaction: React.FC<TransactionProps> = ({ transaction, onTransac
 
   const amountContent = transaction.type === TransactionType.SWAP && transaction.fromCurrency && transaction.toCurrency
     ? {
-        mainText: `${transaction.amount.toFixed(5)} ${transaction.fromCurrency} -> ${transaction.toCurrency}`,
+        mainText: `${transaction.amount} ${transaction.fromCurrency} -> ${transaction.toCurrency}`,
         subText: `≈ ${transaction.amount_usd.toFixed(2)} $`
       }
     : {
-        mainText: `${transaction.amount.toFixed(5)} ${transaction.currency || transaction.fromCurrency || ''}`,
+        mainText: `${transaction.amount} ${transaction.currency || transaction.fromCurrency || ''}`,
         subText: `≈ ${transaction.amount_usd.toFixed(2)} $`
       };
 
