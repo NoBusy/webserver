@@ -45,10 +45,10 @@ const PrivateKeyPopover: React.FC<PrivateKeyPopoverProps> = ({ onCopyKey, onBack
     
     <Flex direction="column" gap={8}>
       <Button
-        text = 'Copy Seed phrase'
+        text="Copy Seed phrase"
         onClick={onCopyKey}
-        className="w-full h-12  rounded-xl hover:bg-[#EFEFEF] font-medium text-black"
-        type= 'primary'
+        className="w-full h-12 rounded-xl hover:bg-[#EFEFEF] font-medium text-black"
+        type="primary"
       />
       
       <Button
@@ -61,13 +61,70 @@ const PrivateKeyPopover: React.FC<PrivateKeyPopoverProps> = ({ onCopyKey, onBack
   </Flex>
 );
 
+interface DeleteWalletPopoverProps {
+  onDelete: () => void;
+  onBack: () => void;
+}
+
+const DeleteWalletPopover: React.FC<DeleteWalletPopoverProps> = ({ onDelete, onBack }) => (
+  <Flex direction="column" gap={24}>
+    <Flex justify="space-between" align="center" width="100%">
+      <Typography.Text 
+        text="Delete Wallet" 
+        weight={500} 
+        fontSize={20}
+        color="#000000"
+      />
+      <Button
+        onClick={onBack}
+        className="p-1"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M18 6L6 18M6 6L18 18" stroke="#000000" strokeWidth="2" strokeLinecap="round"/>
+        </svg>
+      </Button>
+    </Flex>
+    
+    <Typography.Text 
+      text="Are you sure you want to delete this wallet? This action cannot be undone."
+      fontSize={16}
+      weight={400}
+      color="#000000"
+    />
+    
+    <Flex direction="column" gap={8}>
+      <Button
+        text="Delete Wallet"
+        onClick={onDelete}
+        className="w-full h-12 rounded-xl bg-red-500 hover:bg-red-600 font-medium text-white"
+      />
+      
+      <Button
+        onClick={onBack}
+        className="w-full h-12 rounded-xl hover:bg-[#EFEFEF] font-medium text-black"
+      >
+        Cancel
+      </Button>
+    </Flex>
+  </Flex>
+);
 
 export const WalletDetailsWindow = () => {
   const { flow, state } = useWalletDetailsWindowLogic();
+  const [isDeletePopoverOpen, setIsDeletePopoverOpen] = useState(false);
 
   const handleClose = () => {
     state.setIsPopoverOpen(false);
-    state.setShowPrivateKey(false); 
+    state.setShowPrivateKey(false);
+  };
+
+  const handleDeleteClose = () => {
+    setIsDeletePopoverOpen(false);
+  };
+
+  const handleDelete = () => {
+    flow.handleDeleteWallet();
+    handleDeleteClose();
   };
 
   return (
@@ -76,7 +133,7 @@ export const WalletDetailsWindow = () => {
       zIndex={5002}
       btnText="Delete wallet"
       btnType="danger"
-      btnOnClick={flow.handleDeleteWallet}
+      btnOnClick={() => setIsDeletePopoverOpen(true)}
       isBtnActive={state.isBtnActive}
       isBtnDisabled={state.isLoading}
     >
