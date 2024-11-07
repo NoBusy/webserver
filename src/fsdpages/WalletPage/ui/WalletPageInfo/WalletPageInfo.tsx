@@ -81,7 +81,7 @@ export const WalletPageInfo = () => {
               {isRefreshing && (
                 <motion.div
                   exit={{ width: 0, opacity: 0, marginLeft: 0 }}
-                  animate={{ width: 16, opacity: 1, marginLeft: '8px' }}
+                  animate={{ width: 16, opacity: 1, marginLeft: 0 }}
                   initial={{ width: 0, opacity: 0, marginLeft: 0 }}
                   transition={{ ease: [0.32, 0.72, 0, 1], duration: 0.3 }}
                 >
@@ -93,7 +93,7 @@ export const WalletPageInfo = () => {
             {isLoading && (
               <motion.div
                 exit={{ width: 0, opacity: 0, paddingLeft: 0 }}
-                animate={{ width: 30.6, opacity: 1, paddingLeft: '9px' }}
+                animate={{ width: 30.6, opacity: 1, paddingLeft: 0 }}
                 initial={{ width: 0, opacity: 0, paddingLeft: 0 }}
                 transition={{ ease: [0.32, 0.72, 0, 1], duration: 0.6 }}
               >
