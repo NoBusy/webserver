@@ -12,7 +12,7 @@ export interface CreateWalletParams {
 export interface ImportWalletParams {
   network: Network;
   name: string;
-  private_key: string;
+  mnemonic: string;
 }
 
 export interface GetTokenInfoParams {
