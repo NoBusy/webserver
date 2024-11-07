@@ -131,7 +131,7 @@ export const WalletDetailsWindow = () => {
 
   return (
     <Window
-      isOpen={true}
+      isOpen={state.isWindowOpen}
       zIndex={5002}
     >
       <WindowHeader title="Wallet details" />
