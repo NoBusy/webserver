@@ -68,7 +68,7 @@ interface DeleteWalletPopoverProps {
 }
 
 const DeleteWalletPopover: React.FC<DeleteWalletPopoverProps> = ({ onDelete, onBack }) => (
-  <Flex direction="column" gap={24} className="p-6">
+  <Flex direction="column" gap={24}>
     <Flex justify="space-between" align="center" width="100%">
       <Typography.Text 
         text="Delete Wallet" 
@@ -93,20 +93,27 @@ const DeleteWalletPopover: React.FC<DeleteWalletPopoverProps> = ({ onDelete, onB
       color="#000000"
     />
     
-    <Flex direction="column" gap={8} className="w-full">
+    <Flex direction="column" gap={8}>
       <Button
+        text="Delete Wallet"
+        type="primary"
         onClick={onDelete}
-        className="w-full h-14 rounded-2xl bg-red-500 hover:bg-red-600 font-medium text-white"
-      >
-        Delete Wallet
-      </Button>
+        style={{
+          width: '100%',
+          height: '48px',
+          background: '#FF3B30'
+        }}
+      />
       
       <Button
+        text="Cancel"
+        type="default"
         onClick={onBack}
-        className="w-full h-14 rounded-2xl hover:bg-[#EFEFEF] font-medium text-black"
-      >
-        Cancel
-      </Button>
+        style={{
+          width: '100%',
+          height: '48px'
+        }}
+      />
     </Flex>
   </Flex>
 );
@@ -236,11 +243,22 @@ export const WalletDetailsWindow = () => {
           onClose={handleDeleteClose}
           trigger={
             <Button
+              type="primary"
+              style={{
+                width: '100%',
+                height: '56px',
+                marginTop: 'auto',
+                marginBottom: '24px',
+                background: '#000000',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
               onClick={() => setIsDeletePopoverOpen(true)}
-              className="w-full h-14 rounded-2xl bg-black text-white mt-auto mb-6 flex items-center justify-center gap-2 px-4"
             >
               <Image src={Trash} alt="" width={20} height={20} />
-              <span className="flex-grow text-center">Delete wallet</span>
+              Delete wallet
             </Button>
           }
         >
