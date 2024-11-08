@@ -70,15 +70,14 @@ export const RefWindow = () => {
             <Divider />
             <Flex width="100%" direction="column" gap={4.5}>
               <Typography.Text text="- Minimum withdrawal from 10$" type="secondary" />
-              <Typography.Text text="- Withdrawal time: up to 72 working hours" type="secondary" />
-              <Typography.Text text="- USDT will be accrued on the BEP-20 network" type="secondary" />
+              <Typography.Text text="- BEP-20 network, withdrawal up to 72 working hours" type="secondary" />
             </Flex>
           </Field>
 
           <Field padding="14px 16px 14px" direction="column" gap={8}>
             <Flex width="100%" justify="space-between" noFlex>
               <Flex direction="column" gap={6}>
-                <Typography.Text text="Statistics" type="secondary" />
+                <Typography.Text text="Referrals trading volume" type="secondary" />
                 <Flex bg="var(--bg)" radius="12px" padding="2px" width="100%" >
                   <Button 
                     className = {styles.button}

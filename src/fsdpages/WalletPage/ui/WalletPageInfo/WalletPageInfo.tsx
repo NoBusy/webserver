@@ -67,7 +67,7 @@ export const WalletPageInfo = () => {
             onClick={handleRefreshClick}
             style={{
               padding: '0 0 0 8px',
-              background: 'none',
+              background: 'none', 
               border: 'none',
               cursor: 'pointer',
               display: 'flex',
@@ -75,20 +75,30 @@ export const WalletPageInfo = () => {
               height: '16px',
             }}
           >
-            <RefreshIcon />
+            <AnimatePresence mode="wait">
+              {isRefreshing || isLoading ? (
+                <motion.div
+                  key="spinner"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Spinner size="md" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="refresh"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <RefreshIcon />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </Button>
-          <AnimatePresence>
-            {(isRefreshing || isLoading) && (
-              <motion.div
-                exit={{ width: 0, opacity: 0, paddingLeft: 0 }}
-                animate={{ width: 0, opacity: 1, paddingLeft: 0 }}
-                initial={{ width: 0, opacity: 0, paddingLeft: 0 }}
-                transition={{ ease: [0.32, 0.72, 0, 1], duration: 0.6 }}
-              >
-                <Spinner size="md" />
-              </motion.div>
-            )}
-          </AnimatePresence>
         </Flex>
         <Flex align="center" gap={8}>
           <Typography.Text text="$" fontFamily="Clash Display" type="secondary" fontSize={40} />
