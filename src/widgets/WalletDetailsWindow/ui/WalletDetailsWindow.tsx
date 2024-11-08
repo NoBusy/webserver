@@ -87,7 +87,7 @@ const DeleteWalletPopover: React.FC<DeleteWalletPopoverProps> = ({ onDelete, onB
     </Flex>
     
     <Typography.Text 
-      text="Are you sure you want to delete this wallet? This action cannot be undone."
+      text="Are you sure you want to delete this wallet? Make sure you save your seed phrase. This action cannot be undone."
       fontSize={16}
       weight={400}
       color="#000000"
