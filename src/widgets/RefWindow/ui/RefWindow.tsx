@@ -15,6 +15,10 @@ import styles from './RefWindow.module.scss'
 export const RefWindow = () => {
   const { flow, state } = useRefWindowLogic();
 
+  const volumeValue = Number(state.refProgram?.[
+    state.period === 'all' ? 'total_swap_volume_usd' : 'monthly_swap_volume_usd'
+  ] ?? 0);
+
   return (
     <Window isOpen={state.isWindowOpen} setIsOpen={flow.handleWindowClose}>
       <Flex width="100%" direction="column" gap={24}>
@@ -59,7 +63,7 @@ export const RefWindow = () => {
                 <Typography.Text text="Available balance" type="secondary" />
                 <Flex align="center" gap={6}>
                   <Image src={UsdtIcon} alt="usdt-icon" />
-                  <Typography.Text text={state.refProgram?.balance ?? 0} fontSize={18} />
+                  <Typography.Text text={state.refProgram?.balance ? state.refProgram?.balance.toFixed(5) : 0} fontSize={18} />
                 </Flex>
               </Flex>
               <Flex bg="var(--withdrawalBtnBg)" padding="0 16px" height="36px" align="center" radius="8px" gap={8}>
@@ -102,7 +106,7 @@ export const RefWindow = () => {
                 </Flex>
                 <Flex align="center" gap={6}>
                   <Image src={UsdtIcon} alt="usdt-icon" />
-                  <Typography.Text text={state.refProgram?.[state.period === 'all' ? 'total_swap_volume_usd' : 'monthly_swap_volume_usd'] ?? 0} fontSize={18} />
+                  <Typography.Text text={volumeValue === 0 ? '0' : volumeValue.toFixed(5)} fontSize={18} />
                 </Flex>
               </Flex>
             </Flex>
