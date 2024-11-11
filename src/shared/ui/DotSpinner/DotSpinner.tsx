@@ -31,7 +31,7 @@ const DotSpinner = ({ size = 'lg' }) => {
       </svg>
       <style jsx>{`
         .blue-dot {
-          animation: moveDot 2s steps(1) infinite;
+          animation: moveDot 0.6s steps(1) infinite;
         }
         @keyframes moveDot {
           0% {
