@@ -1,8 +1,8 @@
 export enum Network {
-  SOL = 'Solana',
-  TON = 'The Open Network',
   ETH = 'Ethereum',
+  SOL = 'Solana',
   BSC = 'Binance Smart Chain',
+  TON = 'The Open Network',
 }
 
 export enum WalletType {

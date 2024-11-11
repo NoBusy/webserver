@@ -63,42 +63,67 @@ export const WalletPageInfo = () => {
       <Flex direction="column" align="center" justify="center" gap={8}>
         <Flex align="center" height="25px">
           <Typography.Text text="Total Balance" fontSize={16} />
-          <Button
-            onClick={handleRefreshClick}
-            style={{
-              padding: '0 0 0 8px',
-              background: 'none', 
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              height: '16px',
-            }}
-          >
-            <AnimatePresence mode="wait">
-              {isRefreshing || isLoading ? (
-                <motion.div
-                  key="spinner"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Spinner size="md" />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="refresh"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <RefreshIcon />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </Button>
+          <div style={{ 
+            width: '24px',  // Фиксированная ширина
+            height: '24px', // Фиксированная высота
+            position: 'relative',
+            marginLeft: '8px'
+          }}>
+            <Button
+              onClick={handleRefreshClick}
+              style={{
+                padding: 0,
+                background: 'none', 
+                border: 'none',
+                cursor: 'pointer',
+                position: 'absolute', // Абсолютное позиционирование
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)', // Центрирование
+                width: '24px',
+                height: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <AnimatePresence mode="wait">
+                {isRefreshing || isLoading ? (
+                  <motion.div
+                    key="spinner"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)'
+                    }}
+                  >
+                    <Spinner size="md" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="refresh"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)'
+                    }}
+                  >
+                    <RefreshIcon />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Button>
+          </div>
         </Flex>
         <Flex align="center" gap={8}>
           <Typography.Text text="$" fontFamily="Clash Display" type="secondary" fontSize={40} />
