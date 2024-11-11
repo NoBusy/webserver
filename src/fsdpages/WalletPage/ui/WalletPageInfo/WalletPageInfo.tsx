@@ -67,7 +67,7 @@ export const WalletPageInfo = () => {
             width: '24px',  // Фиксированная ширина
             height: '24px', // Фиксированная высота
             position: 'relative',
-            marginLeft: '8px'
+            marginLeft: '3px'
           }}>
             <Button
               onClick={handleRefreshClick}
