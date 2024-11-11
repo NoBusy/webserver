@@ -88,7 +88,7 @@ export const WalletPageInfo = () => {
               }}
             >
               <AnimatePresence mode="wait">
-                {isRefreshing || isLoading ? (
+                {isRefreshing ? (
                   <motion.div
                     key="spinner"
                     initial={{ opacity: 0 }}
