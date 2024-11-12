@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Flex } from '@/shared/ui/Flex/Flex';
 import { Typography } from '@/shared/ui/Typography/Typography';
 import { Button } from '@/shared/ui/Button/Button';
@@ -33,7 +33,6 @@ export const SelectTokenPage: React.FC<SelectTokenPageProps> = ({
 
   const selectedWallet = useSelector(getSelectedWallet);
   const isSelectTokenWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.SelectToken);
-
 
   const handleGetTokenInfo = useDebounce(async (address: string) => {
     if (!address || !selectedWallet) return;
@@ -78,6 +77,20 @@ export const SelectTokenPage: React.FC<SelectTokenPageProps> = ({
       handleGetTokenInfo(value);
     }
   }, [handleGetTokenInfo]);
+
+  useEffect(() => {
+    if (!isSelectTokenWindowOpen) {
+      setTokenAddress('');
+    }
+  }, [isSelectTokenWindowOpen]);
+
+  useEffect(() => {
+    return () => {
+      setTokenAddress('');
+      setIsLoading(false);
+    };
+  }, []);
+
 
   return (
     <Window 
