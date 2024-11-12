@@ -32,7 +32,7 @@ export const Input: React.FC<InputProps> = (props) => {
   const [isFocused, setIsFocused] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const { scanQr } = useScanQrCode();
-
+  
   const options: Record<string, boolean | undefined> = {
     [styles.block]: props.block,
     [styles[props.theme ?? 'light']]: true,
@@ -57,16 +57,40 @@ export const Input: React.FC<InputProps> = (props) => {
   };
 
   const handleScanQr = async () => {
-  const result = await scanQr();
-  if (result && props.onChange) {
-    props.onChange({ 
-      target: { 
-        value: result,
-        name: props.name 
-      } 
-    } as React.ChangeEvent<HTMLInputElement>);
-  }
-};
+    const result = await scanQr();
+    if (result && props.onChange) {
+      props.onChange({
+        target: {
+          value: result,
+          name: props.name
+        }
+      } as React.ChangeEvent<HTMLInputElement>);
+    }
+  };
+
+  // Обработчик ввода с валидацией
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!props.onChange) return;
+
+    // Если это не числовой инпут, пропускаем валидацию
+    if (props.type !== 'number') {
+      props.onChange(e);
+      return;
+    }
+
+    const newValue = e.target.value;
+
+    // Валидация для числового ввода
+    const validNumberFormat = /^(0$|0\.\d*$|[1-9]\d*\.?\d*$)$/;
+    
+    // Пропускаем пустую строку или значения, соответствующие формату
+    if (newValue === '' || validNumberFormat.test(newValue)) {
+      // Предотвращаем ввод нескольких нулей в начале
+      if (!/^0\d/.test(newValue)) {
+        props.onChange(e);
+      }
+    }
+  };
 
   return (
     <div className={cn(styles.input_wrapper, options)}>
@@ -85,14 +109,15 @@ export const Input: React.FC<InputProps> = (props) => {
         <input
           id={props.id}
           ref={inputRef}
-          type={props.type}
+          type={props.type === 'number' ? 'text' : props.type} // Меняем type="number" на type="text" для лучшего контроля
           name={props.name}
           value={props.value}
-          onChange={props.onChange}
+          onChange={handleInputChange}
           onBlur={handleBlur}
           onFocus={handleFocus}
           placeholder={props.placeholder}
           className={styles.input}
+          inputMode={props.type === 'number' ? 'decimal' : undefined} // Для удобства ввода на мобильных
         />
         {props.value && (
           <CloseInlineIcon
@@ -103,7 +128,7 @@ export const Input: React.FC<InputProps> = (props) => {
         )}
         {props.isQrScanEnabled && (
           <div onClick={handleScanQr} className={styles.qr_icon}>
-            <Image src={Qr} alt ='' width={18} height={18} />
+            <Image src={Qr} alt='' width={18} height={18} />
           </div>
         )}
         {props.isHasMaxButton && !props.value && (
