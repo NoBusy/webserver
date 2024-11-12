@@ -78,20 +78,48 @@ export const Input: React.FC<InputProps> = (props) => {
       return;
     }
 
-    const newValue = e.target.value;
+    let newValue = e.target.value;
+
+    // Заменяем запятую на точку
+    newValue = newValue.replace(',', '.');
+
+    // Проверяем количество точек
+    if ((newValue.match(/\./g) || []).length > 1) {
+      return;
+    }
 
     // Валидация для числового ввода
     const validNumberFormat = /^(0$|0\.\d*$|[1-9]\d*\.?\d*$)$/;
     
-    // Пропускаем пустую строку или значения, соответствующие формату
-    if (newValue === '' || validNumberFormat.test(newValue)) {
-      // Предотвращаем ввод нескольких нулей в начале
-      if (!/^0\d/.test(newValue)) {
-        props.onChange(e);
-      }
+    // Обработка пустой строки
+    if (newValue === '') {
+      props.onChange({
+        ...e,
+        target: {
+          ...e.target,
+          value: ''
+        }
+      });
+      return;
+    }
+
+    // Проверка на множественные нули в начале
+    if (/^0[0-9]/.test(newValue)) {
+      return;
+    }
+
+    // Проверяем формат и передаем значение, если оно валидно
+    if (validNumberFormat.test(newValue)) {
+      props.onChange({
+        ...e,
+        target: {
+          ...e.target,
+          value: newValue
+        }
+      });
     }
   };
-
+  
   return (
     <div className={cn(styles.input_wrapper, options)}>
       {props.label && (

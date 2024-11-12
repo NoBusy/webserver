@@ -74,7 +74,14 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
   }, [amount]);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    let value = e.target.value;
+
+    value = value.replace(',', '.');
+    
+    // Проверяем, что в строке только одна точка
+    if ((value.match(/\./g) || []).length > 1) {
+      return;
+    }
     
     // Проверяем формат введенного числа
     const validNumberFormat = /^(0$|0\.\d*$|[1-9]\d*\.?\d*$)$/;
