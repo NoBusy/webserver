@@ -159,10 +159,10 @@ export const useTransferWindowLogic = () => {
 
 
   const NETWORK_FEES = {
-    [Network.ETH]: 0.008,
-    [Network.BSC]: 0.0004,
-    [Network.SOL]: 0.00022,
-    [Network.TON]: 0.18
+    [Network.ETH]: 0.001,
+    [Network.BSC]: 0.0001,
+    [Network.SOL]: 0.0001,
+    [Network.TON]: 0.07
   } as const;
 
   const getMaxAmount = useCallback((token: Token): string => {
