@@ -38,8 +38,8 @@ export const LoadingWindow = () => {
         transition={{ ease: [0.32, 0.72, 0, 1], duration: 0.6 }}
         className={styles.loading_window}
       >
-        {/* <DotSpinner size="lg" /> */}
         <GradientSpinner />
+        {/* <DotSpinner size="lg" /> */}
       </motion.div>
     </AnimatePresence>
   );
