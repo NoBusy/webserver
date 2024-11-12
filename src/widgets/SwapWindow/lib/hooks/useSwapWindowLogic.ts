@@ -364,6 +364,8 @@ export const useSwapWindowLogic = () => {
 
   const handleSelectToToken = async (token: Token) => {
     try {
+      setToToken(undefined);
+      setTokenExtendedInfo(null);
       // Проверяем, есть ли токен уже в кошельке
       const existingToken = selectedWallet?.tokens.find(t => t.contract === token.contract);
   
@@ -399,6 +401,8 @@ export const useSwapWindowLogic = () => {
       }
     } catch (error) {
       showToast(errorToast, 'Failed to process token');
+      setToToken(undefined);
+      setTokenExtendedInfo(null);
     }
   };
 
@@ -415,6 +419,13 @@ export const useSwapWindowLogic = () => {
       handleGetTokenExtendedInfo(fromToken, selectedWallet.network);
     }
   };
+
+  useEffect(() => {
+    if (selectedWallet) {
+      setToToken(undefined);
+      setTokenExtendedInfo(null);
+    }
+  }, [selectedWallet?.id]);
 
   return {
     flow: {
