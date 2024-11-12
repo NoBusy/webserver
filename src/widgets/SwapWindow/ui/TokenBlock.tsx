@@ -75,19 +75,13 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setInputValue(value);
-
-    // Вызываем внешний обработчик только если есть значение
-    if (value !== '') {
-      onAmountChange?.({
-        ...e,
-        target: {
-          ...e.target,
-          value: value
-        }
-      });
-    } else {
-      // Если поле пустое, передаем 0
+    
+    // Проверяем формат введенного числа
+    const validNumberFormat = /^(0$|0\.\d*$|[1-9]\d*\.?\d*$)$/;
+    
+    // Если значение пустое, обрабатываем как 0
+    if (value === '') {
+      setInputValue('');
       onAmountChange?.({
         ...e,
         target: {
@@ -95,7 +89,22 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
           value: '0'
         }
       });
+      return;
     }
+
+    // Если значение не соответствует формату, игнорируем ввод
+    if (!validNumberFormat.test(value)) {
+      return;
+    }
+
+    setInputValue(value);
+    onAmountChange?.({
+      ...e,
+      target: {
+        ...e.target,
+        value
+      }
+    });
   };
 
   return (
@@ -106,13 +115,14 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
           <input
             id={isFrom ? "fromAmount" : "toAmount"}
             name={isFrom ? "fromAmount" : "toAmount"}
-            type="number"
+            type="text"
             value={inputValue}
             onChange={handleAmountChange}
             placeholder="0"
             className={styles.amountInput}
             readOnly={!isFrom}
             inputMode="decimal"
+            pattern="^(0|[1-9]\d*\.?\d*|\.\d+)$"
           />
           <div className={styles.usdAmount}>{usdAmount} $</div>
         </div>
