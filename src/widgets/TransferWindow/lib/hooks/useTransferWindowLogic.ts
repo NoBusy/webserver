@@ -121,33 +121,85 @@ export const useTransferWindowLogic = () => {
     };
   }, []);
 
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAmountChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setIsLoading(true);
-    if (!tokenToTransfer) return;
+    if (!tokenToTransfer || !selectedWallet) return;
 
-    if (Number(e.target.value) > tokenToTransfer?.balance) {
-      notify('error')
+    const newAmount = e.target.value;
+    const isNativeToken = tokenToTransfer.symbol === 'ETH' || 
+                         tokenToTransfer.symbol === 'BNB' || 
+                         tokenToTransfer.symbol === 'SOL' || 
+                         tokenToTransfer.symbol === 'TON';
+
+    if (isNativeToken) {
+      const networkFee = NETWORK_FEES[selectedWallet.network];
+      if (Number(newAmount) > tokenToTransfer.balance - networkFee) {
+        notify('error');
+        errorToast(`Insufficient balance to cover network fee (${networkFee} ${tokenToTransfer.symbol})`);
+        setIsLoading(false);
+        return;
+      }
+    } else if (Number(newAmount) > tokenToTransfer.balance) {
+      notify('error');
       errorToast('Insufficient funds');
+      setIsLoading(false);
+      return;
     }
 
-    if (!e.target.value) {
+    if (!newAmount) {
       setRate(0);
       setAmount('');
       setIsLoading(false);
       return;
-    } else {
-      setAmount(e.target.value);
-      handleGetRate(e.target.value);
     }
-  };
 
-  const handleMaxButtonClick = () => {
-    if (tokenToTransfer) {
-      const maxAmount = tokenToTransfer.balance.toString();
-      setAmount(maxAmount);
-      handleGetRate(maxAmount);
+    setAmount(newAmount);
+    handleGetRate(newAmount);
+  }, [tokenToTransfer, selectedWallet, handleGetRate, notify, errorToast]);
+
+
+  const NETWORK_FEES = {
+    [Network.ETH]: 0.008,
+    [Network.BSC]: 0.0004,
+    [Network.SOL]: 0.00022,
+    [Network.TON]: 0.18
+  } as const;
+
+  const getMaxAmount = useCallback((token: Token): string => {
+    // Проверяем, является ли токен нативным токеном сети
+    const isNativeToken = token.symbol === 'ETH' || 
+                         token.symbol === 'BNB' || 
+                         token.symbol === 'SOL' || 
+                         token.symbol === 'TON';
+
+    if (isNativeToken && selectedWallet) {
+      // Для нативных токенов вычитаем комиссию
+      const networkFee = NETWORK_FEES[selectedWallet.network];
+      const maxAmount = token.balance - networkFee;
+      
+      // Проверяем, что после вычета комиссии сумма положительная
+      if (maxAmount <= 0) {
+        notify('error');
+        errorToast(`Insufficient balance to cover network fee (${networkFee} ${token.symbol})`);
+        return '0';
+      }
+      
+      // Округляем до 9 знаков после запятой для большей точности
+      return maxAmount.toFixed(9);
     }
-  };
+    
+    // Для не-нативных токенов возвращаем весь баланс
+    return token.balance.toString();
+  }, [selectedWallet, notify, errorToast]);
+
+  const handleMaxButtonClick = useCallback(() => {
+    if (!tokenToTransfer) return;
+
+    const maxAmount = getMaxAmount(tokenToTransfer);
+    setAmount(maxAmount);
+    handleGetRate(maxAmount);
+  }, [tokenToTransfer, getMaxAmount, handleGetRate]);
+
 
   const handleToAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!tokenToTransfer) return;

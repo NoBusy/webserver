@@ -16,7 +16,9 @@ export const ConfirmTransferWindow: React.FC<ConfirmTransferWindowProps> = (prop
   const { flow, state } = props.logic;
 
   return (
-    <Window isOpen={state.isConfirmWindowOpen} zIndex={5006} btnOnClick={flow.handleTransferConfirm} btnText="Confirm" isBtnActive>
+    <Window isOpen={state.isConfirmWindowOpen} zIndex={5006} btnOnClick={flow.handleTransferConfirm} btnText="Confirm" 
+      isBtnActive={!state.isLoading} 
+      isBtnDisabled={state.isLoading}>
       <WindowHeader title="Transfer" isLoading={state.isLoading} />
       <Flex width="100%" direction="column" align="center" gap={24}>
         <Flex width="100%" direction="column" align="center" gap={4}>
