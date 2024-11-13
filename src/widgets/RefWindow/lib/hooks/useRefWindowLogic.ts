@@ -24,7 +24,7 @@ export const useRefWindowLogic = () => {
     await impact('light')
     const TgWebAppSdk = await getTgWebAppSdk();
     if (!TgWebAppSdk || !data?.data) return;
-    TgWebAppSdk.openTelegramLink(`https://t.me/share?url=${data.data.link}&text=Join to TestCryptoSwapBot for crypto exchange into telegram 🍻`);
+    TgWebAppSdk.openTelegramLink(`https://t.me/share?url=${data.data.link}&text=Join to YoYo Swap for crypto exchange into telegram 🍻`);
   };
 
   return {
