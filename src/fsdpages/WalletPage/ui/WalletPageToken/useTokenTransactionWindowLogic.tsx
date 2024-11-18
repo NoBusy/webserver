@@ -9,6 +9,7 @@ import { useTransferWindowLogic } from '@/widgets/TransferWindow/lib/hooks/useTr
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
 import { useToastManager } from '@/shared/lib/hooks/useToastManager/useToastManager';
 import { useAnimation } from 'framer-motion';
+import { isInteger } from 'lodash';
 
 export const useTokenTransactionsWindowLogic = () => {
   const dispatch = useDispatch();
@@ -117,7 +118,8 @@ export const useTokenTransactionsWindowLogic = () => {
   }, [dispatch, loadTokenInfo]);
 
   const formatBalance = useCallback((balance: number) => {
-    return balance !== 0 ? balance.toFixed(7) : '0';
+    if (balance === 0) return '0';
+    return isInteger(balance) ? balance.toString() : balance.toFixed(5);
   }, []);
 
   useEffect(() => {
