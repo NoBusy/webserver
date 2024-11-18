@@ -74,9 +74,34 @@ export const useTransferWindowLogic = () => {
   
   const handleTransferConfirm = async () => {
     await impact('light')
+    console.log('[Transfer] Starting transfer confirmation:', {
+      amount: amount,
+      tokenSymbol: tokenToTransfer?.symbol,
+      balance: tokenToTransfer?.balance,
+      toAddress: toAddress
+    });
+
     try {
       setIsLoading(true);
-      if (!tokenToTransfer || !selectedWallet || !toAddress || !amount) return;
+      if (!tokenToTransfer || !selectedWallet || !toAddress || !amount) {
+        console.log('[Transfer] Missing required fields:', {
+          hasToken: !!tokenToTransfer,
+          hasWallet: !!selectedWallet,
+          hasAddress: !!toAddress,
+          hasAmount: !!amount
+        });
+        return;
+      }
+
+      const numericAmount = Number(amount);
+      const isNativeToken = tokenToTransfer.symbol === networkSymbol[selectedWallet.network];
+      
+      console.log('[Transfer] Balance check:', {
+        amount: numericAmount,
+        balance: tokenToTransfer.balance,
+        isNativeToken,
+        networkFee: isNativeToken ? NETWORK_FEES[selectedWallet.network] : 0
+      });
 
       const result = await transferRequest({
         amount: Number(amount),
@@ -86,6 +111,8 @@ export const useTransferWindowLogic = () => {
         to_address: toAddress,
       }).unwrap();
 
+      console.log('[Transfer] Transfer request result:', result);
+
       if (result.ok) {
         notify('success')
         successToast('Transfer successful');
@@ -93,6 +120,7 @@ export const useTransferWindowLogic = () => {
         updateAfterDelay(30000);
       }
     } catch (e) {
+      console.error('[Transfer] Transfer failed:', e);
       notify('error')
       errorToast('Failed to transfer tokens');
     } finally {
@@ -122,24 +150,46 @@ export const useTransferWindowLogic = () => {
   }, []);
 
   const handleAmountChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('[Transfer] Amount change started:', {
+      newValue: e.target.value,
+      currentBalance: tokenToTransfer?.balance
+    });
+
     setIsLoading(true);
-    if (!tokenToTransfer || !selectedWallet) return;
+    if (!tokenToTransfer || !selectedWallet) {
+      console.log('[Transfer] Missing token or wallet');
+      return;
+    }
 
     const newAmount = e.target.value;
-    const isNativeToken = tokenToTransfer.symbol === 'ETH' || 
-                         tokenToTransfer.symbol === 'BNB' || 
-                         tokenToTransfer.symbol === 'SOL' || 
-                         tokenToTransfer.symbol === 'TON';
+    const isNativeToken = tokenToTransfer.symbol === networkSymbol[selectedWallet.network];
+
+    console.log('[Transfer] Validating amount:', {
+      newAmount: Number(newAmount),
+      balance: tokenToTransfer.balance,
+      isNativeToken,
+      networkFee: isNativeToken ? NETWORK_FEES[selectedWallet.network] : 0
+    });
 
     if (isNativeToken) {
       const networkFee = NETWORK_FEES[selectedWallet.network];
       if (Number(newAmount) > tokenToTransfer.balance - networkFee) {
+        console.log('[Transfer] Insufficient balance for native token:', {
+          amount: Number(newAmount),
+          balance: tokenToTransfer.balance,
+          networkFee,
+          remaining: tokenToTransfer.balance - networkFee
+        });
         notify('error');
         errorToast(`Insufficient balance to cover network fee (${networkFee} ${tokenToTransfer.symbol})`);
         setIsLoading(false);
         return;
       }
     } else if (Number(newAmount) > tokenToTransfer.balance) {
+      console.log('[Transfer] Insufficient balance for token:', {
+        amount: Number(newAmount),
+        balance: tokenToTransfer.balance
+      });
       notify('error');
       errorToast('Insufficient funds');
       setIsLoading(false);
@@ -155,8 +205,7 @@ export const useTransferWindowLogic = () => {
 
     setAmount(newAmount);
     handleGetRate(newAmount);
-  }, [tokenToTransfer, selectedWallet, handleGetRate, notify, errorToast]);
-
+}, [tokenToTransfer, selectedWallet, handleGetRate, notify, errorToast]);
 
   const NETWORK_FEES = {
     [Network.ETH]: 0.001,
