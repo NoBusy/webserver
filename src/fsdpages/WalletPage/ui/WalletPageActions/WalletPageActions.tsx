@@ -7,10 +7,12 @@ import { BurgerIcon } from '@/shared/assets/icons/BurgerIcon';
 import { Field } from '@/shared/ui/Field/Field';
 import { Flex } from '@/shared/ui/Flex/Flex';
 import { useDispatch } from 'react-redux';
+import { useTelegramLink } from '@/shared/lib/hooks/useTelegramLink/useTelegramLink';
 
 
 export const WalletPageActions = () => {
   const dispatch = useDispatch();
+  const { openLink } = useTelegramLink();
   
   const handleReferralClick = async () => {
     dispatch(globalActions.addWindow({ window: GlobalWindow.Referral }));
@@ -18,6 +20,10 @@ export const WalletPageActions = () => {
 
   const handleTransactionsHistoryClick = async () => {
     dispatch(globalActions.addWindow({ window: GlobalWindow.TransactionsHistory }));
+  };
+
+  const handleSupportClick = async () => {
+    await openLink('https://t.me/yoyosupport');
   };
 
   return (
@@ -42,7 +48,7 @@ export const WalletPageActions = () => {
         </Flex>
       </Field>
 
-      <Field width="100%" padding="12px 16px">
+      <Field width="100%" padding="12px 16px" onClick={handleSupportClick}>
         <Flex width="100%" align="center" gap={12}>
           <Flex width="40px" height="35px" align="center" justify="center" radius="8px" bg="var(--yellow)">
             <MessageOutlineIcon width={20} height={20} fill="white" />
