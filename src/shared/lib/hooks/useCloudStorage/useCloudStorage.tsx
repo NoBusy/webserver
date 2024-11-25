@@ -15,7 +15,7 @@ const getWebApp = async () => {
 };
 
 export const useCloudStorage = () => {
-  const getItem = useCallback(async (key: string) => {
+  const getItem = useCallback(async (key: string): Promise<string | null> => {
     const webApp = await getWebApp();
     return new Promise((resolve, reject) => {
       webApp.CloudStorage.getItem(key, (error: Error | null, value: string | null) => {
@@ -25,7 +25,7 @@ export const useCloudStorage = () => {
     });
   }, []);
 
-  const setItem = useCallback(async (key: string, value: string) => {
+  const setItem = useCallback(async (key: string, value: string): Promise<boolean> => {
     const webApp = await getWebApp();
     return new Promise((resolve, reject) => {
       webApp.CloudStorage.setItem(key, value, (error: Error | null, success: boolean) => {

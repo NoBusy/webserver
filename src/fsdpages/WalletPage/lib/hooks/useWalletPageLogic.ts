@@ -12,6 +12,8 @@ import { userApi } from '@/entities/User';
 import cookies from 'js-cookie';
 import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 import { useCloudStorage } from '@/shared/lib/hooks/useCloudStorage/useCloudStorage';
+import { useAppStorage } from '@/shared/lib/hooks/useCloudStorage/useAppStorage';
+import { STORAGE_KEYS } from '@/shared/consts/storage';
 
 
 
@@ -37,27 +39,36 @@ export const useWalletPageLogic = () => {
   const [getWalletsRequest, getWalletsResult] = walletApi.useLazyGetWalletsQuery();
 
   const getWallets = async () => {
-    const walletsData = await getWalletsRequest().unwrap();
-    if (!walletsData.data) return;
-
-    dispatch(walletActions.setWallets(walletsData.data));
-
-    const walletId: string | undefined = cookies.get(COOKIES_KEY_SELECTED_WALLET);
-    const wallet: Wallet | undefined = selectedWallet ?? walletsData.data.find((w) => w.id === walletId);
-    const network: Network | undefined = selectedNetwork ?? (cookies.get(COOKIES_KEY_SELECTED_NETWORK) as Network);
-
-    if (!wallet) {
-      walletId ? await getWalletRequest(walletId) : await getWalletRequest(walletsData.data[0].id);
-    }
-
-    if (wallet && network) {
-      getWalletRequest(wallet.id);
-
-      if (wallet.network !== network) {
-        dispatch(walletActions.setSelectedNetwork(wallet.network));
-      } else {
-        dispatch(walletActions.setSelectedNetwork(network));
+    try {
+      const storage = useAppStorage();
+      const walletsData = await getWalletsRequest().unwrap();
+      if (!walletsData.data) return;
+  
+      dispatch(walletActions.setWallets(walletsData.data));
+  
+      const savedWalletId = await storage.get<string>(STORAGE_KEYS.SELECTED_WALLET);
+      const savedNetwork = await storage.get<Network>(STORAGE_KEYS.SELECTED_NETWORK);
+  
+      const wallet = selectedWallet ?? walletsData.data.find((w) => w.id === savedWalletId);
+      const network = selectedNetwork ?? savedNetwork;
+  
+      if (!wallet) {
+        savedWalletId ? 
+          await getWalletRequest(savedWalletId) : 
+          await getWalletRequest(walletsData.data[0].id);
       }
+  
+      if (wallet && network) {
+        await getWalletRequest(wallet.id);
+        
+        if (wallet.network !== network) {
+          dispatch(walletActions.setSelectedNetwork(wallet.network));
+        } else {
+          dispatch(walletActions.setSelectedNetwork(network));
+        }
+      }
+    } catch (error) {
+      console.error('Error in getWallets:', error);
     }
   };
 
