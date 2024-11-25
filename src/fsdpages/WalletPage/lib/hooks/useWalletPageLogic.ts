@@ -12,7 +12,7 @@ import { userApi } from '@/entities/User';
 import cookies from 'js-cookie';
 import { useHapticFeedback } from '@/shared/lib/hooks/useHapticFeedback/useHapticFeedback';
 import { useCloudStorage } from '@/shared/lib/hooks/useCloudStorage/useCloudStorage';
-import { useAppStorage } from '@/shared/lib/hooks/useCloudStorage/useAppStorage';
+import { appStorage, useAppStorage } from '@/shared/lib/hooks/useCloudStorage/useAppStorage';
 import { STORAGE_KEYS } from '@/shared/consts/storage';
 
 
@@ -40,21 +40,20 @@ export const useWalletPageLogic = () => {
 
   const getWallets = async () => {
     try {
-      const storage = useAppStorage();
       const walletsData = await getWalletsRequest().unwrap();
       if (!walletsData.data) return;
   
       dispatch(walletActions.setWallets(walletsData.data));
   
-      const savedWalletId = await storage.get<string>(STORAGE_KEYS.SELECTED_WALLET);
-      const savedNetwork = await storage.get<Network>(STORAGE_KEYS.SELECTED_NETWORK);
+      const savedWalletId = await appStorage.get<string>(STORAGE_KEYS.SELECTED_WALLET);
+      const savedNetwork = await appStorage.get<Network>(STORAGE_KEYS.SELECTED_NETWORK);
   
       const wallet = selectedWallet ?? walletsData.data.find((w) => w.id === savedWalletId);
       const network = selectedNetwork ?? savedNetwork;
   
       if (!wallet) {
-        savedWalletId ? 
-          await getWalletRequest(savedWalletId) : 
+        savedWalletId ?
+          await getWalletRequest(savedWalletId) :
           await getWalletRequest(walletsData.data[0].id);
       }
   
