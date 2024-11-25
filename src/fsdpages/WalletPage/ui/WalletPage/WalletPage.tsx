@@ -25,20 +25,19 @@ import { useEffect, useState } from 'react';
 
 export const WalletPage = () => {
   const { state } = useWalletPageLogic();
-  const [isAppReady, setIsAppReady] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
-  // Use useEffect to handle hydration
   useEffect(() => {
-    // Set a small timeout to ensure all initial states are properly set
-    const timer = setTimeout(() => {
-      setIsAppReady(true);
-    }, 50);
-
-    return () => clearTimeout(timer);
+    setIsMounted(true);
   }, []);
 
-  // Don't render anything until the app is ready
-  if (!isAppReady || state.isLoading) {
+ 
+  if (!isMounted) {
+    return <div suppressHydrationWarning><LoadingWindow /></div>;
+  }
+
+
+  if (state.isLoading) {
     return <LoadingWindow />;
   }
 
