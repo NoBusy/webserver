@@ -1,7 +1,7 @@
 'use client';
+import { useWalletPageLogic } from '../../lib/hooks/useWalletPageLogic';
 import { WalletPageActions } from '../WalletPageActions/WalletPageActions';
 import { WalletPageHeader } from '../WalletPageHeader/WalletPageHeader';
-import { useWalletPageLogic } from '../../lib/hooks/useWalletPageLogic';
 import { WalletPageTokens } from '../WalletPageTokens/WalletPageTokens';
 import { WalletPageInfo } from '../WalletPageInfo/WalletPageInfo';
 import { Page } from '@/shared/ui/Page/Page';
@@ -23,22 +23,25 @@ import { TokenDetailsWindow } from '../WalletPageToken/TokenDetailsWindow';
 import { StoryViewer } from '@/widgets/StoryViewer';
 import { useEffect, useState } from 'react';
 
-
-
 export const WalletPage = () => {
   const { state } = useWalletPageLogic();
-  const [mounted, setMounted] = useState(false);
+  const [isAppReady, setIsAppReady] = useState(false);
 
+  // Use useEffect to handle hydration
   useEffect(() => {
-    setMounted(true);
+    // Set a small timeout to ensure all initial states are properly set
+    const timer = setTimeout(() => {
+      setIsAppReady(true);
+    }, 50);
+
+    return () => clearTimeout(timer);
   }, []);
 
-  
-  if (!mounted || state.isLoading) {
+  // Don't render anything until the app is ready
+  if (!isAppReady || state.isLoading) {
     return <LoadingWindow />;
   }
-  
-  
+
   return (
     <Page>
       <WalletPageHeader />
@@ -46,7 +49,6 @@ export const WalletPage = () => {
       <WalletPageTokens />
       <WalletPageActions />
       <TransactionsHistoryWindow />
-
       <SwapWindow />
       <DepositWindow />
       <RefWindow />
