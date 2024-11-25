@@ -1,5 +1,27 @@
 @import "./variables.scss";
 
+#wallet-page-root {
+  visibility: hidden;
+}
+
+#wallet-page-root.initialized {
+  visibility: visible;
+}
+
+#initial-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  z-index: 99999;
+  transition: opacity 0.3s ease;
+}
+
 :root {
   --safe-area-bottom: (100vh - var(--tg-viewport-stable-height,100vh))
 }
