@@ -26,23 +26,15 @@ import { useEffect, useState } from 'react';
 
 
 export const WalletPage = () => {
-  const [mounted, setMounted] = useState(false);
-  const [isFirstRender, setIsFirstRender] = useState(true);
   const { state } = useWalletPageLogic();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // При монтировании компонента
     setMounted(true);
-    // Устанавливаем задержку перед снятием флага первого рендера
-    const timer = setTimeout(() => {
-      setIsFirstRender(false);
-    }, 100); // небольшая задержка для гарантии загрузки
-
-    return () => clearTimeout(timer);
   }, []);
 
-  // Показываем LoadingWindow при первом рендере, пока не смонтировано или при загрузке
-  if (!mounted || isFirstRender || state.isLoading) {
+  
+  if (!mounted || state.isLoading) {
     return <LoadingWindow />;
   }
   
