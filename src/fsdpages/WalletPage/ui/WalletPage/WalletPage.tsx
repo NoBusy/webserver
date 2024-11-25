@@ -21,12 +21,25 @@ import { RefWindow } from '@/widgets/RefWindow';
 import { SwapWindow } from '@/widgets/SwapWindow';
 import { TokenDetailsWindow } from '../WalletPageToken/TokenDetailsWindow';
 import { StoryViewer } from '@/widgets/StoryViewer';
+import { useEffect, useState } from 'react';
 
 
 
 export const WalletPage = () => {
-  useWalletPageLogic();
+  const { state } = useWalletPageLogic();
+  // Добавляем состояние для контроля первого рендера
+  const [mounted, setMounted] = useState(false);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // При первом рендере или загрузке показываем LoadingWindow
+  if (!mounted || state.isLoading) {
+    return <LoadingWindow />;
+  }
+  
+  
   return (
     <Page>
       <WalletPageHeader />
