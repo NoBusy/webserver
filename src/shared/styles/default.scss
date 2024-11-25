@@ -1,14 +1,16 @@
 @import "./variables.scss";
 
-#wallet-page-root {
-  visibility: hidden;
+#__next, 
+#root {
+  display: none !important;
 }
 
-#wallet-page-root.initialized {
-  visibility: visible;
+html.app-ready #__next,
+html.app-ready #root {
+  display: block !important;
 }
 
-#initial-loader {
+#initial-app-loader {
   position: fixed;
   top: 0;
   left: 0;
@@ -19,7 +21,10 @@
   justify-content: center;
   background: var(--bg);
   z-index: 99999;
-  transition: opacity 0.3s ease;
+}
+
+html.app-ready #initial-app-loader {
+  display: none !important;
 }
 
 :root {
