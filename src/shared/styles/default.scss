@@ -1,32 +1,5 @@
 @import "./variables.scss";
 
-#__next, 
-#root {
-  display: none !important;
-}
-
-html.app-ready #__next,
-html.app-ready #root {
-  display: block !important;
-}
-
-#initial-app-loader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg);
-  z-index: 99999;
-}
-
-html.app-ready #initial-app-loader {
-  display: none !important;
-}
-
 :root {
   --safe-area-bottom: (100vh - var(--tg-viewport-stable-height,100vh))
 }
