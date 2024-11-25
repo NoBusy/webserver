@@ -37,27 +37,49 @@ export const useWalletPageLogic = () => {
   const [getWalletsRequest, getWalletsResult] = walletApi.useLazyGetWalletsQuery();
 
   const getWallets = async () => {
-    const walletsData = await getWalletsRequest().unwrap();
-    if (!walletsData.data) return;
-
-    dispatch(walletActions.setWallets(walletsData.data));
-
-    const walletId: string | undefined = cookies.get(COOKIES_KEY_SELECTED_WALLET);
-    const wallet: Wallet | undefined = selectedWallet ?? walletsData.data.find((w) => w.id === walletId);
-    const network: Network | undefined = selectedNetwork ?? (cookies.get(COOKIES_KEY_SELECTED_NETWORK) as Network);
-
-    if (!wallet) {
-      walletId ? await getWalletRequest(walletId) : await getWalletRequest(walletsData.data[0].id);
-    }
-
-    if (wallet && network) {
-      getWalletRequest(wallet.id);
-
-      if (wallet.network !== network) {
-        dispatch(walletActions.setSelectedNetwork(wallet.network));
-      } else {
-        dispatch(walletActions.setSelectedNetwork(network));
+    try {
+      // 1. Получаем список кошельков
+      const walletsData = await getWalletsRequest().unwrap();
+      if (!walletsData.data || walletsData.data.length === 0) return;
+      
+      dispatch(walletActions.setWallets(walletsData.data));
+  
+      // 2. Определяем какой кошелек использовать
+      const savedWalletId = cookies.get(COOKIES_KEY_SELECTED_WALLET);
+      const savedNetwork = cookies.get(COOKIES_KEY_SELECTED_NETWORK) as Network;
+      
+      let targetWallet: Wallet | undefined;
+      
+      // Приоритет выбора кошелька:
+      // 1. Текущий выбранный кошелек
+      // 2. Кошелек из куки
+      // 3. Первый кошелек из списка
+      if (selectedWallet) {
+        targetWallet = walletsData.data.find(w => w.id === selectedWallet.id);
+      } else if (savedWalletId) {
+        targetWallet = walletsData.data.find(w => w.id === savedWalletId);
       }
+  
+      // Если не нашли кошелек - берем первый из списка
+      if (!targetWallet) {
+        targetWallet = walletsData.data[0];
+      }
+  
+      // 3. Загружаем данные кошелька
+      await getWalletRequest(targetWallet.id);
+      dispatch(walletActions.setSelectedWallet(targetWallet));
+  
+      // 4. Определяем сеть
+      // Если есть сохраненная сеть и она совпадает с сетью кошелька - используем её
+      if (savedNetwork && savedNetwork === targetWallet.network) {
+        dispatch(walletActions.setSelectedNetwork(savedNetwork));
+      } else {
+        // Иначе используем сеть кошелька
+        dispatch(walletActions.setSelectedNetwork(targetWallet.network));
+      }
+      
+    } catch (error) {
+    
     }
   };
 

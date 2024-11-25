@@ -27,14 +27,13 @@ import { useEffect, useState } from 'react';
 
 export const WalletPage = () => {
   const { state } = useWalletPageLogic();
-  // Добавляем состояние для контроля первого рендера
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // При первом рендере или загрузке показываем LoadingWindow
+  
   if (!mounted || state.isLoading) {
     return <LoadingWindow />;
   }
