@@ -3,6 +3,8 @@ import { WalletSliceSchema } from '../types/walletSliceSchema';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Network, SwapParams, Token, TransferParams, Wallet } from '@/entities/Wallet';
 import cookie from 'js-cookie';
+import { appStorage, useAppStorage } from '@/shared/lib/hooks/useCloudStorage/useAppStorage';
+import { STORAGE_KEYS } from '@/shared/consts/storage';
 
 const initialState: WalletSliceSchema = {
   wallets: [],
@@ -24,11 +26,12 @@ export const walletSlice = createSlice({
     },
     setSelectedWallet(state, action: PayloadAction<Wallet>) {
       state.selectedWallet = action.payload;
-      cookie.set(COOKIES_KEY_SELECTED_WALLET, action.payload.id);
+      appStorage.set(STORAGE_KEYS.SELECTED_WALLET, action.payload.id);
     },
+    
     setSelectedNetwork(state, action: PayloadAction<Network>) {
       state.selectedNetwork = action.payload;
-      cookie.set(COOKIES_KEY_SELECTED_NETWORK, action.payload);
+      appStorage.set(STORAGE_KEYS.SELECTED_NETWORK, action.payload);
     },
     setSelectedToken(state, action: PayloadAction<Token>) {
       state.selectedToken = action.payload;
