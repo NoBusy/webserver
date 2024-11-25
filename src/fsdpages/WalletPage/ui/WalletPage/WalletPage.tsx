@@ -2,15 +2,14 @@
 import dynamic from 'next/dynamic';
 import { LoadingWindow } from '@/widgets/LoadingWindow';
 
-// Указываем правильный путь к файлу
 const WalletPageContent = dynamic(
-  () => import('./WalletPageContent').then(mod => mod.WalletPageContent),
-  {
+  () => import('./WalletPageContent').then(mod => mod.default),
+  { 
     loading: () => <LoadingWindow />,
-    ssr: false
+    ssr: false 
   }
 );
 
-export const WalletPage = () => {
-  return <WalletPageContent />;
-};
+const WalletPage = () => <WalletPageContent />;
+
+export default WalletPage;

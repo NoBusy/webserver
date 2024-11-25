@@ -23,7 +23,7 @@ import { WalletPageInfo } from '../WalletPageInfo/WalletPageInfo';
 import { WalletPageActions } from '../WalletPageActions/WalletPageActions';
 import { TokenDetailsWindow } from '../WalletPageToken/TokenDetailsWindow';
 
-export const WalletPageContent = () => {
+const WalletPageContent = () => {
   const { state } = useWalletPageLogic();
 
   if (state.isLoading) {
@@ -56,3 +56,6 @@ export const WalletPageContent = () => {
     </Page>
   );
 };
+
+
+export default WalletPageContent;
