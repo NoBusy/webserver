@@ -56,7 +56,7 @@ const prepareHeaders = (headers: Headers): Headers => {
 };
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://cryptoswaptg.ru/v1",
+  baseUrl: process.env.NEXT_PUBLIC_BASE_API_URL || "https://cryptoswaptg.ru/v1",
   credentials: 'include',
   prepareHeaders,
 });
