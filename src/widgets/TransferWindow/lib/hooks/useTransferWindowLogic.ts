@@ -210,7 +210,7 @@ export const useTransferWindowLogic = () => {
   const NETWORK_FEES = {
     [Network.ETH]: 0.001,
     [Network.BSC]: 0.0001,
-    [Network.SOL]: 0.0007,
+    [Network.SOL]: 0.0013,
     [Network.TON]: 0.07
   } as const;
 
