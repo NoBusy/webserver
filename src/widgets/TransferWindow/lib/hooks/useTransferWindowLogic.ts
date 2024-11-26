@@ -162,33 +162,15 @@ export const useTransferWindowLogic = () => {
     }
   
     const newAmount = e.target.value;
-    // Проверяем что это валидное число
+    // Оставляем только проверку на валидность числа
     if (!/^\d*\.?\d*$/.test(newAmount)) {
       return;
     }
   
-    const numericAmount = Number(newAmount); // для проверок используем число
-    const isNativeToken = tokenToTransfer.symbol === networkSymbol[selectedWallet.network];
-  
-    if (isNativeToken) {
-      const networkFee = NETWORK_FEES[selectedWallet.network];
-      if (numericAmount > tokenToTransfer.balance - networkFee) {
-        notify('error');
-        errorToast(`Insufficient balance to cover network fee (${networkFee} ${tokenToTransfer.symbol})`);
-        setIsLoading(false);
-        return;
-      }
-    } else if (numericAmount > tokenToTransfer.balance) {
-      notify('error');
-      errorToast('Insufficient funds');
-      setIsLoading(false);
-      return;
-    }
-  
-    // Сохраняем как строку
-    setAmount(newAmount); 
+    setAmount(newAmount);
     handleGetRate(newAmount);
-  }, [tokenToTransfer, selectedWallet, handleGetRate, notify, errorToast]);
+    setIsLoading(false);
+  }, [tokenToTransfer, selectedWallet, handleGetRate]);
 
   const NETWORK_FEES = {
     [Network.ETH]: 0.001,
