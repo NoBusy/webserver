@@ -47,7 +47,7 @@ export const PrepareTransferWindow: React.FC<PrepareTransferWindowProps> = (prop
         </Flex> */}
 
         <Input
-          type="text"
+          type="number"
           value={state.amount}
           onChange={flow.handleAmountChange}
           placeholder={`0.00 ${state.tokenToTransfer?.symbol}`}

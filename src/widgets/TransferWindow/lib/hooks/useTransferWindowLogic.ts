@@ -74,38 +74,34 @@ export const useTransferWindowLogic = () => {
   
   const handleTransferConfirm = async () => {
     await impact('light')
-    console.log('[Transfer] Starting transfer confirmation:', {
-      amount: amount,
-      tokenSymbol: tokenToTransfer?.symbol,
-      balance: tokenToTransfer?.balance,
-      toAddress: toAddress
-    });
-  
+    
     try {
       setIsLoading(true);
       if (!tokenToTransfer || !selectedWallet || !toAddress || !amount) {
         return;
       }
   
-      // Убедимся что amount это строка
-      const stringAmount = amount.toString();
-      
-      console.log('[Transfer] Sending request with payload:', {
-        amount: stringAmount,
-        amountType: typeof stringAmount,
-        currency: tokenToTransfer.symbol,
-        token_id: tokenToTransfer.id,
-        wallet_id: selectedWallet.id,
-        to_address: toAddress
+      // Подробное логирование перед отправкой
+      console.log('[Transfer] Pre-request validation:', {
+        amount,
+        amountType: typeof amount,
+        parsedAmount: Number(amount),
+        isValidNumber: !isNaN(Number(amount))
       });
   
-      const result = await transferRequest({
-        amount: stringAmount, // отправляем строку
+      const transferPayload = {
+        amount: amount,
         currency: tokenToTransfer.symbol,
         token_id: tokenToTransfer.id,
         wallet_id: selectedWallet.id,
         to_address: toAddress,
-      }).unwrap();
+      };
+  
+      console.log('[Transfer] Final request payload:', transferPayload);
+  
+      const result = await transferRequest(transferPayload).unwrap();
+  
+      console.log('[Transfer] Server response:', result);
   
       if (result.ok) {
         notify('success')
@@ -113,10 +109,17 @@ export const useTransferWindowLogic = () => {
         handleClearState();
         updateAfterDelay(30000);
       }
-    } catch (e) {
-      console.error('[Transfer] Transfer failed:', e);
-      notify('error')
-      errorToast('Failed to transfer tokens');
+    } catch (e: any) {
+      // Расширенное логирование ошибки
+      console.error('[Transfer] Error details:', {
+        error: e,
+        message: e?.message,
+        data: e?.data,
+        status: e?.status
+      });
+      
+      notify('error');
+      errorToast(e?.data?.message || e?.message || 'Failed to transfer tokens');
     } finally {
       setIsLoading(false);
     }
