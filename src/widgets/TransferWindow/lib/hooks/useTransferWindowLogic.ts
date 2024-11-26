@@ -104,7 +104,7 @@ export const useTransferWindowLogic = () => {
       });
 
       const result = await transferRequest({
-        amount: Number(amount),
+        amount: amount.toString(),
         currency: tokenToTransfer.symbol,
         token_id: tokenToTransfer.id,
         wallet_id: selectedWallet.id,
@@ -154,58 +154,41 @@ export const useTransferWindowLogic = () => {
       newValue: e.target.value,
       currentBalance: tokenToTransfer?.balance
     });
-
+  
     setIsLoading(true);
     if (!tokenToTransfer || !selectedWallet) {
       console.log('[Transfer] Missing token or wallet');
       return;
     }
-
+  
     const newAmount = e.target.value;
+    // Проверяем что это валидное число
+    if (!/^\d*\.?\d*$/.test(newAmount)) {
+      return;
+    }
+  
+    const numericAmount = Number(newAmount); // для проверок используем число
     const isNativeToken = tokenToTransfer.symbol === networkSymbol[selectedWallet.network];
-
-    console.log('[Transfer] Validating amount:', {
-      newAmount: Number(newAmount),
-      balance: tokenToTransfer.balance,
-      isNativeToken,
-      networkFee: isNativeToken ? NETWORK_FEES[selectedWallet.network] : 0
-    });
-
+  
     if (isNativeToken) {
       const networkFee = NETWORK_FEES[selectedWallet.network];
-      if (Number(newAmount) > tokenToTransfer.balance - networkFee) {
-        console.log('[Transfer] Insufficient balance for native token:', {
-          amount: Number(newAmount),
-          balance: tokenToTransfer.balance,
-          networkFee,
-          remaining: tokenToTransfer.balance - networkFee
-        });
+      if (numericAmount > tokenToTransfer.balance - networkFee) {
         notify('error');
         errorToast(`Insufficient balance to cover network fee (${networkFee} ${tokenToTransfer.symbol})`);
         setIsLoading(false);
         return;
       }
-    } else if (Number(newAmount) > tokenToTransfer.balance) {
-      console.log('[Transfer] Insufficient balance for token:', {
-        amount: Number(newAmount),
-        balance: tokenToTransfer.balance
-      });
+    } else if (numericAmount > tokenToTransfer.balance) {
       notify('error');
       errorToast('Insufficient funds');
       setIsLoading(false);
       return;
     }
-
-    if (!newAmount) {
-      setRate(0);
-      setAmount('');
-      setIsLoading(false);
-      return;
-    }
-
-    setAmount(newAmount);
+  
+    // Сохраняем как строку
+    setAmount(newAmount); 
     handleGetRate(newAmount);
-}, [tokenToTransfer, selectedWallet, handleGetRate, notify, errorToast]);
+  }, [tokenToTransfer, selectedWallet, handleGetRate, notify, errorToast]);
 
   const NETWORK_FEES = {
     [Network.ETH]: 0.001,
@@ -226,18 +209,18 @@ export const useTransferWindowLogic = () => {
       const networkFee = NETWORK_FEES[selectedWallet.network];
       const maxAmount = token.balance - networkFee;
       
-      // Проверяем, что после вычета комиссии сумма положительная
+      
       if (maxAmount <= 0) {
         notify('error');
         errorToast(`Insufficient balance to cover network fee (${networkFee} ${token.symbol})`);
         return '0';
       }
       
-      // Округляем до 9 знаков после запятой для большей точности
+      
       return maxAmount.toFixed(9);
     }
     
-    // Для не-нативных токенов возвращаем весь баланс
+    
     return token.balance.toString();
   }, [selectedWallet, notify, errorToast]);
 
