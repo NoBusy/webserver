@@ -1,4 +1,4 @@
-import { getSelectedToken, getSelectedWallet, Network, Token, Wallet, walletActions, walletApi } from '@/entities/Wallet';
+import { getSelectedToken, getSelectedWallet, Network, Token, TransferParams, Wallet, walletActions, walletApi } from '@/entities/Wallet';
 import { getIsWindowOpen, globalActions, GlobalWindow } from '@/entities/Global';
 import { useDebounce } from '@/shared/lib/hooks/useDebounce/useDebounce';
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
@@ -81,16 +81,17 @@ export const useTransferWindowLogic = () => {
         return;
       }
   
-      // Подробное логирование перед отправкой
+      // Убедимся что amount это строка и уберём лишние нули в конце
+      const cleanAmount = Number(amount).toString();
+  
       console.log('[Transfer] Pre-request validation:', {
-        amount,
-        amountType: typeof amount,
-        parsedAmount: Number(amount),
-        isValidNumber: !isNaN(Number(amount))
+        originalAmount: amount,
+        cleanAmount,
+        type: typeof cleanAmount
       });
   
-      const transferPayload = {
-        amount: amount,
+      const transferPayload: TransferParams = {
+        amount: cleanAmount,
         currency: tokenToTransfer.symbol,
         token_id: tokenToTransfer.id,
         wallet_id: selectedWallet.id,
@@ -101,8 +102,6 @@ export const useTransferWindowLogic = () => {
   
       const result = await transferRequest(transferPayload).unwrap();
   
-      console.log('[Transfer] Server response:', result);
-  
       if (result.ok) {
         notify('success')
         successToast('Transfer successful');
@@ -110,7 +109,6 @@ export const useTransferWindowLogic = () => {
         updateAfterDelay(30000);
       }
     } catch (e: any) {
-      // Расширенное логирование ошибки
       console.error('[Transfer] Error details:', {
         error: e,
         message: e?.message,
@@ -124,13 +122,6 @@ export const useTransferWindowLogic = () => {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (selectedToken) {
-      setTokenToTransfer(selectedToken);
-      handleGetRate('0');
-    }
-  }, [selectedToken]);
 
   const handleTokenSelect = useCallback( async (token: Token) => {
     setTokenToTransfer(token);
