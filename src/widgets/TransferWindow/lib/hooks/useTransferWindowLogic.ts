@@ -73,25 +73,23 @@ export const useTransferWindowLogic = () => {
 
   
   const handleTransferConfirm = async () => {
-    await impact('light')
-    
     try {
       setIsLoading(true);
       if (!tokenToTransfer || !selectedWallet || !toAddress || !amount) {
         return;
       }
   
-      // Убедимся что amount это строка и уберём лишние нули в конце
-      const cleanAmount = Number(amount).toString();
+      // Преобразуем в число с правильной точностью
+      const numericAmount = Number(parseFloat(amount).toFixed(9));
   
       console.log('[Transfer] Pre-request validation:', {
         originalAmount: amount,
-        cleanAmount,
-        type: typeof cleanAmount
+        numericAmount,
+        type: typeof numericAmount
       });
   
-      const transferPayload: TransferParams = {
-        amount: cleanAmount,
+      const transferPayload = {
+        amount: numericAmount, // отправляем как number
         currency: tokenToTransfer.symbol,
         token_id: tokenToTransfer.id,
         wallet_id: selectedWallet.id,
@@ -108,16 +106,10 @@ export const useTransferWindowLogic = () => {
         handleClearState();
         updateAfterDelay(30000);
       }
-    } catch (e: any) {
-      console.error('[Transfer] Error details:', {
-        error: e,
-        message: e?.message,
-        data: e?.data,
-        status: e?.status
-      });
-      
-      notify('error');
-      errorToast(e?.data?.message || e?.message || 'Failed to transfer tokens');
+    } catch (e) {
+      console.error('[Transfer] Error details:', e);
+      notify('error')
+      errorToast('Failed to transfer tokens');
     } finally {
       setIsLoading(false);
     }

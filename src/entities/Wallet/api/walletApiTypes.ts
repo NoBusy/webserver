@@ -67,7 +67,7 @@ export interface DeleteWalletTokenParams {
 }
 
 export interface TransferParams {
-  amount: string;
+  amount: number;
   currency: string;
   token_id: string;
   wallet_id: string;
