@@ -80,7 +80,7 @@ export const useTransferWindowLogic = () => {
       balance: tokenToTransfer?.balance,
       toAddress: toAddress
     });
-
+  
     try {
       setIsLoading(true);
       if (!tokenToTransfer || !selectedWallet || !toAddress || !amount) {
@@ -92,17 +92,18 @@ export const useTransferWindowLogic = () => {
         });
         return;
       }
-
+  
       const numericAmount = Number(amount);
       const isNativeToken = tokenToTransfer.symbol === networkSymbol[selectedWallet.network];
       
-      console.log('[Transfer] Balance check:', {
-        amount: numericAmount,
-        balance: tokenToTransfer.balance,
-        isNativeToken,
-        networkFee: isNativeToken ? NETWORK_FEES[selectedWallet.network] : 0
+      console.log('[Transfer] Request payload:', {
+        amount: amount.toString(),
+        currency: tokenToTransfer.symbol,
+        token_id: tokenToTransfer.id,
+        wallet_id: selectedWallet.id,
+        to_address: toAddress
       });
-
+  
       const result = await transferRequest({
         amount: amount.toString(),
         currency: tokenToTransfer.symbol,
@@ -110,19 +111,33 @@ export const useTransferWindowLogic = () => {
         wallet_id: selectedWallet.id,
         to_address: toAddress,
       }).unwrap();
-
+  
       console.log('[Transfer] Transfer request result:', result);
-
+  
       if (result.ok) {
         notify('success')
         successToast('Transfer successful');
         handleClearState();
         updateAfterDelay(30000);
+      } else {
+        // Добавляем обработку неуспешного результата
+        console.error('[Transfer] Transfer not OK:', result);
+        notify('error');
+        errorToast('Failed to transfer tokens');
       }
-    } catch (e) {
-      console.error('[Transfer] Transfer failed:', e);
-      notify('error')
-      errorToast('Failed to transfer tokens');
+    } catch (e: any) {
+      // Расширяем логирование ошибки
+      console.error('[Transfer] Transfer error details:', {
+        error: e,
+        message: e.message,
+        data: e.data,
+        status: e.status,
+        stack: e.stack
+      });
+  
+      notify('error');
+      // Используем сообщение из ошибки, если оно есть
+      errorToast(e.data?.message || e.message || 'Failed to transfer tokens');
     } finally {
       setIsLoading(false);
     }
