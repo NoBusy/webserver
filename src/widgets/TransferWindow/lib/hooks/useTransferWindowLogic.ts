@@ -87,9 +87,16 @@ export const useTransferWindowLogic = () => {
         return;
       }
   
-      // Отправляем строку, как и ожидается в params
+      console.log('[Transfer] Sending request with payload:', {
+        amount,
+        currency: tokenToTransfer.symbol,
+        token_id: tokenToTransfer.id,
+        wallet_id: selectedWallet.id,
+        to_address: toAddress
+      });
+  
       const result = await transferRequest({
-        amount: amount, // просто передаем строку
+        amount,
         currency: tokenToTransfer.symbol,
         token_id: tokenToTransfer.id,
         wallet_id: selectedWallet.id,
@@ -104,10 +111,24 @@ export const useTransferWindowLogic = () => {
         handleClearState();
         updateAfterDelay(30000);
       }
-    } catch (e) {
-      console.error('[Transfer] Transfer failed:', e);
+    } catch (e: any) {
+      // Подробное логирование ошибки
+      console.error('[Transfer] Full error object:', e);
+      console.error('[Transfer] Error details:', {
+        message: e?.message,
+        status: e?.status,
+        data: e?.data,
+        originalError: e?.originalError,
+        stack: e?.stack
+      });
+      
+      // Показываем более информативное сообщение об ошибке
       notify('error')
-      errorToast('Failed to transfer tokens');
+      errorToast(
+        e?.data?.message || 
+        e?.message || 
+        'Failed to transfer tokens'
+      );
     } finally {
       setIsLoading(false);
     }
