@@ -137,7 +137,7 @@ export const useWalletPageLogic = () => {
       // dispatch(globalActions.addWindow({
       //   window: GlobalWindow.StoryViewer,
       //   options: { ignoreGlobalLoading: true } 
-      // }))
+      // }))n
       setIsStoriesLoaded(true);
       setIsFirstLoad(false);
     } catch (error) {
