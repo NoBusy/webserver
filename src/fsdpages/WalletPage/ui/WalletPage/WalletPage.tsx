@@ -23,39 +23,36 @@ import { WalletPageInfo } from '../WalletPageInfo/WalletPageInfo';
 import { WalletPageActions } from '../WalletPageActions/WalletPageActions';
 import { TokenDetailsWindow } from '../WalletPageToken/TokenDetailsWindow';
 
-
 const WalletPage = () => {
-  const { state } = useWalletPageLogic(); 
+  useWalletPageLogic();
+  
 
   return (
-    <>
-      <LoadingWindow /> {/* LoadingWindow всегда в DOM, но прозрачный когда не нужен */}
-      {/* Рендерим Page только когда все загружено */}
-      {!state.isLoading && (
-        <Page>
-          <WalletPageHeader />
-          <WalletPageInfo />
-          <WalletPageTokens />
-          <WalletPageActions />
-          <TransactionsHistoryWindow />
-          <SwapWindow />
-          <DepositWindow />
-          <RefWindow />
-          <TransferWindow />
-          <NetworksWindow />
-          <AddWalletWindow />
-          <AddTokenWindow />
-          <WalletDetailsWindow />
-          <WalletsListWindow />
-          <TransactionDetailsWindow />
-          <ImportWalletWindow />
-          <CreateWalletWindow />
-          <TokenDetailsWindow/>
-          <StoryViewer/>
-        </Page>
-      )}
-    </>
+    <Page>
+      <WalletPageHeader />
+      <WalletPageInfo />
+      <WalletPageTokens />
+      <WalletPageActions />
+      <TransactionsHistoryWindow />
+      <SwapWindow />
+      <DepositWindow />
+      <RefWindow />
+      <TransferWindow />
+      <NetworksWindow />
+      <LoadingWindow />
+      <AddWalletWindow />
+      <AddTokenWindow />
+      <TransactionsHistoryWindow />
+      <WalletDetailsWindow />
+      <WalletsListWindow />
+      <TransactionDetailsWindow />
+      <ImportWalletWindow />
+      <CreateWalletWindow />
+      <TokenDetailsWindow/>
+      <StoryViewer/>
+    </Page>
   );
 };
+
 
 export default WalletPage;
