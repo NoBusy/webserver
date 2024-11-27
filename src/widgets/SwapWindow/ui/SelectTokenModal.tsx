@@ -34,9 +34,42 @@ export const SelectTokenPage: React.FC<SelectTokenPageProps> = ({
   const selectedWallet = useSelector(getSelectedWallet);
   const isSelectTokenWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.SelectToken);
 
+  const validateTokenAddress = (address: string, network: Network): boolean => {
+    const tonAddressRegex: RegExp = /^(EQ|UQ)[a-zA-Z0-9_-]{46}$/;
+    const ethAddressRegex: RegExp = /^0x[a-fA-F0-9]{40}$/;
+    const solAddressRegex: RegExp = /^([a-zA-Z0-9]{32}|[a-zA-Z0-9]{43}|[a-zA-Z0-9]{44})$/;
+    const bscAddressRegex: RegExp = /^0x[a-fA-F0-9]{40}$/;
+
+    let regex: RegExp;
+    
+    switch (network) {
+      case Network.ETH:
+        regex = ethAddressRegex;
+        break;
+      case Network.SOL:
+        regex = solAddressRegex;
+        break;
+      case Network.TON:
+        regex = tonAddressRegex;
+        break;
+      case Network.BSC:
+        regex = bscAddressRegex;
+        break;
+      default:
+        return false;
+    }
+
+    return regex.test(address);
+  };
+
   const handleGetTokenInfo = useDebounce(async (address: string) => {
     if (!address || !selectedWallet) return;
     setIsLoading(true);
+
+    if (!validateTokenAddress(address, selectedWallet.network)) {
+      return;
+  }
+
     try {
       const result = await getTokenInfoRequest({
         network: selectedWallet.network,
