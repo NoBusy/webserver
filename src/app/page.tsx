@@ -1,6 +1,6 @@
-import WalletPage from "@/fsdpages/WalletPage/ui/WalletPage/WalletPage";
+import WalletPageContent from "@/fsdpages/WalletPage/ui/WalletPage/WalletPageContent";
 
 
 export default function NextJsPage() {
-  return <WalletPage />;
+  return <WalletPageContent />;
 }
