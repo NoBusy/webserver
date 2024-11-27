@@ -175,7 +175,7 @@ export const useWalletPageLogic = () => {
       handleBackButtonClick,
     },
     state: {
-      isLoading: !isInited || userDataResult.isLoading || getWalletsResult.isLoading || isLoading || isGlobalLoading,
+      isLoading: userDataResult.isLoading || getWalletsResult.isLoading || isLoading || isGlobalLoading,
       selectedWallet,
       selectedNetwork,
     },
