@@ -22,11 +22,12 @@ import { WalletPageTokens } from '../WalletPageTokens/WalletPageTokens';
 import { WalletPageInfo } from '../WalletPageInfo/WalletPageInfo';
 import { WalletPageActions } from '../WalletPageActions/WalletPageActions';
 import { TokenDetailsWindow } from '../WalletPageToken/TokenDetailsWindow';
+import { stat } from 'fs';
 
 const WalletPageContent = () => {
   const { state } = useWalletPageLogic();
 
-  if (state.isLoading) {
+  if (state.isLoading || !state.selectedWallet) {
     return <LoadingWindow />;
   }
 
