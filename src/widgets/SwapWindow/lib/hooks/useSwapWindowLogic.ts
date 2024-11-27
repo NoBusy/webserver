@@ -326,7 +326,7 @@ export const useSwapWindowLogic = () => {
         estimatedFee = 0.0004;
         break;
       case Network.SOL:
-        estimatedFee = 0.00022; 
+        estimatedFee = 0.0022; 
         break;
       case Network.TON:
         estimatedFee = 0.18; 
