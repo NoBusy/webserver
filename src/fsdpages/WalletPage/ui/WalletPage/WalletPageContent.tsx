@@ -27,7 +27,7 @@ import { stat } from 'fs';
 const WalletPageContent = () => {
   const { state } = useWalletPageLogic();
 
-  if (state.isLoading) {
+  if (state.isInitialLoading) {
     return <LoadingWindow />;
   }
 
