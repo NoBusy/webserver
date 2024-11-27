@@ -170,12 +170,16 @@ export const useWalletPageLogic = () => {
     checkBackButtonState(openedWindows);
   }, [openedWindows]);
 
+
+  const isInitialLoading = !isInited || userDataResult.isLoading || getWalletsResult.isLoading;
   return {
     flow: {
       handleBackButtonClick,
     },
     state: {
-      isLoading: !isInited || userDataResult.isLoading || getWalletsResult.isLoading || isLoading || isGlobalLoading,
+      isInitialLoading,
+      // isLoading: !isInited || userDataResult.isLoading || getWalletsResult.isLoading || isLoading || isGlobalLoading,
+      isContentLoading: isLoading || isGlobalLoading,
       selectedWallet,
       selectedNetwork,
     },
