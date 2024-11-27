@@ -25,11 +25,7 @@ import { TokenDetailsWindow } from '../WalletPageToken/TokenDetailsWindow';
 import { stat } from 'fs';
 
 const WalletPageContent = () => {
-  const { state } = useWalletPageLogic();
-
-  if (state.isInitialLoading) {
-    return <LoadingWindow />;
-  }
+  useWalletPageLogic();
 
   return (
     <Page>
