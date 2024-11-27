@@ -410,9 +410,16 @@ export const useSwapWindowLogic = () => {
     }
   };
 
-  const handleBackToSwap = () => {
+  const handleCloseSelectToken = useCallback(() => {
     setCurrentView('swap');
-  };
+    dispatch(globalActions.removeWindow(GlobalWindow.SelectToken));
+  }, [dispatch]);
+
+  const handleBackToSwap = useCallback(() => {
+    handleCloseSelectToken();
+    handleClearState();
+  }, [handleCloseSelectToken, handleClearState]);
+
 
   const handleSwapTokens = async () => {
     setFromToken(toToken);
@@ -450,6 +457,7 @@ export const useSwapWindowLogic = () => {
       handleBackToSwap,
       handleSwapTokens,
       updateSlippage,
+      handleClearState
     },
     state: {
       fromAmount,

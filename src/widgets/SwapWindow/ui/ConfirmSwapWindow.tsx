@@ -10,6 +10,7 @@ import { Token } from '@/entities/Wallet';
 
 export interface ConfirmSwapWindowProps {
   logic: UseSwapWindowLogic;
+  onClose?: () => void;
 }
 
 export const ConfirmSwapWindow: React.FC<ConfirmSwapWindowProps> = (props) => {
@@ -57,6 +58,7 @@ export const ConfirmSwapWindow: React.FC<ConfirmSwapWindowProps> = (props) => {
       btnText={state.isLoading ? "Processing..." : "Confirm and swap"}
       isBtnActive={!state.isLoading}
       isBtnDisabled={state.isLoading}
+      onClose={props.onClose}
     >
       <WindowHeader
         title="Swap Details"

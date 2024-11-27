@@ -28,9 +28,10 @@ export const SwapWindow: React.FC = () => {
           : "Select token to swap to"
         }
         isOpen={state.currentView === 'selectFromToken' || state.currentView === 'selectToToken'}
+        onClose={flow.handleBackToSwap}
       />
 
-      {state.isConfirmSwapWindowOpen && <ConfirmSwapWindow logic={logic} />}
+      {state.isConfirmSwapWindowOpen && <ConfirmSwapWindow logic={logic} onClose={flow.handleClearState} />}
     </>
   );
 };

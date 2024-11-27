@@ -20,13 +20,15 @@ interface SelectTokenPageProps {
   onSelectToken: (token: Token) => void;
   title: string;
   isOpen: boolean;
+  onClose?: () => void;
 }
 
 export const SelectTokenPage: React.FC<SelectTokenPageProps> = ({
   tokens,
   onSelectToken,
   title,
-  isOpen
+  isOpen,
+  onClose
 }) => {
   const [tokenAddress, setTokenAddress] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -135,6 +137,7 @@ export const SelectTokenPage: React.FC<SelectTokenPageProps> = ({
     <Window 
       isOpen={isSelectTokenWindowOpen}
       zIndex={5005}
+      onClose={onClose}
     >
       <WindowHeader 
         title={title} 
