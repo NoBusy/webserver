@@ -12,6 +12,8 @@ import { Window } from '@/shared/ui/Window/Window';
 import { WindowHeader } from '@/shared/ui/Header/WindowHeader';
 import { getTokenImage } from '@/fsdpages/WalletPage';
 import { GlobalWindow, getIsWindowOpen } from '@/entities/Global';
+import { useToastManager } from '@/shared/lib/hooks/useToastManager/useToastManager';
+import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
 
 interface SelectTokenPageProps {
   tokens: Token[];
@@ -33,6 +35,8 @@ export const SelectTokenPage: React.FC<SelectTokenPageProps> = ({
 
   const selectedWallet = useSelector(getSelectedWallet);
   const isSelectTokenWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.SelectToken);
+  const { errorToast} = useToasts();
+  const { showToast } = useToastManager({maxCount: 1});
 
   const validateTokenAddress = (address: string, network: Network): boolean => {
     const tonAddressRegex: RegExp = /^(EQ|UQ)[a-zA-Z0-9_-]{46}$/;
@@ -67,6 +71,8 @@ export const SelectTokenPage: React.FC<SelectTokenPageProps> = ({
     setIsLoading(true);
 
     if (!validateTokenAddress(address, selectedWallet.network)) {
+      showToast(errorToast, 'Invalid token address')
+      setIsLoading(false)
       return;
   }
 
@@ -96,7 +102,7 @@ export const SelectTokenPage: React.FC<SelectTokenPageProps> = ({
         onSelectToken(newToken);
       }
     } catch (e) {
-      console.error('Failed to get token info', e);
+      
     } finally {
       setIsLoading(false);
     }
