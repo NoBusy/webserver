@@ -166,8 +166,11 @@ export const useSwapWindowLogic = () => {
     setRate(0);
     setCurrentView('swap');
     setTokenExtendedInfo(null);
+    setHistoricalData([]);
+    setEstimatedFee({ estimated_fee: 0, estimated_fee_usd: 0 });
     dispatch(walletActions.clearSelectedToken());
   }, [dispatch]);
+
 
   useEffect(() => {
     return () => {
@@ -427,6 +430,12 @@ export const useSwapWindowLogic = () => {
       setTokenExtendedInfo(null);
     }
   }, [selectedWallet?.id]);
+
+  useEffect(() => {
+    if (!isSwapWindowOpen) {
+      handleClearState();
+    }
+  }, [isSwapWindowOpen, handleClearState]);
 
   return {
     flow: {
