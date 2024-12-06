@@ -27,7 +27,7 @@ const WalletPage = () => {
   const { state } = useWalletPageLogic();
 
   if (state.isLoading) {
-    return null;
+    return <LoadingWindow />;
   }
 
   
@@ -38,13 +38,13 @@ const WalletPage = () => {
       <WalletPageInfo />
       <WalletPageTokens />
       <WalletPageActions />
+
       <TransactionsHistoryWindow />
       <SwapWindow />
       <DepositWindow />
       <RefWindow />
       <TransferWindow />
       <NetworksWindow />
-      <LoadingWindow />
       <AddWalletWindow />
       <AddTokenWindow />
       <TransactionsHistoryWindow />
