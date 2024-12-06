@@ -1,12 +1,13 @@
 'use client';
 import { useWalletPageLogic } from '@/fsdpages/WalletPage/lib/hooks/useWalletPageLogic';
+import { LoadingWindow } from '@/widgets/LoadingWindow';
 import dynamic from 'next/dynamic';
 
 const InitializedApp = dynamic(
   () => import('@/fsdpages/WalletPage/ui/WalletPage/WalletPage'), 
   {
-    ssr: false,
-    loading: () => null
+    // ssr: false,
+    loading: () => <LoadingWindow />
   }
 );
 
