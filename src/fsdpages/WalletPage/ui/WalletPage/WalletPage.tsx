@@ -24,7 +24,12 @@ import { WalletPageActions } from '../WalletPageActions/WalletPageActions';
 import { TokenDetailsWindow } from '../WalletPageToken/TokenDetailsWindow';
 
 const WalletPage = () => {
-  useWalletPageLogic();
+  const { state } = useWalletPageLogic();
+
+  if (state.isLoading) {
+    return null;
+  }
+
   
 
   return (
