@@ -3,7 +3,7 @@
 import { getIsGlobalLoading, getWindowsOpen, GlobalWindow, GlobalWindowType } from '@/entities/Global';
 import { getIsLoading } from '@/entities/Wallet';
 import { useSelector } from 'react-redux';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './Page.module.scss';
 import cn from 'classnames';
 
@@ -20,6 +20,7 @@ export interface PageProps {
 export const Page: React.FC<PageProps> = (props) => {
   const { children, className } = props;
 
+  const [isContentReady, setIsContentReady] = useState(false);
   const isWalletPageLoading: boolean = useSelector(getIsLoading);
   const isGlobalLoading: boolean = useSelector(getIsGlobalLoading);
   const windows: GlobalWindowType<GlobalWindow>[] = useSelector(getWindowsOpen);
@@ -54,6 +55,15 @@ export const Page: React.FC<PageProps> = (props) => {
       clearTimeout(timeout);
     };
   }, [pageRef, isGlobalLoading, isWalletPageLoading, windows]);
+
+  useEffect(() => {
+    // Даем время на инициализацию состояния
+    const readyTimer = requestAnimationFrame(() => {
+      setIsContentReady(true);
+    });
+
+    return () => cancelAnimationFrame(readyTimer);
+  }, []);
 
   return (
     <main ref={pageRef} style={optionsStyles} className={cn(styles.page, className, options)}>
