@@ -16,13 +16,20 @@
   align-items: center;
   padding: 12px 16px 30px;
   margin-bottom: var(--safe-area-bottom);
-  opacity: 0; 
-  visibility: hidden; 
-  transition: opacity 0.3s ease-in, visibility 0.3s ease-in;
 
   &.centered {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+}
+
+.content {
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+  
+  &.contentLoaded {
+    opacity: 1;
   }
 }

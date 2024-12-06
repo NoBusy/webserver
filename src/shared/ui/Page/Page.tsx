@@ -1,5 +1,4 @@
 'use client';
-
 import { getIsGlobalLoading, getWindowsOpen, GlobalWindow, GlobalWindowType } from '@/entities/Global';
 import { getIsLoading } from '@/entities/Wallet';
 import { useSelector } from 'react-redux';
@@ -19,7 +18,6 @@ export interface PageProps {
 
 export const Page: React.FC<PageProps> = (props) => {
   const { children, className } = props;
-
   const [isContentReady, setIsContentReady] = useState(false);
   const isWalletPageLoading: boolean = useSelector(getIsLoading);
   const isGlobalLoading: boolean = useSelector(getIsGlobalLoading);
@@ -39,13 +37,15 @@ export const Page: React.FC<PageProps> = (props) => {
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
+    
     if (!pageRef.current) return;
 
     if (isGlobalLoading || isWalletPageLoading || windows.length > 0) {
       pageRef.current.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-
       timeout = setTimeout(() => {
-        pageRef.current && (pageRef.current.style.overflowY = 'hidden');
+        if (pageRef.current) {
+          pageRef.current.style.overflowY = 'hidden';
+        }
       }, 250);
     } else {
       pageRef.current.style.overflowY = 'scroll';
@@ -56,18 +56,24 @@ export const Page: React.FC<PageProps> = (props) => {
     };
   }, [pageRef, isGlobalLoading, isWalletPageLoading, windows]);
 
+  // Эффект для плавного появления контента
   useEffect(() => {
-    // Даем время на инициализацию состояния
-    const readyTimer = requestAnimationFrame(() => {
+    const timer = setTimeout(() => {
       setIsContentReady(true);
-    });
+    }, 50);
 
-    return () => cancelAnimationFrame(readyTimer);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
-    <main ref={pageRef} style={optionsStyles} className={cn(styles.page, className, options)}>
-      {children}
+    <main 
+      ref={pageRef} 
+      style={optionsStyles} 
+      className={cn(styles.page, className, options)}
+    >
+      <div className={cn(styles.content, { [styles.contentLoaded]: isContentReady })}>
+        {children}
+      </div>
     </main>
   );
 };
