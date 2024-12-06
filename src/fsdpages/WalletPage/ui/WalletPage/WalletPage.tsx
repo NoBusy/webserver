@@ -25,22 +25,23 @@ import { TokenDetailsWindow } from '../WalletPageToken/TokenDetailsWindow';
 import { Network, Wallet } from '@/entities/Wallet';
 
 
-export interface WalletPageState {
-  isLoading: boolean;
-  selectedWallet?: Wallet;
-  selectedNetwork?: Network;
-}
+// export interface WalletPageState {
+//   isLoading: boolean;
+//   selectedWallet?: Wallet;
+//   selectedNetwork?: Network;
+// }
 
-interface WalletPageProps {
-  state: WalletPageState;
-}
+// interface WalletPageProps {
+//   state: WalletPageState;
+// }
 
 
-const WalletPage = ({ state }: WalletPageProps ) => {
-  if (!state.selectedWallet || !state.selectedNetwork) {
+const WalletPage = () => {
+  const { state } = useWalletPageLogic();
+  
+  if (!state?.selectedWallet || !state?.selectedNetwork) {
     return <LoadingWindow />;
   }
-
   return (
     <Page>
       <WalletPageHeader />
