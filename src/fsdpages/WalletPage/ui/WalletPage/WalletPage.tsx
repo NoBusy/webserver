@@ -38,7 +38,7 @@ interface WalletPageProps {
 
 const WalletPage = ({ state }: WalletPageProps ) => {
   if (!state.selectedWallet || !state.selectedNetwork) {
-    return null;
+    return <LoadingWindow />;
   }
 
   return (
