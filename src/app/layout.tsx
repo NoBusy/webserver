@@ -8,12 +8,7 @@ import Script from 'next/script';
 import Head from 'next/head';
 import React from 'react';
 
-const inter = Inter({ 
-  subsets: ['latin'],
-  display: 'swap',          
-  preload: true,           
-  adjustFontFallback: true 
-});
+const inter: NextFont = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Chain Spy Robot',
