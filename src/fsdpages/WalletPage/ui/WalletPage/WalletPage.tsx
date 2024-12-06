@@ -24,14 +24,6 @@ import { WalletPageActions } from '../WalletPageActions/WalletPageActions';
 import { TokenDetailsWindow } from '../WalletPageToken/TokenDetailsWindow';
 
 const WalletPage = () => {
-  const { state } = useWalletPageLogic();
-
-  if (state.isLoading) {
-    return <LoadingWindow />;
-  }
-
-  
-
   return (
     <Page>
       <WalletPageHeader />
