@@ -22,8 +22,25 @@ import { WalletPageTokens } from '../WalletPageTokens/WalletPageTokens';
 import { WalletPageInfo } from '../WalletPageInfo/WalletPageInfo';
 import { WalletPageActions } from '../WalletPageActions/WalletPageActions';
 import { TokenDetailsWindow } from '../WalletPageToken/TokenDetailsWindow';
+import { Network, Wallet } from '@/entities/Wallet';
 
-const WalletPage = () => {
+
+export interface WalletPageState {
+  isLoading: boolean;
+  selectedWallet?: Wallet;
+  selectedNetwork?: Network;
+}
+
+interface WalletPageProps {
+  state: WalletPageState;
+}
+
+
+const WalletPage = ({ state }: WalletPageProps ) => {
+  if (!state.selectedWallet || !state.selectedNetwork) {
+    return null;
+  }
+
   return (
     <Page>
       <WalletPageHeader />
