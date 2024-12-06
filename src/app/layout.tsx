@@ -7,8 +7,25 @@ import '@/shared/styles/index.scss';
 import Script from 'next/script';
 import Head from 'next/head';
 import React from 'react';
+import localFont from 'next/font/local'
 
-const inter: NextFont = Inter({ subsets: ['latin'] });
+const clashDisplay = localFont({
+  src: [
+    {
+      path: '../shared/assets/fonts/ClashDisplay-Bold.woff2',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: '../shared/assets/fonts/ClashDisplay-Semibold.woff2',
+      weight: '600',
+      style: 'normal',
+    },
+  ],
+  display: 'swap',
+  preload: true,
+  variable: '--font-clash-display' // Для использования как CSS переменной
+});
 
 export const metadata: Metadata = {
   title: 'Chain Spy Robot',
@@ -23,7 +40,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
     </Head>
     <Script src="https://telegram.org/js/telegram-web-app.js" />
-    <body className={inter.className} id="root">
+    <body className={clashDisplay.className} id="root">
     <StoreProvider>
       {children}
       <Toaster />
