@@ -24,6 +24,20 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <Head>
       <meta name="viewport"
             content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+      <link 
+          rel="preload" 
+          href="/assets/fonts/ClashDisplay-Bold.woff2" 
+          as="font" 
+          type="font/woff2" 
+          crossOrigin="anonymous"
+        />
+        <link 
+          rel="preload" 
+          href="/assets/fonts/ClashDisplay-Semibold.woff2" 
+          as="font" 
+          type="font/woff2" 
+          crossOrigin="anonymous"
+        />
     </Head>
     <Script src="https://telegram.org/js/telegram-web-app.js" />
     <body className={inter.className} id="root">
