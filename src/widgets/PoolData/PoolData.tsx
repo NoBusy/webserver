@@ -150,8 +150,8 @@ export const PoolData: React.FC<PoolDataProps> = ({ token }) => {
                 ? trade.attributes.to_token_amount 
                 : trade.attributes.from_token_amount;
                 const tokenPrice = isBuy 
-                ? trade.attributes.price_from_in_usd 
-                : trade.attributes.price_to_in_usd;
+                ? trade.attributes.price_to_in_usd 
+                : trade.attributes.price_from_in_usd;
 
                 return (
                 <div key={trade.id} className={styles.tradeItem}>
