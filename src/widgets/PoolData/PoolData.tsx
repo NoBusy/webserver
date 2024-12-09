@@ -8,18 +8,39 @@ interface PoolDataProps {
 }
 
 export const PoolData: React.FC<PoolDataProps> = ({ token }) => {
-  const { data, isLoading, error } = usePoolData(token);
-
-  if (error || !data) return null;
-  if (isLoading) return <div className={styles.loading}>Loading pool data...</div>;
-
-  const {
-    attributes: {
-      transactions,
-      price_change_percentage: priceChanges,
-      volume_usd: volumeUsd
+    const { data, isLoading, error } = usePoolData(token);
+  
+    console.log('PoolData render:', { data, isLoading, error, token }); // Добавляем логирование
+  
+    if (isLoading) {
+      return <div className={styles.loading}>Loading pool data...</div>;
     }
-  } = data;
+  
+    // Показываем ошибку вместо скрытия компонента
+    if (error) {
+      console.error('Pool data error:', error);
+      return <div className={styles.error}>{error}</div>;
+    }
+  
+    // Проверяем наличие необходимых данных
+    if (!data?.attributes) {
+      console.log('No pool data available');
+      return null;
+    }
+  
+    const {
+      attributes: {
+        transactions = {},
+        price_change_percentage: priceChanges = {},
+        volume_usd: volumeUsd = {}
+      }
+    } = data;
+  
+    // Проверяем наличие необходимых данных перед рендерингом
+    if (!transactions.m5 || !transactions.h1 || !priceChanges) {
+      console.log('Missing required data fields');
+      return null;
+    }
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat('en-US', {

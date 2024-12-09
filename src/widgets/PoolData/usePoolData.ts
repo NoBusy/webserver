@@ -43,9 +43,10 @@ export const usePoolData = (token: Token) => {
           (now - poolAddressCache[cacheKey].timestamp) < ADDRESS_CACHE_TTL) {
         return poolAddressCache[cacheKey].address;
       }
-
+      console.log('Getting pool address for:', token);
       try {
         const network = NETWORK_MAPPING[token.network];
+        console.log('Mapped network:', network);
         const response = await fetch(
           `https://pro-api.coingecko.com/api/v3/onchain/networks/${network}/pools/${token.contract}`,
           {
@@ -54,9 +55,11 @@ export const usePoolData = (token: Token) => {
         );
 
         if (!response.ok) throw new Error('Failed to fetch pool address');
-
+        console.log('Pool address response status:', response.status);
         const jsonData = await response.json();
+        console.log('Pool address data:', jsonData);
         const poolAddress = jsonData.data?.[0]?.attributes?.address;
+        console.log('Found pool address:', poolAddress);
 
         if (!poolAddress) throw new Error('Pool address not found');
 
@@ -74,8 +77,15 @@ export const usePoolData = (token: Token) => {
     };
 
     const fetchPoolData = async () => {
+        if (!token.contract || !token.network) {
+            console.log('Missing token data:', { contract: token.contract, network: token.network });
+            setError('Invalid token data');
+            setIsLoading(false);
+            return;
+          }
       try {
         const poolAddress = await getPoolAddress();
+        console.log('Retrieved pool address:', poolAddress);
         if (!poolAddress) {
           throw new Error('Failed to get pool address');
         }
@@ -88,8 +98,8 @@ export const usePoolData = (token: Token) => {
             (now - poolDataCache[cacheKey].timestamp) < DATA_CACHE_TTL) {
           setData(poolDataCache[cacheKey].data);
           return;
-        }
-
+        }   
+        console.log('Fetching data from GeckoTerminal');
         const network = NETWORK_MAPPING[token.network];
         const response = await fetch(
           `https://api.geckoterminal.com/api/v2/networks/${network}/pools/${poolAddress}`,
@@ -99,8 +109,9 @@ export const usePoolData = (token: Token) => {
         );
 
         if (!response.ok) throw new Error('Failed to fetch pool data');
-
+        console.log('GeckoTerminal response status:', response.status);
         const jsonData = await response.json();
+        console.log('GeckoTerminal data:', jsonData);
         
         poolDataCache[cacheKey] = {
           data: jsonData.data,
