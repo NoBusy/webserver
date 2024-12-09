@@ -144,10 +144,14 @@ export const PoolData: React.FC<PoolDataProps> = ({ token }) => {
           </div>
           <div className={styles.tradesGrid}>
             {currentTrades.map((trade: any) => {
-                // Вычисляем общую стоимость сделки
-                const tokenAmount = Number(trade.attributes.to_token_amount);
-                const tokenPrice = Number(trade.attributes.price_to_in_usd);
-                const totalValue = tokenAmount * tokenPrice;
+                // Определяем, какие значения использовать в зависимости от типа операции
+                const isBuy = trade.attributes.kind === 'buy';
+                const tokenAmount = isBuy 
+                ? trade.attributes.to_token_amount 
+                : trade.attributes.from_token_amount;
+                const tokenPrice = isBuy 
+                ? trade.attributes.price_from_in_usd 
+                : trade.attributes.price_to_in_usd;
 
                 return (
                 <div key={trade.id} className={styles.tradeItem}>
@@ -155,18 +159,20 @@ export const PoolData: React.FC<PoolDataProps> = ({ token }) => {
                     {formatTradeTime(trade.attributes.block_timestamp)}
                     </div>
                     <div className={styles.tradeType}>
-                    <span className={trade.attributes.kind === 'buy' ? styles.positiveChange : styles.negativeChange}>
-                        {trade.attributes.kind === 'buy' ? 'Buy' : 'Sell'}
+                    <span className={isBuy ? styles.positiveChange : styles.negativeChange}>
+                        {isBuy ? 'Buy' : 'Sell'}
                     </span>
                     </div>
                     <div className={styles.tradePrice}>
-                    ${Number(trade.attributes.price_to_in_usd).toFixed(6)}
+                    ${Number(tokenPrice).toFixed(2)}
                     </div>
                     <div className={styles.tradeAmount}>
-                    {Number(trade.attributes.to_token_amount).toFixed(2)}
+                    {Number(tokenAmount).toFixed(2)}
                     </div>
                     <div className={styles.tradeTotalValue}>
-                    ${totalValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                    ${Number(trade.attributes.volume_in_usd).toLocaleString(undefined, { 
+                        maximumFractionDigits: 2 
+                    })}
                     </div>
                 </div>
                 );
