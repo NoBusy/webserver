@@ -2,8 +2,14 @@
     background-color: #ffffff;
     border-radius: 12px;
     padding: 16px;
-    margin: 16px 0;
+    margin-top: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .poolDataSection {
+    & + .poolDataSection {
+      margin-top: 24px;
+    }
   }
   
   .poolDataTitle {
@@ -54,6 +60,40 @@
     margin-top: 4px;
   }
   
+  .tradesGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .tradeItem {
+    display: grid;
+    grid-template-columns: 80px 80px 1fr 1fr;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+  
+  .tradeTime {
+    color: #666;
+  }
+  
+  .tradeType {
+    font-weight: 500;
+  }
+  
+  .tradeAmount {
+    text-align: right;
+    font-weight: 500;
+  }
+  
+  .tradePrice {
+    text-align: right;
+    color: #666;
+  }
+  
   .positiveChange {
     color: #4caf50;
   }
@@ -66,8 +106,4 @@
     text-align: center;
     padding: 16px;
     color: #666;
-    background-color: #ffffff;
-    border-radius: 12px;
-    margin: 16px 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }

@@ -8,39 +8,35 @@ interface PoolDataProps {
 }
 
 export const PoolData: React.FC<PoolDataProps> = ({ token }) => {
-    const { data, isLoading, error } = usePoolData(token);
-  
-    console.log('PoolData render:', { data, isLoading, error, token }); // Добавляем логирование
-  
-    if (isLoading) {
-      return <div className={styles.loading}>Loading pool data...</div>;
+  const { data, trades, isLoading, error } = usePoolData(token);
+  console.log('PoolData render:', { data, trades, isLoading, error, token });
+
+  if (isLoading) {
+    return <div className={styles.loading}>Loading pool data...</div>;
+  }
+
+  if (error) {
+    console.error('Pool data error:', error);
+    return <div className={styles.error}>{error}</div>;
+  }
+
+  if (!data?.attributes) {
+    console.log('No pool data available');
+    return null;
+  }
+
+  const {
+    attributes: {
+      transactions = {},
+      price_change_percentage: priceChanges = {},
+      volume_usd: volumeUsd = {}
     }
-  
-    // Показываем ошибку вместо скрытия компонента
-    if (error) {
-      console.error('Pool data error:', error);
-      return <div className={styles.error}>{error}</div>;
-    }
-  
-    // Проверяем наличие необходимых данных
-    if (!data?.attributes) {
-      console.log('No pool data available');
-      return null;
-    }
-  
-    const {
-      attributes: {
-        transactions = {},
-        price_change_percentage: priceChanges = {},
-        volume_usd: volumeUsd = {}
-      }
-    } = data;
-  
-    // Проверяем наличие необходимых данных перед рендерингом
-    if (!transactions.m5 || !transactions.h1 || !priceChanges) {
-      console.log('Missing required data fields');
-      return null;
-    }
+  } = data;
+
+  if (!transactions.m5 || !transactions.h1 || !priceChanges) {
+    console.log('Missing required data fields');
+    return null;
+  }
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -51,6 +47,10 @@ export const PoolData: React.FC<PoolDataProps> = ({ token }) => {
 
   const formatVolume = (volume: string) => {
     return Number(volume).toLocaleString(undefined, { maximumFractionDigits: 0 });
+  };
+
+  const formatTradeTime = (timestamp: string) => {
+    return new Date(timestamp).toLocaleTimeString();
   };
 
   return (
@@ -76,7 +76,6 @@ export const PoolData: React.FC<PoolDataProps> = ({ token }) => {
               Volume: ${formatVolume(volumeUsd.m5)}
             </div>
           </div>
-
           <div className={styles.poolDataItem}>
             <div className={styles.label}>Last Hour</div>
             <div className={styles.valueRow}>
@@ -95,7 +94,6 @@ export const PoolData: React.FC<PoolDataProps> = ({ token }) => {
               Volume: ${formatVolume(volumeUsd.h1)}
             </div>
           </div>
-
           <div className={styles.poolDataItem}>
             <div className={styles.label}>Price Changes</div>
             <div className={styles.valueColumn}>
@@ -113,6 +111,34 @@ export const PoolData: React.FC<PoolDataProps> = ({ token }) => {
           </div>
         </div>
       </div>
+
+      {trades && trades.length > 0 && (
+        <div className={styles.poolDataSection}>
+          <h3 className={styles.poolDataTitle}>Recent Trades</h3>
+          <div className={styles.tradesGrid}>
+            {trades.slice(0, 5).map((trade: any) => (
+              <div key={trade.id} className={styles.tradeItem}>
+                <div className={styles.tradeTime}>
+                  {formatTradeTime(trade.attributes.block_timestamp)}
+                </div>
+                <div className={styles.tradeType}>
+                  <span className={trade.attributes.kind === 'buy' ? styles.positiveChange : styles.negativeChange}>
+                    {trade.attributes.kind === 'buy' ? 'Buy' : 'Sell'}
+                  </span>
+                </div>
+                <div className={styles.tradeAmount}>
+                  ${Number(trade.attributes.volume_in_usd).toLocaleString()}
+                </div>
+                <div className={styles.tradePrice}>
+                  ${Number(trade.attributes.price_to_in_usd).toFixed(6)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
+export default PoolData;
