@@ -44,20 +44,32 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
     successToast('Copied', { icon: <SuccessFillIcon width={21} height={21} /> });
   };
 
+  const networkMapping: Record<string, string> = {
+    'ETH': 'eth',
+    'BSC': 'bsc',
+    'SOL': 'solana',
+    'Solana': 'solana'  // обратите внимание, у вас 'Solana' а не 'SOL'
+  };
+
   const getGeckoTerminalUrl = (): string | undefined => {
-    if (!poolData?.attributes?.address) return undefined;
-
-    const networkMapping: Record<string, string> = {
-      'ETH': 'eth',
-      'BSC': 'bsc',
-      'SOL': 'solana'
-    };
-
+    // Добавим подробные логи
+    console.log('Creating URL with:', {
+      network: token.network,
+      mappedNetwork: networkMapping[token.network],
+      poolAddress: poolData?.attributes?.address
+    });
+  
+    if (!poolData?.attributes?.address) {
+      return undefined;
+    }
+  
     const network = networkMapping[token.network];
-    if (!network) return undefined;
-    
+    if (!network) {
+      return undefined;
+    }
+  
     const url = `https://www.geckoterminal.com/ru/${network}/pools/${poolData.attributes.address}?embed=1&info=0&swaps=1&grayscale=1&light_chart=0`;
-    console.log('Generated URL:', url);
+    console.log('Final URL:', url);
     return url;
   };
 
