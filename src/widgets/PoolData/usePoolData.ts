@@ -15,7 +15,7 @@ const NETWORK_MAPPING: Record<string, string> = {
 };
 
 const poolDataCache: PoolDataCache = {};
-const CACHE_TTL = 60 * 1000; // 1 минута
+const CACHE_TTL = 60 * 1000;
 
 export const usePoolData = (token: Token) => {
   const [data, setData] = useState<any>(null);
@@ -40,40 +40,27 @@ export const usePoolData = (token: Token) => {
       const cacheKey = `${network}_${token.contract}`;
       const now = Date.now();
 
-      // Проверяем кеш
-      const cachedData = poolDataCache[cacheKey];
-      if (cachedData && (now - cachedData.timestamp) < CACHE_TTL) {
-        setData(cachedData.data);
+      if (poolDataCache[cacheKey] && (now - poolDataCache[cacheKey].timestamp) < CACHE_TTL) {
+        setData(poolDataCache[cacheKey].data);
         setIsLoading(false);
         return;
       }
 
       try {
-        setIsLoading(true);
-        setError(null);
-
         const url = `https://pro-api.coingecko.com/api/v3/onchain/networks/${network}/pools/${token.contract}`;
-        
-        console.log('Fetching data:', { network, contract: token.contract, url });
+        console.log('Fetching pool data:', { network, contract: token.contract, url });
 
         const response = await fetch(url, {
-          headers: {
-            'accept': 'application/json'
-          }
+          headers: { 'accept': 'application/json' }
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error('Failed to fetch pool data');
 
         const jsonData = await response.json();
-        console.log('API Response:', jsonData);
+        console.log('Pool data response:', jsonData);
 
-        if (!jsonData.data?.[0]) {
-          throw new Error('No data available for this pool');
-        }
+        if (!jsonData.data?.[0]) throw new Error('No pool data available');
 
-        // Обновляем кеш
         poolDataCache[cacheKey] = {
           data: jsonData.data[0],
           timestamp: now
@@ -83,7 +70,7 @@ export const usePoolData = (token: Token) => {
           setData(jsonData.data[0]);
         }
       } catch (err) {
-        console.error('API Error:', err);
+        console.error('Pool data error:', err);
         if (isMounted) {
           setError(err instanceof Error ? err.message : 'Failed to load pool data');
         }
