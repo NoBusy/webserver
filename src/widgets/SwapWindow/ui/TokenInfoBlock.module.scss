@@ -149,3 +149,27 @@
 .negativeChange {
   color: #f44336;
 }
+
+
+.chartContainer {
+  position: relative;
+  height: 300px;
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 8px;
+  margin: 16px 0;
+  overflow: hidden;
+
+  > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}

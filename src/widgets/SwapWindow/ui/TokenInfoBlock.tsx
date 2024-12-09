@@ -8,6 +8,11 @@ import { SuccessFillIcon } from '@/shared/assets/icons/SuccessFillIcon';
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
 import styles from './TokenInfoBlock.module.scss';
 
+interface TradingViewChartProps {
+  symbol: string;
+  theme?: 'light' | 'dark';
+}
+
 interface TokenInfoBlockProps {
   token: Token;
   tokenExtendedInfo: any;
@@ -15,47 +20,12 @@ interface TokenInfoBlockProps {
   historicalData: { timestamp: string; price: number }[];
 }
 
-interface TradingViewChartProps {
-  token: Token;
-  theme?: 'light' | 'dark';
-}
 
-const TradingViewChart: React.FC<TradingViewChartProps> = ({ token, theme = "dark" }) => {
+const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol, theme = "dark" }) => {
   const container = useRef<HTMLDivElement>(null);
-  
-  const getTradingViewSymbol = useMemo(() => {
-    // Маппинг известных токенов к их правильным тикерам
-    const knownTokens: Record<string, string> = {
-      'WETH': 'ETH',
-      'WBTC': 'BTC',
-      'WBNB': 'BNB',
-      'WMATIC': 'MATIC',
-      'WAVAX': 'AVAX',
-    };
-
-    // Маппинг сетей к биржам
-    const networkExchanges: Record<string, string> = {
-      'ethereum': 'BINANCE',
-      'bsc': 'BINANCE',
-      'polygon': 'BINANCE',
-      'avalanche': 'BINANCE',
-    };
-
-    // Если это wrapped токен, используем оригинальный тикер
-    const symbol = knownTokens[token.symbol] || token.symbol;
-
-    // Для большинства токенов используем Binance как основную биржу
-    const exchange = networkExchanges[token.network?.toLowerCase() || ''] || 'BINANCE';
-    
-    // Формируем символ в формате СИМВОЛUSDT
-    return `${exchange}:${symbol}USDT`;
-
-  }, [token]);
 
   useEffect(() => {
-    if (!getTradingViewSymbol || !container.current) {
-      return;
-    }
+    if (!container.current) return;
 
     const script = document.createElement("script");
     script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
@@ -64,7 +34,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ token, theme = "dar
 
     const widgetConfig = {
       autosize: true,
-      symbol: getTradingViewSymbol,
+      symbol: `${symbol}USDT`,
       interval: "D",
       timezone: "Etc/UTC",
       theme,
@@ -81,7 +51,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ token, theme = "dar
     };
 
     script.innerHTML = JSON.stringify(widgetConfig);
-
+    container.current.innerHTML = '';
     container.current.appendChild(script);
 
     return () => {
@@ -89,19 +59,11 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ token, theme = "dar
         container.current.innerHTML = '';
       }
     };
-  }, [getTradingViewSymbol, theme]);
-
-  if (!getTradingViewSymbol) {
-    return (
-      <div className={styles.chartContainer}>
-        <Typography.Text text="Chart not available for this token" className={styles.value} />
-      </div>
-    );
-  }
+  }, [symbol, theme]);
 
   return (
-    <div className={styles.chartContainer} ref={container}>
-      <div style={{ height: "100%", width: "100%" }} />
+    <div className={styles.chartContainer}>
+      <div ref={container} style={{ height: "100%", width: "100%" }} />
     </div>
   );
 };
@@ -122,6 +84,18 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
   const handleOnCopy = (): void => {
     navigator.clipboard.writeText(token.contract ?? '');
     successToast('Copied', { icon: <SuccessFillIcon width={21} height={21} /> });
+  };
+
+  // Получаем базовый символ без wrapped токенов
+  const getBaseSymbol = (symbol: string) => {
+    const wrappedTokens: Record<string, string> = {
+      'WETH': 'ETH',
+      'WBTC': 'BTC',
+      'WBNB': 'BNB',
+      'WMATIC': 'MATIC',
+      'WAVAX': 'AVAX',
+    };
+    return wrappedTokens[symbol] || symbol;
   };
 
   return (
@@ -150,7 +124,7 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
         <CopyFillIcon className={styles.copyIcon} />
       </div>
 
-      <TradingViewChart token={token} />
+      <TradingViewChart symbol={getBaseSymbol(token.symbol)} />
       
       <div className={styles.infoGrid}>
         <div className={styles.infoItem}>
