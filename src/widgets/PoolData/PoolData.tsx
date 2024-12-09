@@ -144,14 +144,13 @@ export const PoolData: React.FC<PoolDataProps> = ({ token }) => {
           </div>
           <div className={styles.tradesGrid}>
             {currentTrades.map((trade: any) => {
-                // Определяем, какие значения использовать в зависимости от типа операции
                 const isBuy = trade.attributes.kind === 'buy';
                 const tokenAmount = isBuy 
                 ? trade.attributes.to_token_amount 
                 : trade.attributes.from_token_amount;
-                const tokenPrice = isBuy 
-                ? trade.attributes.price_to_in_usd 
-                : trade.attributes.price_from_in_usd;
+                // const tokenPrice = isBuy 
+                // ? trade.attributes.price_to_in_usd 
+                // : trade.attributes.price_from_in_usd;
 
                 return (
                 <div key={trade.id} className={styles.tradeItem}>

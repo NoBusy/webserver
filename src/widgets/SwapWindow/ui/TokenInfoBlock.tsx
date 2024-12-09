@@ -1,79 +1,22 @@
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { Typography } from '@/shared/ui/Typography/Typography';
 import { Token } from '@/entities/Wallet';
-import InfoItem from './InfoItem';
 import { CopyFillIcon } from '@/shared/assets/icons/CopyFillIcon';
 import { SuccessFillIcon } from '@/shared/assets/icons/SuccessFillIcon';
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
 import styles from './TokenInfoBlock.module.scss';
-import { PoolData } from '@/widgets/PoolData/PoolData';
-
-interface TradingViewChartProps {
-  symbol: string;
-  theme?: 'light' | 'dark';
-}
+import { usePoolData } from '@/widgets/PoolData/usePoolData';
 
 interface TokenInfoBlockProps {
   token: Token;
   tokenExtendedInfo: any;
   tokenImage: string;
-  historicalData: { timestamp: string; price: number }[];
 }
-
-
-const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol, theme = "dark" }) => {
-  const container = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!container.current) return;
-
-    const script = document.createElement("script");
-    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
-    script.type = "text/javascript";
-    script.async = true;
-
-    const widgetConfig = {
-      autosize: true,
-      symbol: `${symbol}USDT`,
-      interval: "D",
-      timezone: "Etc/UTC",
-      theme,
-      style: "1",
-      locale: "en",
-      enable_publishing: false,
-      allow_symbol_change: true,
-      save_image: false,
-      withdateranges: true,
-      hide_side_toolbar: false,
-      height: "500",
-      width: "100%",
-      backgroundColor: "#1e222d",
-      gridColor: "rgba(255, 255, 255, 0.06)",
-      container_id: "tradingview_widget",
-      support_host: "https://www.tradingview.com"
-    };
-
-    script.innerHTML = JSON.stringify(widgetConfig);
-    container.current.innerHTML = '';
-    container.current.appendChild(script);
-
-    return () => {
-      if (container.current) {
-        container.current.innerHTML = '';
-      }
-    };
-  }, [symbol, theme]);
-
-  return (
-    <div className={styles.chartContainer}>
-      <div ref={container} style={{ height: "100%", width: "100%" }} />
-    </div>
-  );
-};
 
 const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInfo, tokenImage }) => {
   const { successToast } = useToasts();
+  const { data: poolData, isLoading } = usePoolData(token);
 
   const getPriceChangeClass = (value: number | undefined): string => {
     if (value === undefined) return '';
@@ -90,16 +33,22 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
     successToast('Copied', { icon: <SuccessFillIcon width={21} height={21} /> });
   };
 
-  const getBaseSymbol = (symbol: string) => {
-    const wrappedTokens: Record<string, string> = {
-      'WETH': 'ETH',
-      'WBTC': 'BTC',
-      'WBNB': 'BNB',
-      'WMATIC': 'MATIC',
-      'WAVAX': 'AVAX',
+  const getGeckoTerminalUrl = (): string | undefined => {
+    if (!poolData?.attributes?.address) return undefined;
+
+    const networkMapping: Record<string, string> = {
+      'ETH': 'eth',
+      'BSC': 'bsc',
+      'SOL': 'solana'
     };
-    return wrappedTokens[symbol] || symbol;
+
+    const network = networkMapping[token.network];
+    if (!network) return undefined;
+    
+    return `https://www.geckoterminal.com/ru/${network}/pools/${poolData.attributes.address}?embed=1&info=0&swaps=1&grayscale=1&light_chart=0`;
   };
+
+  const geckoTerminalUrl = getGeckoTerminalUrl();
 
   return (
     <div>
@@ -129,10 +78,24 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
         </div>
       </div>
 
-      <TradingViewChart symbol={getBaseSymbol(token.symbol)} />
+      {isLoading ? (
+        <div className={styles.chartContainer}>Loading...</div>
+      ) : geckoTerminalUrl ? (
+        <div className={styles.chartContainer}>
+          <iframe
+            height="100%"
+            width="100%"
+            title="GeckoTerminal Embed"
+            src={geckoTerminalUrl}
+            frameBorder="0"
+            allow="clipboard-write"
+            allowFullScreen
+          />
+        </div>
+      ) : (
+        <div className={styles.chartContainer}>No pool data available</div>
+      )}
 
-      <PoolData token={token} />
-      
       <div className={styles.infoGrid}>
         <div className={styles.infoItem}>
           <Typography.Text text="Total Supply" className={styles.label} />
