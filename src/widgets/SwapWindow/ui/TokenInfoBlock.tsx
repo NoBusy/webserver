@@ -6,6 +6,7 @@ import InfoItem from './InfoItem';
 import { CopyFillIcon } from '@/shared/assets/icons/CopyFillIcon';
 import { SuccessFillIcon } from '@/shared/assets/icons/SuccessFillIcon';
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
+import styles from './TokenInfoBlock.module.scss';
 
 interface TokenInfoBlockProps {
   token: Token;
@@ -19,40 +20,40 @@ interface TradingViewChartProps {
   theme?: 'light' | 'dark';
 }
 
-interface NetworkMap {
-  [key: string]: string;
-}
-
 const TradingViewChart: React.FC<TradingViewChartProps> = ({ token, theme = "dark" }) => {
   const container = useRef<HTMLDivElement>(null);
   
-  const networkMap: NetworkMap = {
-    'ethereum': 'UNISWAP',
-    'bsc': 'PANCAKESWAP',
-    'polygon': 'QUICKSWAP',
-  };
-
   const getTradingViewSymbol = useMemo(() => {
-    if (token.network && networkMap[token.network.toLowerCase()]) {
-      return `${networkMap[token.network.toLowerCase()]}:${token.symbol}USD`;
-    }
+    // Маппинг известных токенов к их правильным тикерам
+    const knownTokens: Record<string, string> = {
+      'WETH': 'ETH',
+      'WBTC': 'BTC',
+      'WBNB': 'BNB',
+      'WMATIC': 'MATIC',
+      'WAVAX': 'AVAX',
+    };
 
-    const majorTokens = ['BTC', 'ETH', 'BNB', 'USDT', 'USDC'];
-    if (majorTokens.includes(token.symbol.toUpperCase())) {
-      return `BINANCE:${token.symbol}USD`;
-    }
+    // Маппинг сетей к биржам
+    const networkExchanges: Record<string, string> = {
+      'ethereum': 'BINANCE',
+      'bsc': 'BINANCE',
+      'polygon': 'BINANCE',
+      'avalanche': 'BINANCE',
+    };
 
-    const exchanges = ['BINANCE', 'COINBASE', 'KUCOIN'];
-    for (const exchange of exchanges) {
-      return `${exchange}:${token.symbol}USD`;
-    }
+    // Если это wrapped токен, используем оригинальный тикер
+    const symbol = knownTokens[token.symbol] || token.symbol;
 
-    return null;
-  }, [token, networkMap]);
+    // Для большинства токенов используем Binance как основную биржу
+    const exchange = networkExchanges[token.network?.toLowerCase() || ''] || 'BINANCE';
+    
+    // Формируем символ в формате СИМВОЛUSDT
+    return `${exchange}:${symbol}USDT`;
+
+  }, [token]);
 
   useEffect(() => {
     if (!getTradingViewSymbol || !container.current) {
-      console.warn('No suitable trading pair found for TradingView widget');
       return;
     }
 
@@ -71,9 +72,11 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ token, theme = "dar
       locale: "en",
       enable_publishing: false,
       allow_symbol_change: true,
-      calendar: false,
       hide_top_toolbar: false,
       hide_legend: true,
+      save_image: false,
+      height: "300",
+      width: "100%",
       support_host: "https://www.tradingview.com"
     };
 
@@ -90,15 +93,15 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ token, theme = "dar
 
   if (!getTradingViewSymbol) {
     return (
-      <div className="h-[300px] w-full flex items-center justify-center bg-gray-100 rounded">
-        <Typography.Text text="Chart not available for this token" className="text-gray-500" />
+      <div className={styles.chartContainer}>
+        <Typography.Text text="Chart not available for this token" className={styles.value} />
       </div>
     );
   }
 
   return (
-    <div className="tradingview-widget-container" ref={container} style={{ height: "300px", width: "100%" }}>
-      <div className="tradingview-widget-container__widget" style={{ height: "calc(100% - 32px)", width: "100%" }} />
+    <div className={styles.chartContainer} ref={container}>
+      <div style={{ height: "100%", width: "100%" }} />
     </div>
   );
 };
@@ -108,7 +111,7 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
 
   const getPriceChangeClass = (value: number | undefined): string => {
     if (value === undefined) return '';
-    return value < 0 ? 'text-red-500' : 'text-green-500';
+    return value < 0 ? styles.negativeChange : styles.positiveChange;
   };
 
   const formatPriceChange = (value: number | undefined): string => {
@@ -122,58 +125,67 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
   };
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md">
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-3">
-          <Image src={tokenImage} alt={token.symbol} width={40} height={40} className="rounded-full" />
-          <div>
-            <Typography.Text text={token.symbol} className="font-bold text-lg" />
-            <Typography.Text text={`$${tokenExtendedInfo.price?.toFixed(6) || 'N/A'}`} className="text-gray-600" />
+    <div className={styles.tokenInfoBlock}>
+      <div className={styles.header}>
+        <div className={styles.tokenIdentity}>
+          <Image src={tokenImage} alt={token.symbol} width={40} height={40} className={styles.tokenIcon} />
+          <div className={styles.tokenDetails}>
+            <Typography.Text text={token.symbol} className={styles.tokenSymbol} />
+            <Typography.Text text={`$${tokenExtendedInfo.price?.toFixed(6) || 'N/A'}`} className={styles.price} />
           </div>
         </div>
-        <div>
+        <div className={styles.tokenPriceChange}>
           <Typography.Text 
             text={formatPriceChange(tokenExtendedInfo.percent_change_24h)}
-            className={getPriceChangeClass(tokenExtendedInfo.percent_change_24h)}
+            className={`${styles.priceChange} ${getPriceChangeClass(tokenExtendedInfo.percent_change_24h)}`}
           />
         </div>
       </div>
-      
-      <div className="flex items-center gap-2 mb-4">
+
+      <div onClick={handleOnCopy} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
         <Typography.Text 
           text={token.contract || 'Address not available'} 
-          className="text-sm text-gray-500 truncate"
-          onClick={handleOnCopy}
+          className={styles.tokenAddress}
         />
-        <CopyFillIcon 
-          className="cursor-pointer w-4 h-4 text-gray-400 hover:text-gray-600"
-          onClick={handleOnCopy}
-        />
+        <CopyFillIcon className={styles.copyIcon} />
       </div>
 
-      <div className="mb-4">
-        <TradingViewChart token={token} />
-      </div>
+      <TradingViewChart token={token} />
       
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <InfoItem label="Total Supply" value={tokenExtendedInfo.total_supply?.toLocaleString() || 'N/A'} />
-        <InfoItem label="Max Supply" value={tokenExtendedInfo.max_supply?.toLocaleString() || 'N/A'} />
-        <InfoItem label="Market Cap" value={`$${tokenExtendedInfo.market_cap?.toLocaleString() || 'N/A'}`} />
-        <InfoItem 
-          label="24h Change" 
-          value={formatPriceChange(tokenExtendedInfo.percent_change_24h)}
-          className={getPriceChangeClass(tokenExtendedInfo.percent_change_24h)}
-        />
-        <InfoItem 
-          label="7d Change" 
-          value={formatPriceChange(tokenExtendedInfo.percent_change_7d)}
-          className={getPriceChangeClass(tokenExtendedInfo.percent_change_7d)}
-        />
-        <InfoItem
-          label="30d Change" 
-          value={formatPriceChange(tokenExtendedInfo.percent_change_30d)}
-          className={getPriceChangeClass(tokenExtendedInfo.percent_change_30d)}
-        />
+      <div className={styles.infoGrid}>
+        <div className={styles.infoItem}>
+          <Typography.Text text="Total Supply" className={styles.label} />
+          <Typography.Text text={tokenExtendedInfo.total_supply?.toLocaleString() || 'N/A'} className={styles.value} />
+        </div>
+        <div className={styles.infoItem}>
+          <Typography.Text text="Max Supply" className={styles.label} />
+          <Typography.Text text={tokenExtendedInfo.max_supply?.toLocaleString() || 'N/A'} className={styles.value} />
+        </div>
+        <div className={styles.infoItem}>
+          <Typography.Text text="Market Cap" className={styles.label} />
+          <Typography.Text text={`$${tokenExtendedInfo.market_cap?.toLocaleString() || 'N/A'}`} className={styles.value} />
+        </div>
+        <div className={styles.infoItem}>
+          <Typography.Text text="24h Change" className={styles.label} />
+          <Typography.Text 
+            text={formatPriceChange(tokenExtendedInfo.percent_change_24h)}
+            className={`${styles.value} ${getPriceChangeClass(tokenExtendedInfo.percent_change_24h)}`}
+          />
+        </div>
+        <div className={styles.infoItem}>
+          <Typography.Text text="7d Change" className={styles.label} />
+          <Typography.Text 
+            text={formatPriceChange(tokenExtendedInfo.percent_change_7d)}
+            className={`${styles.value} ${getPriceChangeClass(tokenExtendedInfo.percent_change_7d)}`}
+          />
+        </div>
+        <div className={styles.infoItem}>
+          <Typography.Text text="30d Change" className={styles.label} />
+          <Typography.Text 
+            text={formatPriceChange(tokenExtendedInfo.percent_change_30d)}
+            className={`${styles.value} ${getPriceChangeClass(tokenExtendedInfo.percent_change_30d)}`}
+          />
+        </div>
       </div>
     </div>
   );
