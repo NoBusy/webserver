@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Token } from '@/entities/Wallet';
 import { usePoolData } from './usePoolData';
 import styles from './PoolData.module.scss';
@@ -9,6 +9,9 @@ interface PoolDataProps {
 
 export const PoolData: React.FC<PoolDataProps> = ({ token }) => {
   const { data, trades, isLoading, error } = usePoolData(token);
+  const [page, setPage] = useState(1);
+  const tradesPerPage = 20;
+
   console.log('PoolData render:', { data, trades, isLoading, error, token });
 
   if (isLoading) {
@@ -52,6 +55,9 @@ export const PoolData: React.FC<PoolDataProps> = ({ token }) => {
   const formatTradeTime = (timestamp: string) => {
     return new Date(timestamp).toLocaleTimeString();
   };
+
+  const totalPages = trades ? Math.ceil(trades.length / tradesPerPage) : 0;
+  const currentTrades = trades ? trades.slice((page - 1) * tradesPerPage, page * tradesPerPage) : [];
 
   return (
     <div className={styles.poolData}>
@@ -114,9 +120,30 @@ export const PoolData: React.FC<PoolDataProps> = ({ token }) => {
 
       {trades && trades.length > 0 && (
         <div className={styles.poolDataSection}>
-          <h3 className={styles.poolDataTitle}>Recent Trades</h3>
+          <div className={styles.sectionHeader}>
+            <h3 className={styles.poolDataTitle}>Recent Trades</h3>
+            <div className={styles.pagination}>
+              <button 
+                className={styles.paginationButton} 
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+              >
+                Previous
+              </button>
+              <span className={styles.pageInfo}>
+                {page} / {totalPages}
+              </span>
+              <button 
+                className={styles.paginationButton} 
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page >= totalPages}
+              >
+                Next
+              </button>
+            </div>
+          </div>
           <div className={styles.tradesGrid}>
-            {trades.slice(0, 5).map((trade: any) => (
+            {currentTrades.map((trade: any) => (
               <div key={trade.id} className={styles.tradeItem}>
                 <div className={styles.tradeTime}>
                   {formatTradeTime(trade.attributes.block_timestamp)}
