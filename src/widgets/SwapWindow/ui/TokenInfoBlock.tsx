@@ -50,6 +50,12 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
 
   const geckoTerminalUrl = getGeckoTerminalUrl();
 
+  console.log('Token:', token);
+  console.log('Pool Data:', poolData);
+  console.log('Loading:', isLoading);
+  console.log('Error:', Error);
+
+
   return (
     <div>
       <div className={styles.header}>
