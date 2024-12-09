@@ -7,6 +7,7 @@ import { CopyFillIcon } from '@/shared/assets/icons/CopyFillIcon';
 import { SuccessFillIcon } from '@/shared/assets/icons/SuccessFillIcon';
 import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
 import styles from './TokenInfoBlock.module.scss';
+import { PoolData } from '@/widgets/PoolData/PoolData';
 
 interface TradingViewChartProps {
   symbol: string;
@@ -129,6 +130,8 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
       </div>
 
       <TradingViewChart symbol={getBaseSymbol(token.symbol)} />
+
+      <PoolData token={token} />
       
       <div className={styles.infoGrid}>
         <div className={styles.infoItem}>
