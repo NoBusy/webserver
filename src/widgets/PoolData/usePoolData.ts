@@ -8,34 +8,16 @@ interface PoolDataCache {
   }
 }
 
-interface PoolSearchCache {
-  [key: string]: {
-    poolId: string;
-    timestamp: number;
-  }
-}
-
-interface UsePoolDataResult {
-  data: any;
-  isLoading: boolean;
-  error: string | null;
-}
-
 const NETWORK_MAPPING: Record<string, string> = {
-  [Network.ETH]: 'ethereum',
+  [Network.ETH]: 'eth',
   [Network.BSC]: 'bsc',
   [Network.SOL]: 'solana',
 };
 
-// Кеши для данных пула и результатов поиска
 const poolDataCache: PoolDataCache = {};
-const poolSearchCache: PoolSearchCache = {};
+const CACHE_TTL = 60 * 1000; // 1 минута
 
-// TTL кеша (1 час для поиска пула, 1 минута для данных)
-const SEARCH_CACHE_TTL = 60 * 60 * 1000;
-const DATA_CACHE_TTL = 60 * 1000;
-
-export const usePoolData = (token: Token): UsePoolDataResult => {
+export const usePoolData = (token: Token) => {
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,109 +25,65 @@ export const usePoolData = (token: Token): UsePoolDataResult => {
   useEffect(() => {
     let isMounted = true;
 
-    const getPoolAddress = async () => {
-      const cacheKey = `${token.network}_${token.symbol}`;
+    const fetchPoolData = async () => {
+      if (!token.contract || !token.network) {
+        setIsLoading(false);
+        return;
+      }
+
+      const network = NETWORK_MAPPING[token.network];
+      if (!network) {
+        setIsLoading(false);
+        return;
+      }
+
+      const cacheKey = `${network}_${token.contract}`;
       const now = Date.now();
 
-      // Проверяем кеш поиска
-      const cachedSearch = poolSearchCache[cacheKey];
-      if (cachedSearch && (now - cachedSearch.timestamp) < SEARCH_CACHE_TTL) {
-        return cachedSearch.poolId;
+      // Проверяем кеш
+      const cachedData = poolDataCache[cacheKey];
+      if (cachedData && (now - cachedData.timestamp) < CACHE_TTL) {
+        setData(cachedData.data);
+        setIsLoading(false);
+        return;
       }
 
-      try {
-        const network = NETWORK_MAPPING[token.network];
-        if (!network) return null;
-
-        const response = await fetch(
-          `https://api.geckoterminal.com/api/v2/search?query=${token.symbol}&network=${network}`,
-          {
-            headers: {
-              'Accept': 'application/json'
-            }
-          }
-        );
-
-        if (!response.ok) throw new Error('Search failed');
-
-        const searchData = await response.json();
-        console.log('Search results:', searchData);
-
-        // Ищем пул с наибольшим объемом или первый доступный
-        const pool = searchData.data?.find((item: any) => 
-          item.type === 'pool' && 
-          item.attributes.name.toLowerCase().includes(token.symbol.toLowerCase())
-        );
-
-        if (!pool) return null;
-
-        // Сохраняем в кеш
-        poolSearchCache[cacheKey] = {
-          poolId: pool.id,
-          timestamp: now
-        };
-
-        return pool.id;
-      } catch (err) {
-        console.error('Pool search error:', err);
-        return null;
-      }
-    };
-
-    const fetchPoolData = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
-        // Получаем адрес пула
-        const poolId = await getPoolAddress();
-        if (!poolId) {
-          setError('Pool not found');
-          return;
-        }
+        const url = `https://pro-api.coingecko.com/api/v3/onchain/networks/${network}/pools/${token.contract}`;
+        
+        console.log('Fetching data:', { network, contract: token.contract, url });
 
-        const network = NETWORK_MAPPING[token.network];
-        if (!network) {
-          setError('Network not supported');
-          return;
-        }
-
-        // Проверяем кеш данных
-        const cacheKey = poolId;
-        const now = Date.now();
-        const cachedData = poolDataCache[cacheKey];
-        if (cachedData && (now - cachedData.timestamp) < DATA_CACHE_TTL) {
-          setData(cachedData.data);
-          return;
-        }
-
-        const response = await fetch(
-          `https://api.geckoterminal.com/api/v2/networks/${network}/pools/${poolId}`,
-          {
-            headers: {
-              'Accept': 'application/json'
-            }
+        const response = await fetch(url, {
+          headers: {
+            'accept': 'application/json'
           }
-        );
+        });
 
-        if (!response.ok) throw new Error('Failed to fetch pool data');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
         const jsonData = await response.json();
-        console.log('Pool data:', jsonData);
+        console.log('API Response:', jsonData);
 
-        if (!jsonData.data) throw new Error('No data available');
+        if (!jsonData.data?.[0]) {
+          throw new Error('No data available for this pool');
+        }
 
         // Обновляем кеш
         poolDataCache[cacheKey] = {
-          data: jsonData.data,
+          data: jsonData.data[0],
           timestamp: now
         };
 
         if (isMounted) {
-          setData(jsonData.data);
+          setData(jsonData.data[0]);
         }
       } catch (err) {
-        console.error('Error:', err);
+        console.error('API Error:', err);
         if (isMounted) {
           setError(err instanceof Error ? err.message : 'Failed to load pool data');
         }
@@ -157,13 +95,13 @@ export const usePoolData = (token: Token): UsePoolDataResult => {
     };
 
     fetchPoolData();
-    const interval = setInterval(fetchPoolData, DATA_CACHE_TTL);
+    const interval = setInterval(fetchPoolData, CACHE_TTL);
 
     return () => {
       isMounted = false;
       clearInterval(interval);
     };
-  }, [token.network, token.symbol]);
+  }, [token.contract, token.network]);
 
   return { data, isLoading, error };
 };
