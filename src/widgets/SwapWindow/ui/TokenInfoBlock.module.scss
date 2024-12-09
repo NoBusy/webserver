@@ -38,32 +38,19 @@
   word-break: break-all;
 }
 
-.tokenPrice {
-  text-align: right;
-}
-
 .price {
   font-size: 16px;
   font-weight: bold;
 }
 
-.priceChange {
-  font-size: 14px;
-}
-
-.tokenPriceChange {
-  text-align: right;
-}
-
 .chartContainer {
   position: relative;
-  height: 500px;
+  height: 800px; // увеличили высоту с 500px до 800px
   width: 100%;
   border-radius: 12px;
   margin: 16px 0;
   overflow: hidden;
   background-color: #1e222d;
-
   > div {
     position: absolute;
     top: 0;
@@ -73,45 +60,9 @@
   }
 }
 
-.infoGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.infoItem {
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 10px;
-}
-
-.label {
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 4px;
-}
-
-.value {
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.positiveChange {
-  color: #4caf50;
-}
-
-.negativeChange {
-  color: #f44336;
-}
-
 .copyIcon {
   cursor: pointer;
   color: #666;
-  
   &:hover {
     color: #333;
   }
