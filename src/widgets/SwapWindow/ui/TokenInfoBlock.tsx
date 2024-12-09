@@ -45,8 +45,11 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol, theme = "da
       save_image: false,
       withdateranges: true,
       hide_side_toolbar: false,
-      height: "300",
+      height: "500",
       width: "100%",
+      backgroundColor: "#1e222d",
+      gridColor: "rgba(255, 255, 255, 0.06)",
+      container_id: "tradingview_widget",
       support_host: "https://www.tradingview.com"
     };
 

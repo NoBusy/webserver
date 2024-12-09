@@ -65,14 +65,14 @@
   margin: 16px 0;
   overflow: hidden;
   background-color: #1e222d;
+}
 
-  > div {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
+.chartContainer > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .infoGrid {
@@ -112,8 +112,8 @@
 .copyIcon {
   cursor: pointer;
   color: #666;
-  
-  &:hover {
-    color: #333;
-  }
+}
+
+.copyIcon:hover {
+  color: #333;
 }
