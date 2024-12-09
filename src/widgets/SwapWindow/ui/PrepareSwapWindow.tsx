@@ -129,7 +129,7 @@ export const PrepareSwapWindow: React.FC<PrepareSwapWindowProps> = ({ logic }) =
               token={state.toToken}
               tokenExtendedInfo={state.tokenExtendedInfo}
               tokenImage={getTokenImage(state.toToken)}
-              historicalData={state.historicalData}
+              //historicalData={state.historicalData}
             />
           )}
           {state.rate > 0 && state.fromToken && state.toToken && (
