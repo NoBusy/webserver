@@ -79,11 +79,11 @@ interface NativePoolInfo {
   
   const NATIVE_POOLS: Record<string, NativePoolInfo> = {
     [Network.ETH]: {
-      address: '0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b',
+      address: '0x0d4a11d5EEaaC28EC3F61d100daF4d40471f1852',
       symbols: ['ETH', 'WETH']
     },
     [Network.BSC]: {
-      address: '0x172fcd41e0913e95784454622d1c3724f546f849',
+      address: '0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae',
       symbols: ['BNB', 'WBNB']
     },
     [Network.SOL]: {
@@ -91,7 +91,7 @@ interface NativePoolInfo {
       symbols: ['SOL', 'WSOL']
     },
     [Network.TON]: {
-      address: 'EQA-X_yo3fzzbDbJ_0bzFWKqtRuZFIRa1sJsveZJ1YpViO3r',
+      address: 'EQCGScrZe1xbyWqWDvdI6mzP-GAcAWFv6ZXuaJOuSqemxku4',
       symbols: ['TON', 'WTON']
     }
   };
