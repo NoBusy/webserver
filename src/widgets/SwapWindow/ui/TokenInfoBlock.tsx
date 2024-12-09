@@ -42,9 +42,9 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol, theme = "da
       locale: "en",
       enable_publishing: false,
       allow_symbol_change: true,
-      hide_top_toolbar: false,
-      hide_legend: true,
       save_image: false,
+      withdateranges: true,
+      hide_side_toolbar: false,
       height: "300",
       width: "100%",
       support_host: "https://www.tradingview.com"
@@ -86,7 +86,6 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
     successToast('Copied', { icon: <SuccessFillIcon width={21} height={21} /> });
   };
 
-  // Получаем базовый символ без wrapped токенов
   const getBaseSymbol = (symbol: string) => {
     const wrappedTokens: Record<string, string> = {
       'WETH': 'ETH',
