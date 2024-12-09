@@ -162,7 +162,7 @@ export const TokenDetailsWindow: React.FC = () => {
             token={state.selectedToken}
             tokenExtendedInfo={state.swapState.tokenExtendedInfo}
             tokenImage={getTokenImage(state.selectedToken)}
-            historicalData={state.swapState.historicalData}
+            //historicalData={state.swapState.historicalData}
           />
         )}
       </Window>
