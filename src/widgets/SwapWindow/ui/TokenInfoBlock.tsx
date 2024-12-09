@@ -44,10 +44,8 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
 
     const network = networkMapping[token.network];
     if (!network) return undefined;
-
-    const poolId = poolData.id.replace(`${network}_`, '');
     
-    return `https://www.geckoterminal.com/ru/${network}/pools/${poolId}?embed=1&info=0&swaps=1&grayscale=1&light_chart=0`;
+    return `https://www.geckoterminal.com/ru/${network}/pools/${poolData.attributes.address}?embed=1&info=0&swaps=1&grayscale=1&light_chart=0`;
   };
 
   const geckoTerminalUrl = getGeckoTerminalUrl();
