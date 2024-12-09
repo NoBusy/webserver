@@ -18,6 +18,17 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
   const { successToast } = useToasts();
   const { data: poolData, isLoading, error } = usePoolData(token);
 
+  useEffect(() => {
+    console.log('TokenInfoBlock Debug:', {
+      poolData,
+      isLoading,
+      error,
+      hasAttributes: poolData?.attributes,
+      poolAddress: poolData?.attributes?.address,
+      network: token.network,
+    });
+  }, [poolData, isLoading, error, token.network]);
+
   const getPriceChangeClass = (value: number | undefined): string => {
     if (value === undefined) return '';
     return value < 0 ? styles.negativeChange : styles.positiveChange;
@@ -41,17 +52,7 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
       'BSC': 'bsc',
       'SOL': 'solana'
     };
-    useEffect(() => {
-      console.log('TokenInfoBlock Debug:', {
-        poolData,
-        isLoading,
-        error,
-        hasAttributes: poolData?.attributes,
-        poolAddress: poolData?.attributes?.address,
-        network: token.network,
-        mappedNetwork: networkMapping[token.network]
-      });
-    }, [poolData, isLoading, error, token.network]);
+
     const network = networkMapping[token.network];
     if (!network) return undefined;
     
