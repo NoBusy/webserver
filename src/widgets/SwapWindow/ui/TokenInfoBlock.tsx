@@ -16,7 +16,7 @@ interface TokenInfoBlockProps {
 
 const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInfo, tokenImage }) => {
   const { successToast } = useToasts();
-  const { data: poolData, isLoading } = usePoolData(token);
+  const { data: poolData, isLoading, error } = usePoolData(token);
 
   const getPriceChangeClass = (value: number | undefined): string => {
     if (value === undefined) return '';
@@ -41,11 +41,23 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
       'BSC': 'bsc',
       'SOL': 'solana'
     };
-
+    useEffect(() => {
+      console.log('TokenInfoBlock Debug:', {
+        poolData,
+        isLoading,
+        error,
+        hasAttributes: poolData?.attributes,
+        poolAddress: poolData?.attributes?.address,
+        network: token.network,
+        mappedNetwork: networkMapping[token.network]
+      });
+    }, [poolData, isLoading, error, token.network]);
     const network = networkMapping[token.network];
     if (!network) return undefined;
     
-    return `https://www.geckoterminal.com/ru/${network}/pools/${poolData.attributes.address}?embed=1&info=0&swaps=1&grayscale=1&light_chart=0`;
+    const url = `https://www.geckoterminal.com/ru/${network}/pools/${poolData.attributes.address}?embed=1&info=0&swaps=1&grayscale=1&light_chart=0`;
+    console.log('Generated URL:', url);
+    return url;
   };
 
   const geckoTerminalUrl = getGeckoTerminalUrl();
@@ -99,7 +111,20 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
           />
         </div>
       ) : (
-        <div className={styles.chartContainer}>No pool data available</div>
+        <div className={styles.chartContainer}>
+          <div>No pool data available</div>
+          <div>Debug info:</div>
+          <pre style={{fontSize: '12px', overflow: 'auto', maxHeight: '200px'}}>
+            {JSON.stringify({
+              hasPoolData: !!poolData,
+              poolId: poolData?.id,
+              poolAddress: poolData?.attributes?.address,
+              network: token.network,
+              error: error,
+              url: geckoTerminalUrl
+            }, null, 2)}
+          </pre>
+        </div>
       )}
 
       <div className={styles.infoGrid}>
