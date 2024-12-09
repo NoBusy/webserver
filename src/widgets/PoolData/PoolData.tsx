@@ -163,9 +163,6 @@ export const PoolData: React.FC<PoolDataProps> = ({ token }) => {
                         {isBuy ? 'Buy' : 'Sell'}
                     </span>
                     </div>
-                    <div className={styles.tradePrice}>
-                    ${Number(tokenPrice).toFixed(2)}
-                    </div>
                     <div className={styles.tradeAmount}>
                     {Number(tokenAmount).toFixed(2)}
                     </div>
