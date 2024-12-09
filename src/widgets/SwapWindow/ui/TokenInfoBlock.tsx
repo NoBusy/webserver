@@ -101,29 +101,31 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
   };
 
   return (
-    <div className={styles.tokenInfoBlock}>
+    <div>
       <div className={styles.header}>
-        <div className={styles.tokenIdentity}>
-          <Image src={tokenImage} alt={token.symbol} width={40} height={40} className={styles.tokenIcon} />
-          <div className={styles.tokenDetails}>
-            <Typography.Text text={token.symbol} className={styles.tokenSymbol} />
-            <Typography.Text text={`$${tokenExtendedInfo.price?.toFixed(6) || 'N/A'}`} className={styles.price} />
+        <div className={styles.headerTop}>
+          <div className={styles.tokenIdentity}>
+            <Image src={tokenImage} alt={token.symbol} width={40} height={40} className={styles.tokenIcon} />
+            <div className={styles.tokenDetails}>
+              <Typography.Text text={token.symbol} className={styles.tokenSymbol} />
+              <Typography.Text text={`$${tokenExtendedInfo.price?.toFixed(6) || 'N/A'}`} className={styles.price} />
+            </div>
+          </div>
+          <div className={styles.tokenPriceChange}>
+            <Typography.Text 
+              text={formatPriceChange(tokenExtendedInfo.percent_change_24h)}
+              className={`${styles.priceChange} ${getPriceChangeClass(tokenExtendedInfo.percent_change_24h)}`}
+            />
           </div>
         </div>
-        <div className={styles.tokenPriceChange}>
+        
+        <div onClick={handleOnCopy} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Typography.Text 
-            text={formatPriceChange(tokenExtendedInfo.percent_change_24h)}
-            className={`${styles.priceChange} ${getPriceChangeClass(tokenExtendedInfo.percent_change_24h)}`}
+            text={token.contract || 'Address not available'} 
+            className={styles.tokenAddress}
           />
+          <CopyFillIcon className={styles.copyIcon} />
         </div>
-      </div>
-
-      <div onClick={handleOnCopy} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Typography.Text 
-          text={token.contract || 'Address not available'} 
-          className={styles.tokenAddress}
-        />
-        <CopyFillIcon className={styles.copyIcon} />
       </div>
 
       <TradingViewChart symbol={getBaseSymbol(token.symbol)} />
