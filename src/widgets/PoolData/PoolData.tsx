@@ -143,25 +143,35 @@ export const PoolData: React.FC<PoolDataProps> = ({ token }) => {
             </div>
           </div>
           <div className={styles.tradesGrid}>
-            {currentTrades.map((trade: any) => (
-              <div key={trade.id} className={styles.tradeItem}>
-                <div className={styles.tradeTime}>
-                  {formatTradeTime(trade.attributes.block_timestamp)}
+            {currentTrades.map((trade: any) => {
+                // Вычисляем общую стоимость сделки
+                const tokenAmount = Number(trade.attributes.to_token_amount);
+                const tokenPrice = Number(trade.attributes.price_to_in_usd);
+                const totalValue = tokenAmount * tokenPrice;
+
+                return (
+                <div key={trade.id} className={styles.tradeItem}>
+                    <div className={styles.tradeTime}>
+                    {formatTradeTime(trade.attributes.block_timestamp)}
+                    </div>
+                    <div className={styles.tradeType}>
+                    <span className={trade.attributes.kind === 'buy' ? styles.positiveChange : styles.negativeChange}>
+                        {trade.attributes.kind === 'buy' ? 'Buy' : 'Sell'}
+                    </span>
+                    </div>
+                    <div className={styles.tradePrice}>
+                    ${Number(trade.attributes.price_to_in_usd).toFixed(6)}
+                    </div>
+                    <div className={styles.tradeAmount}>
+                    {Number(trade.attributes.to_token_amount).toFixed(2)}
+                    </div>
+                    <div className={styles.tradeTotalValue}>
+                    ${totalValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                    </div>
                 </div>
-                <div className={styles.tradeType}>
-                  <span className={trade.attributes.kind === 'buy' ? styles.positiveChange : styles.negativeChange}>
-                    {trade.attributes.kind === 'buy' ? 'Buy' : 'Sell'}
-                  </span>
-                </div>
-                <div className={styles.tradeAmount}>
-                  ${Number(trade.attributes.volume_in_usd).toLocaleString()}
-                </div>
-                <div className={styles.tradePrice}>
-                  ${Number(trade.attributes.price_to_in_usd).toFixed(6)}
-                </div>
-              </div>
-            ))}
-          </div>
+                );
+            })}
+            </div>
         </div>
       )}
     </div>
