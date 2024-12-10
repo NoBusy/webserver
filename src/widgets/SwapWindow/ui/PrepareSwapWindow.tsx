@@ -32,10 +32,10 @@ export const PrepareSwapWindow: React.FC<PrepareSwapWindowProps> = ({ logic }) =
     let networkParam;
     switch (state.fromToken.network) {
       case Network.BSC:
-        networkParam = 'Binance-Smart-Chain';
+        networkParam = 'Binance_Smart_Chain';
         break;
       case Network.TON:
-        networkParam = 'The-Open-Network';
+        networkParam = 'The_Open_Network';
         break;
       default:
         networkParam = state.fromToken.network;

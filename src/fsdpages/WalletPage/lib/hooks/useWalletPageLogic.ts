@@ -49,9 +49,9 @@ export const useWalletPageLogic = () => {
         let [network, fromToken, toToken] = startParam.split('-');
   
         // Преобразуем сеть в правильный формат
-        if (network === 'Binance-Smart-Chain') {
+        if (network === 'Binance_Smart_Chain') {
           network = Network.BSC;
-        } else if (network === 'The-Open-Network') {
+        } else if (network === 'The_Open_Network') {
           network = Network.TON;
         }
   
