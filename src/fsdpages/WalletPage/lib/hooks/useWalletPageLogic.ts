@@ -42,14 +42,24 @@ export const useWalletPageLogic = () => {
   const checkSwapParams = async () => {
     const TgWebApp = await getTgWebAppSdk();
     if (!TgWebApp) return;
-
+  
     const startParam = TgWebApp.initDataUnsafe.start_param;
     if (startParam) {
       try {
-        // Парсим параметры в формате: network-fromToken-toToken
-        const [network, fromToken, toToken] = startParam.split('-');
+        let [network, fromToken, toToken] = startParam.split('-');
         
-        // Открываем окно свопа с параметрами
+        // Преобразуем "Binance-Smart-Chain" обратно в "Binance Smart Chain"
+        if (network.includes('Binance')) {
+          network = 'Binance Smart Chain';
+        }
+  
+        // Сначала переключаем сеть
+        dispatch(walletActions.setSelectedNetwork(network as Network));
+  
+        // Даем время на переключение сети и обновление кошелька
+        await new Promise(resolve => setTimeout(resolve, 500));
+  
+        // Только потом открываем окно свопа
         dispatch(globalActions.addWindow({
           window: GlobalWindow.Swap,
           options: { 

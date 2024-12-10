@@ -26,9 +26,14 @@ export const PrepareSwapWindow: React.FC<PrepareSwapWindowProps> = ({ logic }) =
   const handleShareLink = async () => {
     const TgWebAppSdk = await getTgWebAppSdk();
     if (!TgWebAppSdk || !state.fromToken || !state.toToken) return;
-
+  
+    // Заменяем пробелы на дефисы для BSC
+    const networkParam = state.fromToken.network === 'Binance Smart Chain' 
+      ? 'Binance-Smart-Chain' 
+      : state.fromToken.network;
+  
     const params = [
-      state.fromToken.network,
+      networkParam,
       state.fromToken.contract || 'native',
       state.toToken.contract
     ].join('-');
