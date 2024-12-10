@@ -51,29 +51,49 @@ export const useSwapWindowLogic = () => {
       if (!selectedWallet?.tokens) {
         throw new Error('No wallet tokens available');
       }
-
+  
       const network = params.network as Network;
-
-      // Ищем токены в кошельке
+  
+      // Ищем токены
       let fromTokenData = selectedWallet.tokens.find(t => {
-        if (!params.fromToken) {
+        if (!params.fromToken || params.fromToken === 'native') {
           return t.network === network && t.contract === null;
         }
         return t.contract?.toLowerCase() === params.fromToken.toLowerCase();
       });
-
-      let toTokenData = selectedWallet.tokens.find(t => 
-        t.contract?.toLowerCase() === params.toToken.toLowerCase()
-      );
-
-      // Если не нашли toToken, получаем инфо и добавляем
-      if (!toTokenData && params.toToken) {
+  
+      let toTokenData = selectedWallet.tokens.find(t => {
+        if (!params.toToken || params.toToken === 'native') {
+          return t.network === network && t.contract === null;
+        }
+        return t.contract?.toLowerCase() === params.toToken.toLowerCase();
+      });
+  
+      // Если не нашли toToken и это не нативный токен, получаем информацию и создаем
+      if (!toTokenData && params.toToken && params.toToken !== 'native') {
         const result = await getTokenInfoRequest({
           network,
           contract: params.toToken,
         }).unwrap();
-
+  
         if (result.ok && result.data) {
+          const currentDate = new Date().toISOString();
+          toTokenData = {
+            id: result.data.contract,
+            wallet_id: selectedWallet.id,
+            symbol: result.data.symbol,
+            network,
+            name: result.data.name,
+            contract: params.toToken,
+            balance: 0,
+            balance_usd: 0,
+            price: result.data.price,
+            price_change_percentage: result.data.price_change_percentage || 0,
+            icon: result.data.icon || '',
+            added_at: currentDate,
+            updated_at: currentDate,
+          };
+  
           // Добавляем токен в кошелек
           await addTokenRequest({
             wallet_id: selectedWallet.id,
@@ -81,24 +101,47 @@ export const useSwapWindowLogic = () => {
             network,
             contract: params.toToken,
           }).unwrap();
-
-          // Обновляем список токенов
-          const walletsResult = await getWalletsRequest().unwrap();
-          if (walletsResult.ok && walletsResult.data) {
-            const updatedWallet = walletsResult.data.find(w => w.id === selectedWallet.id);
-            if (updatedWallet) {
-              toTokenData = updatedWallet.tokens.find(
-                t => t.contract?.toLowerCase() === params.toToken.toLowerCase()
-              );
-            }
-          }
         }
       }
-
+  
+      // То же самое для fromToken
+      if (!fromTokenData && params.fromToken && params.fromToken !== 'native') {
+        const result = await getTokenInfoRequest({
+          network,
+          contract: params.fromToken,
+        }).unwrap();
+  
+        if (result.ok && result.data) {
+          const currentDate = new Date().toISOString();
+          fromTokenData = {
+            id: result.data.contract,
+            wallet_id: selectedWallet.id,
+            symbol: result.data.symbol,
+            network,
+            name: result.data.name,
+            contract: params.fromToken,
+            balance: 0,
+            balance_usd: 0,
+            price: result.data.price,
+            price_change_percentage: result.data.price_change_percentage || 0,
+            icon: result.data.icon || '',
+            added_at: currentDate,
+            updated_at: currentDate,
+          };
+  
+          await addTokenRequest({
+            wallet_id: selectedWallet.id,
+            wallet_address: selectedWallet.address,
+            network,
+            contract: params.fromToken,
+          }).unwrap();
+        }
+      }
+  
       if (!fromTokenData || !toTokenData) {
         throw new Error('Tokens not found in wallet');
       }
-
+  
       setFromToken(fromTokenData);
       setToToken(toTokenData);
       
