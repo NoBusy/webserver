@@ -74,8 +74,8 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
     if (document.activeElement?.id !== (isFrom ? "fromAmount" : "toAmount")) {
       setInputValue(amount === 0 && inputValue === '' ? '' : amount.toString());
     }
-  }, [amount, isFrom, inputValue]);
-
+  }, [amount, isFrom]); // Убрал inputValue из зависимостей, чтобы избежать лишних обновлений
+  
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
     
@@ -91,21 +91,21 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
       });
       return;
     }
-
+  
     value = value.replace(',', '.');
     
     // Проверяем, что в строке только одна точка
     if ((value.match(/\./g) || []).length > 1) {
       return;
     }
-    
-    // Обновленный regex для проверки формата
-    const validNumberFormat = /^(0|0\.|[1-9]\d*\.?\d*)?$/;
+  
+    // Возвращаем ваш оригинальный regex, который корректно работал с нулями
+    const validNumberFormat = /^(0$|0\.\d*$|[1-9]\d*\.?\d*$)$/;
     
     if (!validNumberFormat.test(value)) {
       return;
     }
-
+  
     setInputValue(value);
     onAmountChange?.({
       ...e,
