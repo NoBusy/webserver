@@ -55,11 +55,7 @@ export const useWalletPageLogic = () => {
           network = Network.TON;
         }
   
-        // Сначала переключаем сеть
-        dispatch(walletActions.setSelectedNetwork(network as Network));
-  
-        // Ждем переключения сети и обновления кошелька
-        await getWallets(); // принудительно обновляем кошельки после смены сети
+        await getWallets(network as Network);
   
         // Только потом открываем окно свопа
         dispatch(globalActions.addWindow({
@@ -78,7 +74,7 @@ export const useWalletPageLogic = () => {
     }
   };
 
-  const getWallets = async () => {
+  const getWallets = async (forceNetwork?: Network) => {  // добавляем опциональный параметр
     try {
       const walletsData = await getWalletsRequest().unwrap();
       if (!walletsData.data) return;
@@ -88,24 +84,32 @@ export const useWalletPageLogic = () => {
       const savedWalletId = await appStorage.get<string>(STORAGE_KEYS.SELECTED_WALLET);
       const savedNetwork = await appStorage.get<Network>(STORAGE_KEYS.SELECTED_NETWORK);
   
-      const wallet = selectedWallet ?? walletsData.data.find((w) => w.id === savedWalletId);
-      const network = selectedNetwork ?? savedNetwork;
+      // Используем forceNetwork если он передан, иначе обычная логика
+      const network = forceNetwork || selectedNetwork || savedNetwork;
+  
+      // Ищем кошелек в нужной сети
+      const wallet = walletsData.data.find(w => w.network === network) || 
+                    walletsData.data.find(w => w.id === savedWalletId);
   
       if (!wallet) {
-        savedWalletId ?
-          await getWalletRequest(savedWalletId) :
+        // Если не нашли кошелек, берем первый в нужной сети
+        const walletInNetwork = walletsData.data.find(w => w.network === network);
+        if (walletInNetwork) {
+          await getWalletRequest(walletInNetwork.id);
+        } else {
           await getWalletRequest(walletsData.data[0].id);
+        }
+      } else {
+        await getWalletRequest(wallet.id);
       }
   
-      if (wallet && network) {
-        await getWalletRequest(wallet.id);
-        
-        if (wallet.network !== network) {
-          dispatch(walletActions.setSelectedNetwork(wallet.network));
-        } else {
-          dispatch(walletActions.setSelectedNetwork(network));
-        }
+      // Всегда устанавливаем сеть из параметра если он есть
+      if (forceNetwork) {
+        dispatch(walletActions.setSelectedNetwork(forceNetwork));
+      } else if (wallet) {
+        dispatch(walletActions.setSelectedNetwork(wallet.network));
       }
+  
     } catch (error) {
       console.error('Error in getWallets:', error);
     }
