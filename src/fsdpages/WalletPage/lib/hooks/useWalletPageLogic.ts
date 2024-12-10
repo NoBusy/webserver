@@ -50,7 +50,10 @@ export const useWalletPageLogic = () => {
         
         // Преобразуем "Binance-Smart-Chain" обратно в "Binance Smart Chain"
         if (network.includes('Binance')) {
-          network = 'Binance Smart Chain';
+          network = Network.BSC;
+        }
+        if (network.includes('The')) {
+          network = Network.TON;
         }
   
         // Сначала переключаем сеть
