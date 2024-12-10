@@ -68,25 +68,18 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
 
   const [inputValue, setInputValue] = React.useState(amount.toString());
 
-  // Обновляем локальный стейт при изменении внешнего значения
+  
   React.useEffect(() => {
-    setInputValue(amount === 0 && inputValue === '' ? '' : amount.toString());
-  }, [amount]);
+    // Не обновляем если инпут в фокусе
+    if (document.activeElement?.id !== (isFrom ? "fromAmount" : "toAmount")) {
+      setInputValue(amount === 0 && inputValue === '' ? '' : amount.toString());
+    }
+  }, [amount, isFrom, inputValue]);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
-
-    value = value.replace(',', '.');
     
-    // Проверяем, что в строке только одна точка
-    if ((value.match(/\./g) || []).length > 1) {
-      return;
-    }
-    
-    // Проверяем формат введенного числа
-    const validNumberFormat = /^(0$|0\.\d*$|[1-9]\d*\.?\d*$)$/;
-    
-    // Если значение пустое, обрабатываем как 0
+    // Разрешаем пустую строку
     if (value === '') {
       setInputValue('');
       onAmountChange?.({
@@ -98,6 +91,29 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
       });
       return;
     }
+
+    value = value.replace(',', '.');
+    
+    // Проверяем, что в строке только одна точка
+    if ((value.match(/\./g) || []).length > 1) {
+      return;
+    }
+    
+    // Обновленный regex для проверки формата
+    const validNumberFormat = /^(0|0\.|[1-9]\d*\.?\d*)?$/;
+    
+    if (!validNumberFormat.test(value)) {
+      return;
+    }
+
+    setInputValue(value);
+    onAmountChange?.({
+      ...e,
+      target: {
+        ...e.target,
+        value
+      }
+    });
 
     // Если значение не соответствует формату, игнорируем ввод
     if (!validNumberFormat.test(value)) {
