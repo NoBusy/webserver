@@ -79,36 +79,29 @@ export const useTransferWindowLogic = () => {
         return;
       }
   
-      // Преобразуем в число с правильной точностью
       const numericAmount = Number(parseFloat(amount).toFixed(9));
   
-      console.log('[Transfer] Pre-request validation:', {
-        originalAmount: amount,
-        numericAmount,
-        type: typeof numericAmount
-      });
-  
       const transferPayload = {
-        amount: numericAmount, // отправляем как number
+        amount: numericAmount,
         currency: tokenToTransfer.symbol,
         token_id: tokenToTransfer.id,
         wallet_id: selectedWallet.id,
         to_address: toAddress,
       };
   
-      console.log('[Transfer] Final request payload:', transferPayload);
-  
       const result = await transferRequest(transferPayload).unwrap();
   
-      if (result.ok) {
-        notify('success')
+     
+      if (result.ok && result.data?.hash) {
+        notify('success');
         successToast('Transfer successful');
         handleClearState();
         updateAfterDelay(30000);
       }
+  
     } catch (e) {
       console.error('[Transfer] Error details:', e);
-      notify('error')
+      notify('error');
       errorToast('Failed to transfer tokens');
     } finally {
       setIsLoading(false);
