@@ -9,7 +9,7 @@ export const appStorage = {
       localStorage.setItem(key, stringValue);
       return true;
     } catch (error) {
-      console.error(`Error saving to storage: ${key}`, error);
+     
       try {
         const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
         localStorage.setItem(key, stringValue);
@@ -42,7 +42,7 @@ export const appStorage = {
 
       return null;
     } catch (error) {
-      console.error(`Error reading from storage: ${key}`, error);
+      
       return null;
     }
   }
@@ -59,7 +59,7 @@ export const useAppStorage = () => {
         localStorage.setItem(key, stringValue);
         return true;
       } catch (error) {
-        console.error(`Error saving to storage: ${key}`, error);
+    
         try {
           const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
           localStorage.setItem(key, stringValue);
@@ -92,7 +92,7 @@ export const useAppStorage = () => {
 
         return null;
       } catch (error) {
-        console.error(`Error reading from storage: ${key}`, error);
+     
         return null;
       }
     }

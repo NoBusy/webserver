@@ -42,15 +42,12 @@ export const useScanQrCode = () => {
         webApp?.showScanQrPopup({
           text: "Scan QR code to get address"
         }, (result: string) => {
-          console.log('Raw QR scan result:', result);
-          const cleanAddress = cleanQrAddress(result);
-          console.log('Cleaned QR scan result:', cleanAddress);
+          const cleanAddress = cleanQrAddress(result); 
           resolve(cleanAddress);
           return true; // закрываем попап после успешного сканирования
         });
       } catch (error) {
-        console.error('QR scan error:', error);
-        resolve(null);
+       resolve(null);
       }
     });
   }, []);

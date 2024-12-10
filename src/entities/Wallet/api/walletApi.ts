@@ -42,7 +42,7 @@ export const walletApi = api.injectEndpoints({
             dispatch(walletActions.setSelectedWallet(result.data.data));
           }
         } catch (error) {
-          console.error('Error in getWalletSilentUpdate:', error);
+        //  console.error('Error in getWalletSilentUpdate:', error);
         }
       },
     }),

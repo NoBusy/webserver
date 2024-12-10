@@ -189,10 +189,21 @@ export const useWalletPageLogic = () => {
   }, [userDataResult.isLoading]);
 
   useEffect(() => {
-    initTgWebAppSdk();
-    getProfileRequestParams();
-    initStories()
-    checkSwapParams();
+    const init = async () => {
+      try {
+        await initTgWebAppSdk();
+        await getProfileRequestParams();
+        await checkSwapParams();
+        await initStories();
+      } catch (error) {
+        console.error('Initialization error:', error);
+      }
+    };
+  
+    
+    init().catch(error => {
+      console.error('Failed to initialize:', error);
+    });
   }, []);
 
   useEffect(() => {

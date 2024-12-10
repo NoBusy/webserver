@@ -126,7 +126,7 @@ interface NativePoolInfo {
           }
   
           const network = NETWORK_MAPPING[token.network];
-          console.log('Getting pools for token:', { network, contract: token.contract });
+     
   
           const response = await fetch(
             `https://api.geckoterminal.com/api/v2/networks/${network}/tokens/${token.contract}/pools?sort=h24_volume_usd_desc`,
@@ -138,14 +138,12 @@ interface NativePoolInfo {
           if (!response.ok) throw new Error('Failed to fetch token pools');
           
           const jsonData = await response.json();
-          console.log('Token pools data:', jsonData);
   
           const topPool = jsonData.data?.[0];
           if (!topPool) throw new Error('No pools found for token');
           return topPool;
   
         } catch (err) {
-          console.error('Error getting token pools:', err);
           throw err;
         }
       };
@@ -153,14 +151,12 @@ interface NativePoolInfo {
       const fetchData = async () => {
         try {
           const poolData = await getTokenPools();
-          console.log('Found pool:', poolData);
           
           if (isMounted) {
             setData(poolData);
             setError(null);
           }
         } catch (err) {
-          console.error('Error:', err);
           if (isMounted) {
             setError(err instanceof Error ? err.message : 'Failed to load data');
           }

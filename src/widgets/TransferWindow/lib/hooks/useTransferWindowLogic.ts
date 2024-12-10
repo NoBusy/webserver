@@ -100,7 +100,7 @@ export const useTransferWindowLogic = () => {
       }
   
     } catch (e) {
-      console.error('[Transfer] Error details:', e);
+      //console.error('[Transfer] Error details:', e);
       notify('error');
       errorToast('Failed to transfer tokens');
     } finally {
@@ -123,14 +123,14 @@ export const useTransferWindowLogic = () => {
   }, []);
 
   const handleAmountChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('[Transfer] Amount change started:', {
-      newValue: e.target.value,
-      currentBalance: tokenToTransfer?.balance
-    });
+   // console.log('[Transfer] Amount change started:', {
+   //   newValue: e.target.value,
+   //   currentBalance: tokenToTransfer?.balance
+   // });
   
     setIsLoading(true);
     if (!tokenToTransfer || !selectedWallet) {
-      console.log('[Transfer] Missing token or wallet');
+     // console.log('[Transfer] Missing token or wallet');
       return;
     }
   

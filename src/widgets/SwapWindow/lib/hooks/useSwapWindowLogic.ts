@@ -146,7 +146,7 @@ export const useSwapWindowLogic = () => {
       setToToken(toTokenData);
       
     } catch (error) {
-      console.error('Failed to set initial tokens:', error);
+     // console.error('Failed to set initial tokens:', error);
       showToast(errorToast, 'Failed to load tokens');
     } finally {
       setIsLoading(false);
@@ -308,7 +308,7 @@ export const useSwapWindowLogic = () => {
         slippageBps: Math.round(slippage * 100)
       };
   
-      console.log('Swap request params:', swapParams);
+   //   console.log('Swap request params:', swapParams);
   
       const result = await swapRequest(swapParams).unwrap();
   
