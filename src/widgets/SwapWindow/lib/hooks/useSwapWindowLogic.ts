@@ -43,6 +43,73 @@ export const useSwapWindowLogic = () => {
 
   const [slippage, setSlippage] = useState<number>(5);
 
+
+  const setInitialTokens = async (params: { fromToken: string; toToken: string; network: string }) => {
+    try {
+      setIsLoading(true);
+      
+      if (!selectedWallet?.tokens) {
+        throw new Error('No wallet tokens available');
+      }
+
+      const network = params.network as Network;
+
+      // Ищем токены в кошельке
+      let fromTokenData = selectedWallet.tokens.find(t => {
+        if (!params.fromToken) {
+          return t.network === network && t.contract === null;
+        }
+        return t.contract?.toLowerCase() === params.fromToken.toLowerCase();
+      });
+
+      let toTokenData = selectedWallet.tokens.find(t => 
+        t.contract?.toLowerCase() === params.toToken.toLowerCase()
+      );
+
+      // Если не нашли toToken, получаем инфо и добавляем
+      if (!toTokenData && params.toToken) {
+        const result = await getTokenInfoRequest({
+          network,
+          contract: params.toToken,
+        }).unwrap();
+
+        if (result.ok && result.data) {
+          // Добавляем токен в кошелек
+          await addTokenRequest({
+            wallet_id: selectedWallet.id,
+            wallet_address: selectedWallet.address,
+            network,
+            contract: params.toToken,
+          }).unwrap();
+
+          // Обновляем список токенов
+          const walletsResult = await getWalletsRequest().unwrap();
+          if (walletsResult.ok && walletsResult.data) {
+            const updatedWallet = walletsResult.data.find(w => w.id === selectedWallet.id);
+            if (updatedWallet) {
+              toTokenData = updatedWallet.tokens.find(
+                t => t.contract?.toLowerCase() === params.toToken.toLowerCase()
+              );
+            }
+          }
+        }
+      }
+
+      if (!fromTokenData || !toTokenData) {
+        throw new Error('Tokens not found in wallet');
+      }
+
+      setFromToken(fromTokenData);
+      setToToken(toTokenData);
+      
+    } catch (error) {
+      console.error('Failed to set initial tokens:', error);
+      showToast(errorToast, 'Failed to load tokens');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const updateSlippage = (newSlippage: number) => {
     setSlippage(newSlippage);
   };
@@ -457,7 +524,8 @@ export const useSwapWindowLogic = () => {
       handleBackToSwap,
       handleSwapTokens,
       updateSlippage,
-      handleClearState
+      handleClearState,
+      setInitialTokens
     },
     state: {
       fromAmount,

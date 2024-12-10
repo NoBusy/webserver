@@ -9,6 +9,8 @@ import settingsIcon from '@/shared/assets/icons/settings-icon.svg';
 import TokenBlock from './TokenBlock';
 import TokenInfoBlock from './TokenInfoBlock';
 import { getTokenImage } from '@/fsdpages/WalletPage';
+import { getTgWebAppSdk } from '@/shared/lib/helpers/getTgWebAppSdk';
+import shareIcon from '@/shared/assets/icons/Share.svg'
 
 interface PrepareSwapWindowProps {
   logic: UseSwapWindowLogic;
@@ -20,6 +22,25 @@ export const PrepareSwapWindow: React.FC<PrepareSwapWindowProps> = ({ logic }) =
   const [showSlippageOptions, setShowSlippageOptions] = useState(false);
   const [customSlippage, setCustomSlippage] = useState(state.slippage.toString());
 
+
+  const handleShareLink = async () => {
+    const TgWebAppSdk = await getTgWebAppSdk();
+    if (!TgWebAppSdk || !state.fromToken || !state.toToken) return;
+
+    const params = [
+      state.fromToken.network,
+      state.fromToken.contract || 'native',
+      state.toToken.contract
+    ].join('-');
+    
+    const messageText = `Swap ${state.fromToken.symbol} to ${state.toToken.symbol} on YoYo Swap 🔄`;
+    const appUrl = `https://t.me/TestSwapBot_bot?startapp=${params}`;
+    
+    TgWebAppSdk.openTelegramLink(
+      `https://t.me/share?url=${encodeURIComponent(appUrl)}&text=${encodeURIComponent(messageText)}`
+    );
+  };
+  
   useEffect(() => {
     setCustomSlippage(state.slippage.toString());
   }, [state.slippage]);
@@ -59,6 +80,13 @@ export const PrepareSwapWindow: React.FC<PrepareSwapWindowProps> = ({ logic }) =
           <div className={styles.titleContainer}>
             <h2 className={styles.title}>Swap</h2>
             <div className={styles.slippageContainer}>
+            <button 
+                className={styles.shareButton}
+                onClick={handleShareLink}
+                disabled={!state.fromToken || !state.toToken}
+              >
+                <Image src={shareIcon} alt="Share" width={16} height={16} />
+              </button>
               <button 
                 className={styles.autoButton} 
                 onClick={() => setShowSlippageOptions(!showSlippageOptions)}

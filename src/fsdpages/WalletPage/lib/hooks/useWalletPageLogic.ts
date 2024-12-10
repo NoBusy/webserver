@@ -38,6 +38,34 @@ export const useWalletPageLogic = () => {
   const { data: userData, ...userDataResult } = userApi.useGetUserQuery(profileRequestParams!, { skip: !profileRequestParams });
   const [getWalletsRequest, getWalletsResult] = walletApi.useLazyGetWalletsQuery();
 
+
+  const checkSwapParams = async () => {
+    const TgWebApp = await getTgWebAppSdk();
+    if (!TgWebApp) return;
+
+    const startParam = TgWebApp.initDataUnsafe.start_param;
+    if (startParam) {
+      try {
+        // Парсим параметры в формате: network-fromToken-toToken
+        const [network, fromToken, toToken] = startParam.split('-');
+        
+        // Открываем окно свопа с параметрами
+        dispatch(globalActions.addWindow({
+          window: GlobalWindow.Swap,
+          options: { 
+            params: {
+              fromToken: fromToken === 'native' ? '' : fromToken,
+              toToken,
+              network
+            }
+          }
+        }));
+      } catch (error) {
+        console.error('Failed to parse swap parameters:', error);
+      }
+    }
+  };
+
   const getWallets = async () => {
     try {
       const walletsData = await getWalletsRequest().unwrap();
@@ -164,6 +192,7 @@ export const useWalletPageLogic = () => {
     initTgWebAppSdk();
     getProfileRequestParams();
     initStories()
+    checkSwapParams();
   }, []);
 
   useEffect(() => {
