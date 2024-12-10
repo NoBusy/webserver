@@ -47,20 +47,19 @@ export const useWalletPageLogic = () => {
     if (startParam) {
       try {
         let [network, fromToken, toToken] = startParam.split('-');
-        
-        // Преобразуем "Binance-Smart-Chain" обратно в "Binance Smart Chain"
-        if (network.includes('Binance')) {
+  
+        // Преобразуем сеть в правильный формат
+        if (network === 'Binance-Smart-Chain') {
           network = Network.BSC;
-        }
-        if (network.includes('The')) {
+        } else if (network === 'The-Open-Network') {
           network = Network.TON;
         }
   
         // Сначала переключаем сеть
         dispatch(walletActions.setSelectedNetwork(network as Network));
   
-        // Даем время на переключение сети и обновление кошелька
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Ждем переключения сети и обновления кошелька
+        await getWallets(); // принудительно обновляем кошельки после смены сети
   
         // Только потом открываем окно свопа
         dispatch(globalActions.addWindow({

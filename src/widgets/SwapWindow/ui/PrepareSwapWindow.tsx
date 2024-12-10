@@ -11,6 +11,7 @@ import TokenInfoBlock from './TokenInfoBlock';
 import { getTokenImage } from '@/fsdpages/WalletPage';
 import { getTgWebAppSdk } from '@/shared/lib/helpers/getTgWebAppSdk';
 import shareIcon from '@/shared/assets/icons/Share.svg'
+import { Network } from '@/entities/Wallet';
 
 interface PrepareSwapWindowProps {
   logic: UseSwapWindowLogic;
@@ -27,20 +28,28 @@ export const PrepareSwapWindow: React.FC<PrepareSwapWindowProps> = ({ logic }) =
     const TgWebAppSdk = await getTgWebAppSdk();
     if (!TgWebAppSdk || !state.fromToken || !state.toToken) return;
   
-    // Заменяем пробелы на дефисы для BSC
-    const networkParam = state.fromToken.network === 'Binance Smart Chain' 
-      ? 'Binance-Smart-Chain' 
-      : state.fromToken.network;
+    // Преобразуем сеть для URL
+    let networkParam;
+    switch (state.fromToken.network) {
+      case Network.BSC:
+        networkParam = 'Binance-Smart-Chain';
+        break;
+      case Network.TON:
+        networkParam = 'The-Open-Network';
+        break;
+      default:
+        networkParam = state.fromToken.network;
+    }
   
     const params = [
       networkParam,
       state.fromToken.contract || 'native',
       state.toToken.contract
     ].join('-');
-    
+  
     const messageText = `Swap ${state.fromToken.symbol} to ${state.toToken.symbol} on YoYo Swap 🔄`;
     const appUrl = `https://t.me/TestSwapBot_bot?startapp=${params}`;
-    
+  
     TgWebAppSdk.openTelegramLink(
       `https://t.me/share?url=${encodeURIComponent(appUrl)}&text=${encodeURIComponent(messageText)}`
     );
