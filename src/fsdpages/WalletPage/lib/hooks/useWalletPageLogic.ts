@@ -84,32 +84,33 @@ export const useWalletPageLogic = () => {
       const savedWalletId = await appStorage.get<string>(STORAGE_KEYS.SELECTED_WALLET);
       const savedNetwork = await appStorage.get<Network>(STORAGE_KEYS.SELECTED_NETWORK);
   
-      // Используем forceNetwork если он передан, иначе обычная логика
+      // Используем forceNetwork только если он передан
       const network = forceNetwork || selectedNetwork || savedNetwork;
   
-      // Ищем кошелек в нужной сети
-      const wallet = walletsData.data.find(w => w.network === network) || 
-                    walletsData.data.find(w => w.id === savedWalletId);
+      // Сохраняем оригинальную логику поиска кошелька
+      let wallet = selectedWallet ?? walletsData.data.find((w) => w.id === savedWalletId);
+      
+      // Если есть forceNetwork и текущий кошелек не в той сети, ищем подходящий
+      if (forceNetwork && wallet?.network !== forceNetwork) {
+        wallet = walletsData.data.find(w => w.network === forceNetwork && w.id === savedWalletId) ||
+                 walletsData.data.find(w => w.network === forceNetwork);
+      }
   
       if (!wallet) {
-        // Если не нашли кошелек, берем первый в нужной сети
-        const walletInNetwork = walletsData.data.find(w => w.network === network);
-        if (walletInNetwork) {
-          await getWalletRequest(walletInNetwork.id);
-        } else {
+        savedWalletId ?
+          await getWalletRequest(savedWalletId) :
           await getWalletRequest(walletsData.data[0].id);
-        }
-      } else {
+      }
+  
+      if (wallet && network) {
         await getWalletRequest(wallet.id);
+        
+        if (wallet.network !== network) {
+          dispatch(walletActions.setSelectedNetwork(wallet.network));
+        } else {
+          dispatch(walletActions.setSelectedNetwork(network));
+        }
       }
-  
-      // Всегда устанавливаем сеть из параметра если он есть
-      if (forceNetwork) {
-        dispatch(walletActions.setSelectedNetwork(forceNetwork));
-      } else if (wallet) {
-        dispatch(walletActions.setSelectedNetwork(wallet.network));
-      }
-  
     } catch (error) {
       console.error('Error in getWallets:', error);
     }
