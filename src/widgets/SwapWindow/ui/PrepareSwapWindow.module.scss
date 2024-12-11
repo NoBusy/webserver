@@ -284,7 +284,7 @@
 
 .actionButton {
   padding: 4px 8px;
-  background-color: rgba(233, 237, 242, 1);
+  background-color: #E9EDF2;
   cursor: pointer;
   font-size: 11px;
   color: #666666;
@@ -298,14 +298,6 @@
   align-items: center;
   justify-content: center;
   border: none;
-
-  &:hover {
-    background-color: #f0f0f0;
-  }
-
-  &:active {
-    background-color: #e8e8e8;
-  }
 }
 
 .balance {

@@ -19,7 +19,7 @@ interface PrepareSwapWindowProps {
 
 export const PrepareSwapWindow: React.FC<PrepareSwapWindowProps> = ({ logic }) => {
   const { flow, state } = logic;
-  const [showTokenInfo, setShowTokenInfo] = useState(false);
+  const [showTokenInfo, setShowTokenInfo] = useState(true);
   const [showSlippageOptions, setShowSlippageOptions] = useState(false);
   const [customSlippage, setCustomSlippage] = useState(state.slippage.toString());
 
