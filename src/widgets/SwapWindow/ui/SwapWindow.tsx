@@ -16,18 +16,23 @@ export const SwapWindow: React.FC = () => {
   useEffect(() => {
     const swapWindow = openedWindows.find(w => w.window === GlobalWindow.Swap);
     
-    if (swapWindow?.options?.params) {
-      // Если есть параметры в окне, используем их
+    // Добавляем проверку на существование окна свопа
+    if (!swapWindow) return;
+  
+    if (swapWindow.options?.params) {
       const { fromToken, toToken, network } = swapWindow.options.params;
       flow.setInitialTokens({ fromToken, toToken, network });
-    } else if (state.selectedWallet && state.isSwapWindowOpen) {
-      // Если нет параметров, но есть выбранный кошелек, устанавливаем нативный токен
-      const nativeToken = state.selectedWallet.tokens.find(t => t.contract === null);
-      if (nativeToken) {
-        flow.handleSelectFromToken(nativeToken);
+    } else if (state.selectedWallet) {
+      // Добавляем проверку на текущий fromToken
+      if (!state.fromToken) {
+        const nativeToken = state.selectedWallet.tokens.find(t => t.contract === null);
+        if (nativeToken) {
+          flow.handleSelectFromToken(nativeToken);
+        }
       }
     }
-  }, [openedWindows, state.selectedWallet, state.isSwapWindowOpen]);
+    // Оставляем только зависимость от openedWindows
+  }, [openedWindows]);
 
   return (
     <>
