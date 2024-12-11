@@ -9,15 +9,15 @@
   margin-right: 4px;
   opacity: 0.8;
   transition: opacity 0.2s ease;
+}
 
-  &:hover {
-    opacity: 1;
-  }
+.shareButton:hover {
+  opacity: 1;
+}
 
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+.shareButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .swapWindowWrapper {
@@ -63,14 +63,14 @@
   color: #333;
   cursor: pointer;
   transition: background-color 0.2s;
+}
 
-  &:hover {
-    background-color: rgba(233, 237, 242, 1);
-  }
+.autoButton:hover {
+  background-color: #e9edf2;
+}
 
-  img {
-    margin-left: 6px;
-  }
+.autoButton img {
+  margin-left: 6px;
 }
 
 .slippageOptions {
@@ -95,85 +95,85 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 12px;
+}
 
-  button {
-    flex: 1;
-    background-color: rgba(233, 237, 242, 1);
-    border: none;
-    border-radius: 8px;
-    padding: 8px;
-    font-size: 14px;
-    color: #333;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-right: 8px;
+.slippageButtons button {
+  flex: 1;
+  background-color: #e9edf2;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-right: 8px;
+}
 
-    &:last-child {
-      margin-right: 0;
-    }
+.slippageButtons button:last-child {
+  margin-right: 0;
+}
 
-    &:hover {
-      background-color: #e0e0e0;
-    }
+.slippageButtons button:hover {
+  background-color: #e0e0e0;
+}
 
-    &.activeSlippage {
-      background-color: #007bff;
-      color: #ffffff;
-    }
-  }
+.slippageButtons button.activeSlippage {
+  background-color: #007bff;
+  color: #ffffff;
 }
 
 .customSlippage {
   display: flex;
   align-items: center;
   margin-bottom: 12px;
+}
 
-  input {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 14px;
-  }
+.customSlippage input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+}
 
-  span {
-    margin-left: 8px;
-    font-size: 14px;
-  }
+.customSlippage span {
+  margin-left: 8px;
+  font-size: 14px;
 }
 
 .slippageActions {
   display: flex;
   justify-content: space-between;
+}
 
-  button {
-    flex: 1;
-    padding: 8px;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+.slippageActions button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
 
-    &.cancelButton {
-      background-color: rgba(233, 237, 242, 1);
-      color: #333;
-      margin-right: 8px;
+.slippageActions button.cancelButton {
+  background-color: #e9edf2;
+  color: #333;
+  margin-right: 8px;
+}
 
-      &:hover {
-        background-color: #e0e0e0;
-      }
-    }
+.slippageActions button.cancelButton:hover {
+  background-color: #e0e0e0;
+}
 
-    &.saveButton {
-      background-color: #007bff;
-      color: #ffffff;
+.slippageActions button.saveButton {
+  background-color: #007bff;
+  color: #ffffff;
+}
 
-      &:hover {
-        background-color: #0056b3;
-      }
-    }
-  }
+.slippageActions button.saveButton:hover {
+  background-color: #0056b3;
 }
 
 .content {
@@ -208,11 +208,11 @@
 .amountInfo {
   flex-grow: 1;
   margin-right: 12px;
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
+}
+
+.amountInfo::-webkit-outer-spin-button, .amountInfo::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .amountInput {
@@ -223,11 +223,11 @@
   background: transparent;
   width: 100%;
   outline: none;
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
+}
+
+.amountInput::-webkit-outer-spin-button, .amountInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .usdAmount {
@@ -244,25 +244,25 @@
   border-radius: 20px;
   background-color: white;
   transition: background-color 0.2s;
+}
 
-  img {
-    margin-right: 8px;
-  }
+.tokenSelector img {
+  margin-right: 8px;
+}
 
-  span {
-    font-weight: bold;
-    color: #333333;
-  }
+.tokenSelector span {
+  font-weight: bold;
+  color: #333333;
+}
 
-  .arrow {
-    margin-left: 5px;
-    display: flex;
-    align-items: center;
-  }
+.tokenSelector .arrow {
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+}
 
-  &:hover {
-    background-color: #f0f0f0;
-  }
+.tokenSelector:hover {
+  background-color: #f0f0f0;
 }
 
 .bottomContainer {
