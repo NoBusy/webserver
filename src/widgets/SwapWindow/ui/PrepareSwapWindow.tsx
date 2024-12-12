@@ -48,7 +48,7 @@ export const PrepareSwapWindow: React.FC<PrepareSwapWindowProps> = ({ logic }) =
     ].join('-');
   
     const messageText = `Swap ${state.fromToken.symbol} to ${state.toToken.symbol} on YoYo Swap 🔄`;
-    const appUrl = `https://t.me/TestSwapBot_bot?startapp=${params}`;
+    const appUrl = `https://t.me/Yoyoswap_bot?startapp=${params}`;
   
     TgWebAppSdk.openTelegramLink(
       `https://t.me/share?url=${encodeURIComponent(appUrl)}&text=${encodeURIComponent(messageText)}`
