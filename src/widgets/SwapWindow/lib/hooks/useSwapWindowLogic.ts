@@ -104,7 +104,7 @@ export const useSwapWindowLogic = () => {
         }
       }
   
-      // То же самое для fromToken
+    
       if (!fromTokenData && params.fromToken && params.fromToken !== 'native') {
         const result = await getTokenInfoRequest({
           network,
@@ -144,6 +144,10 @@ export const useSwapWindowLogic = () => {
   
       setFromToken(fromTokenData);
       setToToken(toTokenData);
+
+      if (toTokenData && selectedWallet?.network) {
+        handleGetTokenExtendedInfo(toTokenData, selectedWallet.network);
+      }
       
     } catch (error) {
      // console.error('Failed to set initial tokens:', error);
