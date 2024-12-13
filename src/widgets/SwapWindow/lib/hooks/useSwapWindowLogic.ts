@@ -145,9 +145,9 @@ export const useSwapWindowLogic = () => {
       setFromToken(fromTokenData);
       setToToken(toTokenData);
 
-      if (toTokenData && selectedWallet?.network) {
-        handleGetTokenExtendedInfo(toTokenData, selectedWallet.network);
-      }
+      // if (toTokenData && selectedWallet?.network) {
+      //   handleGetTokenExtendedInfo(toTokenData, selectedWallet.network);
+      // }
       
     } catch (error) {
      // console.error('Failed to set initial tokens:', error);
@@ -253,24 +253,24 @@ export const useSwapWindowLogic = () => {
     }
   }, 350);
 
-  const handleGetTokenExtendedInfo = useDebounce(async (token: Token, network: Network) => {
-    try {
-      setIsTokenInfoLoading(true);
-      const result = await getTokenExtendedInfoRequest({
-        symbol: token.symbol,  
-        contract: token.contract,
-        network: token.network
-      }).unwrap();
+  // const handleGetTokenExtendedInfo = useDebounce(async (token: Token, network: Network) => {
+  //   try {
+  //     setIsTokenInfoLoading(true);
+  //     const result = await getTokenExtendedInfoRequest({
+  //       symbol: token.symbol,  
+  //       contract: token.contract,
+  //       network: token.network
+  //     }).unwrap();
 
-      if (result.ok && result.data) {
-        setTokenExtendedInfo(result.data);
-      }
-    } catch (e) {
+  //     if (result.ok && result.data) {
+  //       setTokenExtendedInfo(result.data);
+  //     }
+  //   } catch (e) {
    
-    } finally {
-      setIsTokenInfoLoading(false);
-    }
-  }, 350);
+  //   } finally {
+  //     setIsTokenInfoLoading(false);
+  //   }
+  // }, 350);
 
   const handleClearState = useCallback(() => {
     setFromToken(undefined);
@@ -452,7 +452,8 @@ export const useSwapWindowLogic = () => {
     // Получаем цену нативного токена
     const nativeSymbol = network === Network.ETH ? 'ETH' : 
                         network === Network.BSC ? 'BNB' : 
-                        network === Network.SOL ? 'SOL' : 'TON';
+                        network === Network.SOL ? 'SOL' : 
+                        network === Network.TON ? 'TON': ''
     
     try {                    
       const priceResult = await getTokenPriceRequest({ symbol: nativeSymbol, network }).unwrap();
@@ -510,9 +511,9 @@ export const useSwapWindowLogic = () => {
         setFromToken(undefined);
       }
   
-      if (selectedWallet?.network) {
-        handleGetTokenExtendedInfo(token, selectedWallet.network);
-      }
+      // if (selectedWallet?.network) {
+      //   handleGetTokenExtendedInfo(token, selectedWallet.network);
+      // }
   
       if (fromAmount) {
         handleGetRate(fromAmount);
@@ -540,9 +541,9 @@ export const useSwapWindowLogic = () => {
     setToToken(fromToken);
     setFromAmount(toAmount);
     setToAmount(fromAmount);
-    if (fromToken && selectedWallet?.network) {
-      handleGetTokenExtendedInfo(fromToken, selectedWallet.network);
-    }
+    // if (fromToken && selectedWallet?.network) {
+    //   handleGetTokenExtendedInfo(fromToken, selectedWallet.network);
+    // }
   };
 
   useEffect(() => {
