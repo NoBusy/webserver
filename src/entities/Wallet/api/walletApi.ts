@@ -200,6 +200,15 @@ export const walletApi = api.injectEndpoints({
         params,
       }),
     }),
+    getTokenLiquidity: build.query<ApiResponse<types.GetPairResult>, types.GetPairParams>({
+      query: (params) => ({
+        url: 'wallets/token/liquidity',
+        params: {
+          contract_address: params.contract_address,
+          network: params.network
+        },
+      }),
+    }),
   }),
 });
 
@@ -222,4 +231,5 @@ export const {
   useLazyGetHistoricalQuotesQuery,
   useDeleteWalletTokenMutation,
   useGetTokenTransactionsQuery,
+  useGetTokenLiquidityQuery,
 } = walletApi;

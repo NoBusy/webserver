@@ -16,7 +16,24 @@ interface TokenInfoBlockProps {
 
 const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInfo, tokenImage }) => {
   const { successToast } = useToasts();
-  const { data: poolData, isLoading, error } = usePoolData(token);
+  const { data: poolData, liquidity, isLoading, error } = usePoolData(token);
+
+  const formatNumber = (num: number) => {
+    if (!num) return '$0';
+    
+    const str = Math.abs(num).toString();
+    const [whole, decimal] = str.split('.');
+    
+    if (whole.length >= 10) { 
+      return `$${(num / 1e9).toFixed(2)}B`;
+    } else if (whole.length >= 7) { 
+      return `$${(num / 1e6).toFixed(2)}M`;
+    } else if (whole.length >= 4) { 
+      return `$${(num / 1e3).toFixed(2)}K`;
+    }
+    
+    return `$${num.toFixed(2)}`;
+  };
 
   const handleOnCopy = (): void => {
     navigator.clipboard.writeText(token.contract ?? '');
@@ -36,27 +53,59 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
   const geckoTerminalUrl = getGeckoTerminalUrl();
 
   return (
-    <div>
-      <div className={styles.header}>
-        <div className={styles.headerTop}>
-          <div className={styles.tokenIdentity}>
-            <Image src={tokenImage} alt={token.symbol} width={40} height={40} className={styles.tokenIcon} />
-            <div className={styles.tokenDetails}>
-              <Typography.Text text={token.symbol} className={styles.tokenSymbol} />
-              <Typography.Text text={`$${tokenExtendedInfo.price?.toFixed(6) || 'N/A'}`} className={styles.price} />
+    <div className={styles.wrapper}>
+      {/* Информационный блок */}
+      <div className={styles.infoCard}>
+        <div className={styles.tokenHeader}>
+          <div className={styles.leftContent}>
+            <Image
+              src={tokenImage}
+              alt={token.symbol}
+              width={48}
+              height={48}
+              className={styles.tokenLogo}
+            />
+            <div className={styles.tokenInfo}>
+              <div className={styles.tokenName}>{token.symbol}</div>
+              <div className={styles.tokenAddress} onClick={handleOnCopy}>
+                {token.contract !== null? `${token.contract?.slice(0, 4)}....${token.contract?.slice(-4)}` : ''}
+                <CopyFillIcon className={styles.copyIcon} />
+              </div>
+            </div>
+          </div>
+          <div className={styles.priceInfo}>
+            <div className={styles.price}>
+              ${tokenExtendedInfo.price.toFixed(5)}
+            </div>
+            <div className={`${styles.priceChange} ${tokenExtendedInfo.percent_change_24h >= 0 ? styles.positive : styles.negative}`}>
+              {tokenExtendedInfo.percent_change_24h > 0 ? '+' : ''}
+              {tokenExtendedInfo.percent_change_24h.toFixed(2)}%
             </div>
           </div>
         </div>
-        
-        <div onClick={handleOnCopy} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Typography.Text 
-            text={token.contract || 'Address not available'} 
-            className={styles.tokenAddress}
-          />
-          <CopyFillIcon className={styles.copyIcon} />
+        <div className={styles.statsContainer}>
+          <div className={styles.statBox}>
+            <div className={styles.statLabel}>Market Cap</div>
+            <div className={styles.statValue}>
+              {formatNumber(tokenExtendedInfo.market_cap)}
+            </div>
+          </div>
+          <div className={styles.statBox}>
+            <div className={styles.statLabel}>Liquidity</div>
+            <div className={styles.statValue}>
+              {formatNumber(liquidity)}
+            </div>
+          </div>
+          <div className={styles.statBox}>
+            <div className={styles.statLabel}>24h Volume</div>
+            <div className={styles.statValue}>
+              {formatNumber(tokenExtendedInfo.volume_24h)}
+            </div>
+          </div>
         </div>
       </div>
-
+  
+      {/* График в отдельном блоке */}
       {isLoading ? (
         <div className={styles.chartContainer}>Loading...</div>
       ) : geckoTerminalUrl ? (
@@ -79,6 +128,5 @@ const TokenInfoBlock: React.FC<TokenInfoBlockProps> = ({ token, tokenExtendedInf
       )}
     </div>
   );
-};
-
+}
 export default TokenInfoBlock;

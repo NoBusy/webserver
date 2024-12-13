@@ -1,69 +1,133 @@
-.header {
-  background: #ffffff;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
-.headerTop {
+.infoCard {
+  background: #141721;
+  padding: 14px;
+  border-radius: 15px;
+  width: 100%;
+}
+
+.tokenHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
-.tokenIdentity {
+.leftContent {
   display: flex;
-  align-items: center;
+  gap: 12px;
 }
 
-.tokenIcon {
-  margin-right: 12px;
+.tokenLogo {
   border-radius: 50%;
+  width: 48px;
+  height: 48px;
 }
 
-.tokenDetails {
+.tokenInfo {
   display: flex;
   flex-direction: column;
+  gap: 4px;
+  justify-content: center; 
 }
 
-.tokenSymbol {
-  font-size: 18px;
-  font-weight: bold;
+.tokenName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 24px; 
 }
 
 .tokenAddress {
-  font-size: 13px;
-  color: #666;
-  word-break: break-all;
+  font-size: 12px;
+  color: #A0A0B3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  line-height: 16px;
+}
+
+.priceInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .price {
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 600;
+  color: #fff;
+  line-height: 24px; 
+}
+
+.priceChange {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 16px; 
+}
+
+.statsContainer {
+  display: flex;
+  gap: 4px;
+}
+
+.statBox {
+  flex: 1; 
+  height: 54px;
+  background: #2B2E38;
+  padding: 8px 16px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.statLabel {
+  color: #A0A0B3;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.statValue {
+  color: #E9EDF2;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .chartContainer {
   position: relative;
-  height: 800px; // увеличили высоту с 500px до 800px
+  height: 800px;
   width: 100%;
   border-radius: 12px;
   margin: 16px 0;
   overflow: hidden;
   background-color: #1e222d;
   > div {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  }
+ }
+
+.copyIcon {
+  color: #808080;
+  &:hover {
+    color: #999;
   }
 }
 
-.copyIcon {
-  cursor: pointer;
-  color: #666;
-  &:hover {
-    color: #333;
-  }
+.positive {
+  color: #459782;
+}
+
+.negative {
+  color: #FF4D4D;
 }

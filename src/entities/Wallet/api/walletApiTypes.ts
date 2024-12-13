@@ -41,6 +41,7 @@ export interface GetTokenExtendedInfoResult {
   percent_change_24h: number;
   percent_change_7d: number;
   percent_change_30d: number;
+  volume_24h: number;
 }
 
 export interface GetTokenPriceParams {
@@ -111,3 +112,11 @@ export interface GetTokenTransactionsParams {
   wallet_id: string;
   token_symbol: string;
 }
+
+export interface GetPairParams {
+  contract_address: string;
+ network: string;
+ }
+ export interface GetPairResult {
+ liquidity: number;
+ }
