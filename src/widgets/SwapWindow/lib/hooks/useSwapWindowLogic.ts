@@ -301,7 +301,6 @@ export const useSwapWindowLogic = () => {
         return;
       }
   
-      // Округляем amount до 9 знаков после запятой
       const roundedAmount = Number(Number(fromAmount).toFixed(9));
   
       const swapParams = {
@@ -312,8 +311,6 @@ export const useSwapWindowLogic = () => {
         slippageBps: Math.round(slippage * 100)
       };
   
-   //   console.log('Swap request params:', swapParams);
-  
       const result = await swapRequest(swapParams).unwrap();
   
       if (result.ok) {
@@ -323,8 +320,22 @@ export const useSwapWindowLogic = () => {
         dispatch(globalActions.removeAllWindows());
         updateAfterDelay(50000);
       }
-    } catch (e) {
-      showToast(errorToast, 'Failed to swap. Try again please')
+    } catch (error: any) {
+      // Определяем сеть для специфичных ошибок
+      const networkName = selectedWallet?.network === Network.ETH ? 'Ethereum' :
+                         selectedWallet?.network === Network.BSC ? 'BSC' :
+                         selectedWallet?.network === Network.TON ? 'TON' : 'Solana';
+  
+      // Обработка конкретных ошибок
+      if (error.data?.message?.includes('insufficient funds')) {
+        showToast(errorToast, `Insufficient ${networkName} native token for gas fees`);
+      } else if (error.data?.errorCode === 'eth.broadcast.failed') {
+        showToast(errorToast, `Failed to broadcast transaction on ${networkName}. Check your gas balance`);
+      } else if (error.data?.message?.includes('INTERNAL_ERROR')) {
+        showToast(errorToast, `Network error on ${networkName}. Please try again`);
+      } else {
+        showToast(errorToast, `Failed to swap on ${networkName}. Please try again`);
+      }
     } finally {
       setIsLoading(false);
     }
