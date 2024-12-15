@@ -331,6 +331,8 @@ export const useSwapWindowLogic = () => {
         showToast(errorToast, `Insufficient ${networkName} native token for gas fees`);
       } else if (error.data?.errorCode === 'eth.broadcast.failed') {
         showToast(errorToast, `Failed to broadcast transaction on ${networkName}. Check your gas balance`);
+      } else if (error.data?.message?.includes('insufficient.funds.on.sender.account')) {
+        showToast(errorToast, `Not enough gas ${networkName}. Please try again or top up your balance`);
       } else if (error.data?.message?.includes('INTERNAL_ERROR')) {
         showToast(errorToast, `Network error on ${networkName}. Please try again`);
       } else {
