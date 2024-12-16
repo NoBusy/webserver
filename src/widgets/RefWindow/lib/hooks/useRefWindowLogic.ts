@@ -35,7 +35,7 @@ export const useRefWindowLogic = () => {
     try {
       await impact('light');
       
-      if (!data?.data || data.data.balance < 10) return;
+      if (!data?.data || data.data.balance < 0) return;
       
       setIsWithdrawLoading(true);
       
