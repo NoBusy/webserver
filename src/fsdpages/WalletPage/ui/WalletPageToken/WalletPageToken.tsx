@@ -130,7 +130,7 @@ const priceChangeColor = (token.price_change_percentage ?? 0) > 0 ? 'var(--green
                       ${token.price.toFixed(2)}{' '}
                       <Typography.Text
                         wrap="nowrap"
-                        text={`${token.price_change_percentage.toFixed(2)}%`}
+                        text={`${token.price_change_percentage?.toFixed(2) ?? '0'}%`}
                         color={priceChangeColor}
                       />
                     </>
