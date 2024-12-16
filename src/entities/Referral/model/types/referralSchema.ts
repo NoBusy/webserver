@@ -13,3 +13,14 @@ export interface Referral {
   created_at: string;
   updated_at: string;
 }
+
+export interface WithdrawalRequest {
+  id: number;
+  user_id: string;
+  telegram_id: string;
+  amount: number;
+  wallet_address: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}

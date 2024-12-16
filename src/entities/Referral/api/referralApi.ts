@@ -1,5 +1,5 @@
 import { ApiResponse } from '@/shared/lib/types/apiResponse';
-import { Referral } from '../model/types/referralSchema';
+import { Referral, WithdrawalRequest } from '../model/types/referralSchema';
 import { api } from '@/shared/api/api';
 
 export const referralApi = api.injectEndpoints({
@@ -7,6 +7,12 @@ export const referralApi = api.injectEndpoints({
     getReferralProgram: builder.query<ApiResponse<Referral>, void>({
       query: () => ({
         url: '/referral/user',
+      }),
+    }),
+    createWithdrawalRequest: builder.mutation<ApiResponse<WithdrawalRequest>, void>({
+      query: () => ({
+        url: '/referral/withdraw',
+        method: 'POST'
       }),
     }),
   }),

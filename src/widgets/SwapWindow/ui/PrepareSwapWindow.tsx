@@ -12,6 +12,10 @@ import { getTokenImage } from '@/fsdpages/WalletPage';
 import { getTgWebAppSdk } from '@/shared/lib/helpers/getTgWebAppSdk';
 import shareIcon from '@/shared/assets/icons/Share.svg'
 import { Network } from '@/entities/Wallet';
+import { useToasts } from '@/shared/lib/hooks/useToasts/useToasts';
+import { useToastManager } from '@/shared/lib/hooks/useToastManager/useToastManager';
+import { CopyFillIcon } from '@/shared/assets/icons/CopyFillIcon';
+
 
 interface PrepareSwapWindowProps {
   logic: UseSwapWindowLogic;
@@ -22,13 +26,12 @@ export const PrepareSwapWindow: React.FC<PrepareSwapWindowProps> = ({ logic }) =
   const [showTokenInfo, setShowTokenInfo] = useState(true);
   const [showSlippageOptions, setShowSlippageOptions] = useState(false);
   const [customSlippage, setCustomSlippage] = useState(state.slippage.toString());
+  const { errorToast, successToast } = useToasts();
+  const { showToast } = useToastManager({maxCount: 1});
 
+  const generateAppLink = () => {
+    if (!state.fromToken || !state.toToken) return '';
 
-  const handleShareLink = async () => {
-    const TgWebAppSdk = await getTgWebAppSdk();
-    if (!TgWebAppSdk || !state.fromToken || !state.toToken) return;
-  
-    // Преобразуем сеть для URL
     let networkParam;
     switch (state.fromToken.network) {
       case Network.BSC:
@@ -47,9 +50,24 @@ export const PrepareSwapWindow: React.FC<PrepareSwapWindowProps> = ({ logic }) =
       state.toToken.contract
     ].join('-');
   
-    const messageText = `Swap ${state.fromToken.symbol} to ${state.toToken.symbol} on YoYo Swap 🔄`;
-    const appUrl = `https://t.me/Yoyoswap_bot?startapp=${params}`;
+    return `https://t.me/Yoyoswap_bot?startapp=${params}`;
+  };
+
+  const handleCopyShareLink = async () => {
+    const shareLink = generateAppLink();
+    if (!shareLink) return;
   
+    await navigator.clipboard.writeText(shareLink);
+    showToast(successToast, 'Link to swap copied');
+  };
+
+  const handleShareLink = async () => {
+    const TgWebAppSdk = await getTgWebAppSdk();
+    if (!TgWebAppSdk || !state.fromToken || !state.toToken) return;
+  
+    const appUrl = generateAppLink();
+    const messageText = `Swap ${state.fromToken.symbol} to ${state.toToken.symbol} on YoYo Swap 🔄`;
+    
     TgWebAppSdk.openTelegramLink(
       `https://t.me/share?url=${encodeURIComponent(appUrl)}&text=${encodeURIComponent(messageText)}`
     );
@@ -94,6 +112,13 @@ export const PrepareSwapWindow: React.FC<PrepareSwapWindowProps> = ({ logic }) =
           <div className={styles.titleContainer}>
             <h2 className={styles.title}>Swap</h2>
             <div className={styles.slippageContainer}>
+            <button
+                className={styles.copyButton}
+                onClick={handleCopyShareLink}
+                disabled={!state.fromToken || !state.toToken}
+              >
+                 <CopyFillIcon className={styles.copyIcon} />
+              </button>
             <button 
                 className={styles.shareButton}
                 onClick={handleShareLink}

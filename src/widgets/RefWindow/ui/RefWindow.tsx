@@ -19,6 +19,9 @@ export const RefWindow = () => {
     state.period === 'all' ? 'total_swap_volume_usd' : 'monthly_swap_volume_usd'
   ] ?? 0);
 
+  const balance = Number(state.refProgram?.balance ?? 0);
+  const canWithdraw = balance >= 0;
+
   return (
     <Window isOpen={state.isWindowOpen} setIsOpen={flow.handleWindowClose}>
       <Flex width="100%" direction="column" gap={24}>
@@ -66,10 +69,31 @@ export const RefWindow = () => {
                   <Typography.Text text={state.refProgram?.balance ? state.refProgram?.balance.toFixed(5) : 0} fontSize={18} />
                 </Flex>
               </Flex>
-              <Flex bg="var(--withdrawalBtnBg)" padding="0 16px" height="36px" align="center" radius="8px" gap={8}>
-                <SendFillIcon width={16} height={16} fill="var(--secondaryText)" />
-                <Typography.Text text="Withdraw" type="secondary" weight={550} />
-              </Flex>
+              <Button
+                onClick={flow.handleWithdrawClick}
+                disabled={!canWithdraw}
+                className={`${!canWithdraw ? 'opacity-50 cursor-not-allowed' : ''}`}
+                style={{
+                  background: 'var(--withdrawalBtnBg)',
+                  padding: '0 16px',
+                  height: '36px',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <SendFillIcon 
+                  width={16} 
+                  height={16} 
+                  fill={canWithdraw ? "var(--accent)" : "var(--secondaryText)"} 
+                />
+                <Typography.Text 
+                  text="Withdraw" 
+                  color={canWithdraw ? "var(--accent)" : "var(--secondaryText)"}
+                  weight={550} 
+                />
+              </Button>
             </Flex>
             <Divider />
             <Flex width="100%" direction="column" gap={4.5}>
