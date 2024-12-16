@@ -20,7 +20,7 @@ export const RefWindow = () => {
   ] ?? 0);
 
   const balance = Number(state.refProgram?.balance ?? 0);
-  const canWithdraw = balance >= 0;
+  const canWithdraw = balance >= 10;
 
   return (
     <Window isOpen={state.isWindowOpen} setIsOpen={flow.handleWindowClose}>
