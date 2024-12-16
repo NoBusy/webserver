@@ -35,8 +35,7 @@ export const WalletPageToken: React.FC<WalletTokenProps> = React.memo(({
     }
   };
 
-  const priceChangeColor = token.price_change_percentage > 0 ? 'var(--green)' : 'var(--red)';
-  const formattedBalance = flow.formatBalance(token.balance);
+const priceChangeColor = (token.price_change_percentage ?? 0) > 0 ? 'var(--green)' : 'var(--red)';  const formattedBalance = flow.formatBalance(token.balance);
 
   return (
     <div style={{ 
