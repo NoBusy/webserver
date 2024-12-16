@@ -56,6 +56,8 @@ const TokenBlock: React.FC<TokenBlockProps> = ({
       if (newAmount <= 0) {
         newAmount = 0;
       }
+    } else if (percent === 100 && !isNativeToken) {
+      newAmount = token.balance * 0.99
     } else {
       newAmount = token.balance * (percent / 100);
     }
