@@ -119,13 +119,13 @@ export const PrepareSwapWindow: React.FC<PrepareSwapWindowProps> = ({ logic }) =
               >
                  <CopyFillIcon className={styles.copyIcon} />
               </button>
-            <button 
+            {/* <button 
                 className={styles.shareButton}
                 onClick={handleShareLink}
                 disabled={!state.fromToken || !state.toToken}
               >
                 <Image src={shareIcon} alt="Share" width={16} height={16} />
-              </button>
+              </button> */}
               <button 
                 className={styles.autoButton} 
                 onClick={() => setShowSlippageOptions(!showSlippageOptions)}
