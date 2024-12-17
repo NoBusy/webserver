@@ -498,15 +498,23 @@ export const useSwapWindowLogic = () => {
 
   const handleSelectToToken = async (token: Token) => {
     try {
+      
+      const currentFromToken = fromToken;
+
+      if (token.contract === null && currentFromToken?.contract === null) {
+        setFromToken(undefined);
+      }
+      
       setToToken(undefined);
       setTokenExtendedInfo(null);
-      console.log('Current state:', { fromToken, toToken, fromAmount });
-
-      // Проверяем, есть ли токен уже в кошельке
-      const existingToken = selectedWallet?.tokens.find(t => t.contract === token.contract);
+      setToAmount('');
+      setFromAmount('');
+      setRate(0);
   
+      
+      const existingToken = selectedWallet?.tokens.find(t => t.contract === token.contract);
+      
       if (!existingToken && selectedWallet) {
-        // Если токена нет в кошельке, добавляем его
         const addResult = await addTokenRequest({
           wallet_id: selectedWallet.id,
           wallet_address: selectedWallet.address,
@@ -515,26 +523,26 @@ export const useSwapWindowLogic = () => {
         }).unwrap();
   
         if (addResult.ok) {
-          await getWalletsRequest().unwrap(); // Обновляем данные кошелька
+          await getWalletsRequest().unwrap();
         }
       }
   
-      // В любом случае устанавливаем токен (актуальные данные получим позже)
-      setToToken(token);
-      setCurrentView('swap');
-      dispatch(globalActions.removeWindow(GlobalWindow.SelectToken));
-  
-      if (token.id === fromToken?.id) {
+      
+      if (token.id === currentFromToken?.id) {
         setFromToken(undefined);
       }
   
+      
+      setToToken(token);
+      
+      
       if (selectedWallet?.network) {
         handleGetTokenExtendedInfo(token, selectedWallet.network);
       }
   
-      if (fromAmount) {
-        handleGetRate(fromAmount);
-      }
+      setCurrentView('swap');
+      dispatch(globalActions.removeWindow(GlobalWindow.SelectToken));
+  
     } catch (error) {
       showToast(errorToast, 'Failed to process token');
       setToToken(undefined);

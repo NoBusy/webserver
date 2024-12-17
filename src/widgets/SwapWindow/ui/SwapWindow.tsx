@@ -15,23 +15,20 @@ export const SwapWindow: React.FC = () => {
 
   useEffect(() => {
     const swapWindow = openedWindows.find(w => w.window === GlobalWindow.Swap);
-    
-   
     if (!swapWindow) return;
-  
+    
     if (swapWindow.options?.params) {
       const { fromToken, toToken, network } = swapWindow.options.params;
       flow.setInitialTokens({ fromToken, toToken, network });
     } else if (state.selectedWallet) {
-  
-      if (!state.fromToken) {
+      
+      if (!state.fromToken && !state.toToken) {
         const nativeToken = state.selectedWallet.tokens.find(t => t.contract === null);
         if (nativeToken) {
           flow.handleSelectFromToken(nativeToken);
         }
       }
     }
-  
   }, [openedWindows]);
 
   return (
