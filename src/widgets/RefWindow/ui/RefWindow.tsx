@@ -77,7 +77,7 @@ export const RefWindow = () => {
                   background: 'var(--withdrawalBtnBg)',
                   padding: '0 16px',
                   height: '36px',
-                  borderRadius: '8px',
+                  borderRadius: '16px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px'
