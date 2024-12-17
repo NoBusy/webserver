@@ -99,13 +99,22 @@ export const PrepareSwapWindow: React.FC<PrepareSwapWindowProps> = ({ logic }) =
     setShowSlippageOptions(false);
   };
 
+  const isDisabled = !state.fromToken || 
+  !state.toToken || 
+  !state.fromAmount || 
+  state.isLoading ||
+  Number(state.fromAmount) > state.fromToken.balance;
+
+
+
   return (
     <Window 
       isOpen={state.isSwapWindowOpen}
       btnText="Continue"
       btnOnClick={flow.handleOpenConfirmWindow}
-      isBtnActive={!state.isSwapButtonDisabled}
-      isBtnDisabled={state.isSwapButtonDisabled}
+      zIndex={5005}
+      isBtnActive
+      isBtnDisabled={isDisabled}
     >
       <div className={styles.swapWindowWrapper}>
         <div className={styles.headerWrapper}>

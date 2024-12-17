@@ -16,6 +16,7 @@ export const useSwapWindowLogic = () => {
   const { updateWalletData, updateAfterDelay } = useWalletUpdater();
   const { impact, notify } = useHapticFeedback();
 
+  
   const [fromToken, setFromToken] = useState<Token | undefined>();
   const [toToken, setToToken] = useState<Token | undefined>();
   const [fromAmount, setFromAmount] = useState<string>('');
@@ -42,7 +43,7 @@ export const useSwapWindowLogic = () => {
   const isSelectTokenWindowOpen: boolean = useSelector(getIsWindowOpen)(GlobalWindow.SelectToken);
 
   const [slippage, setSlippage] = useState<number>(2);
-
+  
 
   const setInitialTokens = async (params: { fromToken: string; toToken: string; network: string }) => {
     try {
@@ -207,8 +208,8 @@ export const useSwapWindowLogic = () => {
   const handleGetRate = useDebounce(async (amount: string) => {
     try {
       setIsLoading(true);
-      if (!fromToken || !toToken || !selectedWallet || !amount || Number(amount) > fromToken?.balance) return;
-  
+      //if (!fromToken || !toToken || !selectedWallet || !amount || Number(amount) > fromToken?.balance) return;
+      if (!fromToken || !selectedWallet || !toToken || !amount) return;
       // Получаем актуальные данные кошелька
       const walletsResult = await getWalletsRequest().unwrap();
       
@@ -217,8 +218,10 @@ export const useSwapWindowLogic = () => {
         const actualFromToken = updatedWallet?.tokens.find(t => t.contract === fromToken.contract);
         const actualToToken = updatedWallet?.tokens.find(t => t.contract === toToken.contract);
   
-        if (actualFromToken && actualToToken) {
+        if (actualFromToken && actualFromToken.balance !== fromToken.balance) {
           setFromToken(actualFromToken);
+        }
+        if (actualToToken && actualToToken.balance !== toToken.balance) {
           setToToken(actualToToken);
         }
       }
@@ -497,6 +500,7 @@ export const useSwapWindowLogic = () => {
     try {
       setToToken(undefined);
       setTokenExtendedInfo(null);
+      console.log('Current state:', { fromToken, toToken, fromAmount });
 
       // Проверяем, есть ли токен уже в кошельке
       const existingToken = selectedWallet?.tokens.find(t => t.contract === token.contract);
@@ -571,7 +575,7 @@ export const useSwapWindowLogic = () => {
       handleClearState();
     }
   }, [isSwapWindowOpen, handleClearState]);
-
+    
   return {
     flow: {
       handleFromAmountChange,
